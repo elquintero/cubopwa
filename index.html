@@ -3,94 +3,118 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#0e1116">
+<meta name="theme-color" content="#0b0d10">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="icon-192.png">
 <title>Cubo Timer</title>
 <style>
-:root{--bg:#0e1116;--panel:#161b22;--line:#252c36;--tx:#e6edf3;--mu:#7d8590;--ac:#5aa9ff;--ok:#3ddc97;--bad:#ff6b6b;color-scheme:dark}
+:root{--bg:#0b0d10;--tx:#e8ecf1;--mu:#6b7380;--line:#1c2128;--ac:#5aa9ff;--ok:#3ddc97;--bad:#ff6b6b;color-scheme:dark}
 *{box-sizing:border-box}
-html,body{margin:0;background:var(--bg);color:var(--tx);font:15px/1.4 system-ui,-apple-system,"Segoe UI",sans-serif}
-body{padding:env(safe-area-inset-top,0) 14px env(safe-area-inset-bottom,0)}
-header{display:flex;align-items:center;gap:10px;padding:12px 0}
-header h1{font-size:17px;margin:0;font-weight:650;flex:1}
-button{font:inherit;color:var(--tx);background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:8px 12px;cursor:pointer}
-button:hover{border-color:var(--ac)}button:focus-visible{outline:2px solid var(--ac);outline-offset:2px}
-button.primary{background:var(--ac);border-color:var(--ac);color:#06101c;font-weight:600}
-#status{font-size:13px;color:var(--mu)}#status.on{color:var(--ok)}
-main{display:grid;gap:14px;max-width:980px;margin:0 auto;padding-bottom:30px}
-@media(min-width:820px){main{grid-template-columns:360px 1fr}}
-section{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:14px}
-h2{font-size:13px;font-weight:600;color:var(--mu);margin:0 0 10px}
-#cv{width:100%;max-width:332px;aspect-ratio:1;display:block;margin:0 auto;touch-action:none;cursor:grab}
-#timer{font-size:clamp(56px,16vw,92px);font-weight:700;text-align:center;font-variant-numeric:tabular-nums;letter-spacing:-1px;padding:6px 0;cursor:pointer;user-select:none}
-#timer.ready{color:var(--ok)}#timer.run{color:var(--tx)}
-#phase{text-align:center;color:var(--mu);min-height:20px}
-#scr{text-align:center;font-size:19px;letter-spacing:.5px;margin:8px 0;word-spacing:6px;min-height:28px}
-#scr span{font-weight:600}
-#scr .d{color:var(--ok)}#scr .c{color:var(--tx);border-bottom:2px solid var(--tx)}#scr .p{color:#ffd54a;border-bottom:2px solid #ffd54a}#scr .e{color:#ff9a3d;border-bottom:2px solid #ff9a3d}#scr .n{color:var(--tx)}#scr .f{color:var(--mu)}
-#hint{text-align:center;min-height:20px;font-size:14px}#hint.p{color:#ffd54a}#hint.e{color:#ff9a3d}
-#live{text-align:center;color:var(--mu);font-size:13px;min-height:18px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
-.row{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:10px}
+html,body{margin:0;min-height:100%;background:var(--bg);color:var(--tx);font:15px/1.45 system-ui,-apple-system,"Segoe UI",sans-serif}
+body{padding:env(safe-area-inset-top,0) 18px env(safe-area-inset-bottom,0)}
+button{font:inherit;color:inherit;background:none;border:0;cursor:pointer;padding:0}
+button:focus-visible,summary:focus-visible{outline:2px solid var(--ac);outline-offset:3px;border-radius:6px}
+header{display:flex;align-items:center;gap:6px;height:56px;max-width:560px;margin:0 auto}
+.sp{flex:1}
+#btnConn{display:flex;align-items:center;gap:8px;color:var(--mu);font-size:13px}
+#btnConn i{width:8px;height:8px;border-radius:50%;background:#3a414b}
+#btnConn:has(#status.on){color:var(--tx)}#btnConn:has(#status.on) i{background:var(--ok)}
+.icon{width:38px;height:38px;display:grid;place-items:center;color:var(--mu);border-radius:10px}
+.icon:hover,#btnConn:hover{color:var(--tx)}
+.icon svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round}
+main{max-width:560px;margin:0 auto;display:flex;flex-direction:column;align-items:center;text-align:center;padding:4vh 0 30px}
+#scr{font:500 clamp(18px,4.6vw,24px)/1.7 ui-monospace,Menlo,Consolas,monospace;letter-spacing:.04em;min-height:42px}
+#scr span{margin:0 .12em;padding-bottom:1px}
+#scr .d{color:var(--ok)}#scr .c{border-bottom:2px solid var(--tx)}#scr .p{color:#ffd54a;border-bottom:2px solid #ffd54a}
+#scr .e{color:#ff9a3d;border-bottom:2px solid #ff9a3d}#scr .n{color:var(--tx)}#scr .f{color:var(--mu)}
+#hint{min-height:22px;font-size:14px}#hint.p{color:#ffd54a}#hint.e{color:#ff9a3d}
+#timer{font-size:clamp(72px,24vw,132px);font-weight:300;line-height:1.1;font-variant-numeric:tabular-nums;letter-spacing:-.02em;margin:3vh 0 0;cursor:pointer;user-select:none;-webkit-tap-highlight-color:transparent}
+#timer.ready{color:var(--ok)}#timer.insp{color:#ffd54a}
+#phase{color:var(--mu);font-size:13px;min-height:20px}
+#live{color:var(--mu);font-size:13px;min-height:20px;max-width:100%;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
+#quick{display:flex;gap:22px;color:var(--mu);font-size:14px;min-height:24px;margin-top:8px;font-variant-numeric:tabular-nums}
+#quick b{color:var(--tx);font-weight:500}
+#cv{width:100%;max-width:260px;aspect-ratio:1;margin:18px 0 6px;touch-action:none;cursor:grab}
+.links{display:flex;flex-wrap:wrap;justify-content:center;gap:4px 18px;color:var(--mu);font-size:13px}
+.links button:hover{color:var(--tx)}
+dialog{background:#12161b;color:var(--tx);border:1px solid var(--line);border-radius:16px;width:min(520px,94vw);max-height:90vh;padding:20px}
+dialog::backdrop{background:rgba(0,0,0,.65)}
+.dh{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}.dh h2{font-size:16px;font-weight:600;margin:0}
+.dh button{color:var(--mu);font-size:18px;width:32px;height:32px}
+.opt{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:14px 0;border-bottom:1px solid var(--line);cursor:pointer}
+.opt small{display:block;color:var(--mu);margin-top:2px;font-size:13px}
+input[role=switch]{appearance:none;-webkit-appearance:none;width:44px;height:26px;border-radius:13px;background:#262d36;position:relative;flex:none;cursor:pointer;transition:background .2s}
+input[role=switch]::after{content:"";position:absolute;top:3px;left:3px;width:20px;height:20px;border-radius:50%;background:var(--tx);transition:transform .2s}
+input[role=switch]:checked{background:var(--ok)}input[role=switch]:checked::after{transform:translateX(18px);background:#06101c}
+input[role=switch]:focus-visible{outline:2px solid var(--ac);outline-offset:2px}
+h3{font-size:12px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--mu);margin:22px 0 10px}
+.mu{color:var(--mu);font-size:13px}
+.dev{border:1px solid var(--line);border-radius:12px;padding:12px;margin-bottom:10px;display:grid;gap:8px;text-align:left}.dev.on{border-color:var(--ok)}
+.dt{display:flex;align-items:center;gap:8px}.badge{border:1px solid var(--line);border-radius:99px;padding:1px 9px;font-size:12px;color:var(--ac)}
+.ic{color:var(--mu);padding:2px 6px}.mac{display:flex;gap:8px;align-items:center;width:100%;background:#0b0d10;border-radius:8px;padding:8px 10px}.mac code{flex:1;text-align:left;font-size:13px}
+.del{color:var(--mu);border:1px solid var(--line);border-radius:8px;padding:8px}.del:hover{color:var(--bad);border-color:var(--bad)}
+.btn{border:1px solid var(--line);border-radius:10px;padding:9px 14px;color:var(--tx)}.btn:hover{border-color:var(--mu)}
+.row{display:flex;gap:10px;margin-top:12px;flex-wrap:wrap}
 table{width:100%;border-collapse:collapse;font-variant-numeric:tabular-nums}
-th,td{padding:5px 4px;text-align:right;border-bottom:1px solid var(--line)}th:first-child,td:first-child{text-align:left;color:var(--mu)}
-#hist{max-height:300px;overflow:auto}
-#hist div{display:flex;gap:8px;align-items:center;padding:5px 0;border-bottom:1px solid var(--line);font-variant-numeric:tabular-nums}
+th{font-weight:500;color:var(--mu);font-size:12px}th,td{padding:6px 4px;text-align:right;border-bottom:1px solid var(--line)}th:first-child,td:first-child{text-align:left;color:var(--mu)}
+#chart{width:100%;height:140px;display:block;margin:14px 0}
+#hist{max-height:240px;overflow:auto}
+#hist div{display:flex;gap:8px;align-items:center;padding:6px 0;border-bottom:1px solid var(--line);font-variant-numeric:tabular-nums}
 #hist .n{color:var(--mu);width:34px}#hist .t{font-weight:600;width:80px}#hist .i{color:var(--mu);flex:1;font-size:13px}
-#hist button{padding:2px 7px;font-size:12px}
-.pad{display:grid;grid-template-columns:repeat(6,1fr);gap:6px}
-.pad button{padding:8px 0;text-align:center}
-details{margin-top:12px}summary{cursor:pointer;color:var(--mu);font-size:13px}
+#hist button{color:var(--mu);font-size:12px;padding:2px 6px;border:1px solid var(--line);border-radius:6px}#hist button:hover{color:var(--tx)}
+.pad{display:grid;grid-template-columns:repeat(6,1fr);gap:6px;margin-top:10px}.pad button{border:1px solid var(--line);border-radius:8px;padding:8px 0}
+details{margin-top:18px}summary{cursor:pointer;color:var(--mu);font-size:13px}
 #log{font:12px ui-monospace,Menlo,monospace;color:var(--mu);white-space:pre;overflow:auto;max-height:140px;margin-top:8px}
-#toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0));transform:translateX(-50%);background:var(--panel);border:1px solid var(--ac);padding:9px 14px;border-radius:8px;opacity:0;pointer-events:none;transition:opacity .2s;max-width:90vw}
+#toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0));transform:translateX(-50%);background:#1a2027;padding:10px 16px;border-radius:10px;opacity:0;pointer-events:none;transition:opacity .2s;max-width:90vw;font-size:14px}
 #toast.show{opacity:1}
-@media(prefers-reduced-motion:reduce){#toast{transition:none}}
+@media(prefers-reduced-motion:reduce){#toast,input[role=switch],input[role=switch]::after{transition:none}}
 </style>
 </head>
 <body>
 <header>
-  <h1>Cubo Timer</h1>
-  <span id="status">Sin cubo</span>
-  <button class="primary" id="btnConn">Conectar cubo</button>
+  <button id="btnConn"><i></i><span id="status">Conectar cubo</span></button>
+  <span class="sp"></span>
+  <button class="icon" id="btnStats" aria-label="Estadísticas" title="Estadísticas"><svg viewBox="0 0 24 24"><path d="M6 20V11M12 20V4M18 20v-6"/></svg></button>
+  <button class="icon" id="btnSet" aria-label="Ajustes" title="Ajustes"><svg viewBox="0 0 24 24"><path d="M4 21v-7M4 10V3M12 21v-9M12 8V3M20 21v-5M20 12V3M1 14h6M9 8h6M17 16h6"/></svg></button>
 </header>
 <main>
-  <section>
-    <h2>Cubo en tiempo real</h2>
-    <canvas id="cv" width="664" height="664" aria-label="Vista 3D del cubo"></canvas>
-    <div class="row">
-      <button id="btnReset" title="Marca el cubo físico como resuelto">Cubo resuelto</button>
-      <button id="btnView">Vista</button>
-    </div>
-    <details>
-      <summary>Simulador y registro Bluetooth</summary>
-      <p style="color:var(--mu);font-size:13px;margin:8px 0">Sin cubo: usa el teclado (U D L R F B, con Shift = inverso) o estos botones.</p>
-      <div class="pad" id="pad"></div>
-      <div class="row"><button id="btnApply">Aplicar scramble al cubo virtual</button></div>
-      <div id="log">Aquí aparecerán los datos crudos del cubo.</div>
-    </details>
-  </section>
-
-  <div style="display:grid;gap:14px;align-content:start">
-    <section>
-      <div id="phase"></div>
-      <div id="scr"></div>
-      <div id="hint"></div>
-      <div id="timer">0.00</div>
-      <div id="live"></div>
-      <div class="row"><button id="btnSkip">Saltar scramble</button><button id="btnNew">Otro scramble</button></div>
-    </section>
-    <section>
-      <h2>Estadísticas</h2>
-      <table id="stats"></table>
-      <div id="extra" style="color:var(--mu);font-size:13px;margin-top:8px"></div>
-    </section>
-    <section>
-      <h2>Historial</h2>
-      <div id="hist"></div>
-      <div class="row"><button id="btnExport">Exportar JSON</button><button id="btnClear">Borrar todo</button></div>
-    </section>
-  </div>
+  <div id="scr"></div>
+  <div id="hint"></div>
+  <div id="timer">0.00</div>
+  <div id="phase"></div>
+  <div id="live"></div>
+  <div id="quick"></div>
+  <canvas id="cv" width="520" height="520" aria-label="Vista 3D del cubo"></canvas>
+  <nav class="links">
+    <button id="btnSkip">saltar scramble</button><button id="btnNew">otro scramble</button><button id="btnReset" title="Marca el cubo físico como resuelto">cubo resuelto</button><button id="btnView">girar vista</button>
+  </nav>
 </main>
+
+<dialog id="dlgStats" aria-label="Estadísticas">
+  <div class="dh"><h2>Estadísticas</h2><button id="stClose" aria-label="Cerrar">✕</button></div>
+  <table id="stats"></table>
+  <div id="extra" class="mu" style="margin-top:8px"></div>
+  <canvas id="chart" aria-label="Evolución de los tiempos"></canvas>
+  <div id="hist"></div>
+  <div class="row"><button class="btn" id="btnExport">Exportar JSON</button><button class="btn" id="btnClear">Borrar todo</button></div>
+</dialog>
+
+<dialog id="dlg" aria-label="Ajustes">
+  <div class="dh"><h2>Ajustes</h2><button id="dlgClose" aria-label="Cerrar">✕</button></div>
+  <label class="opt"><span><b>Inspección de 15 s</b><small>Cuenta atrás antes de resolver. Tras 15 s se aplica +2 y tras 17 s, DNF</small></span><input type="checkbox" role="switch" id="oInsp"></label>
+  <label class="opt"><span><b>Inicio automático</b><small>Empieza al realizar un giro cuando el scramble está hecho y aparece ¡Start!</small></span><input type="checkbox" role="switch" id="oAuto"></label>
+  <label class="opt"><span><b>Animación de éxito</b><small>Reproduce una animación cuando el cubo está resuelto o un caso de entrenamiento terminado</small></span><input type="checkbox" role="switch" id="oSucc"></label>
+  <h3>Dispositivos conectados</h3>
+  <div id="devs"></div>
+  <div class="row"><button class="btn" id="btnNewDev">Conectar otro cubo</button></div>
+  <details>
+    <summary>Avanzado: simulador y registro Bluetooth</summary>
+    <p class="mu">Sin cubo: teclado (U D L R F B, Shift = inverso) o estos botones.</p>
+    <div class="pad" id="pad"></div>
+    <div class="row"><button class="btn" id="btnApply">Aplicar scramble al cubo virtual</button></div>
+    <div id="log">Aquí aparecerán los datos crudos del cubo.</div>
+  </details>
+</dialog>
 <div id="toast"></div>
 
 <script>
@@ -158,14 +182,15 @@ cv.addEventListener('pointerup',()=>drag=null);
 document.getElementById('btnView').onclick=()=>{flip=!flip;draw()};
 
 /* ===== Estado de la resolución ===== */
-let cube=solvedCube(),phase='scramble',scr=[],targetSig='',t0=0,mvs=[];
+let cube=solvedCube(),phase='scramble',scr=[],targetSig='',t0=0,mvs=[],ti=0,pen=0;
 const $=id=>document.getElementById(id);
 const fmt=ms=>{if(ms===Infinity)return'DNF';const s=ms/1000;return s>=60?Math.floor(s/60)+':'+(s%60).toFixed(2).padStart(5,'0'):s.toFixed(2)};
 const toast=m=>{const t=$('toast');t.textContent=m;t.className='show';clearTimeout(toast.h);toast.h=setTimeout(()=>t.className='',2800)};
 function setPhase(p){phase=p;const T=$('timer');
-  $('phase').textContent={scramble:'Haz este scramble (blanco arriba, verde delante)',ready:'Listo: haz un movimiento para empezar',running:'Resolviendo…'}[p];
-  T.className=p==='ready'?'ready':p==='running'?'run':'';
-  if(p==='ready'){T.textContent='0.00';$('live').textContent=''}if(scr.length)renderScr()}
+  $('phase').textContent={scramble:'Haz este scramble',ready:cfg.insp?'Toca o pulsa espacio para iniciar la inspección':cfg.auto?'Haz un giro para empezar':'Toca o pulsa espacio para empezar',inspect:'Inspección · haz un giro para empezar',running:''}[p];
+  T.className=p==='ready'?'ready':p==='running'?'run':p==='inspect'?'insp':'';
+  if(p==='ready'){T.textContent=cfg.insp?'15':cfg.auto?'¡Start!':'0.00';$('live').textContent=''}
+  if(scr.length)renderScr()}
 let prog=0,wrong=[],pre=[];
 const OPP={U:'D',D:'U',L:'R',R:'L',F:'B',B:'F'},qOf=m=>m.endsWith("'")?3:m.endsWith('2')?2:1,qs=(f,q)=>f+['','','2',"'"][q];
 function newScramble(){scr=genScramble();const c=clone(cube);pre=[sig(c)];scr.forEach(m=>{mv(c,m);pre.push(sig(c))});prog=0;wrong=[];setPhase('scramble');renderScr()}
@@ -191,19 +216,22 @@ function trackMove(m){
 function onMove(m){
   mv(cube,m);queue.push(m);pump();
   if(phase==='scramble')trackMove(m);
-  else if(phase==='ready'){t0=performance.now();mvs=[{m,t:0}];setPhase('running');tick()}
+  else if(phase==='ready'){if(!cfg.auto||cfg.insp)return;pen=0;t0=performance.now();mvs=[{m,t:0}];setPhase('running');tick()}
+  else if(phase==='inspect'){const el=performance.now()-ti;pen=el>17000?2:el>15000?1:0;t0=performance.now();mvs=[{m,t:0}];setPhase('running');tick()}
   else if(phase==='running'){mvs.push({m,t:performance.now()-t0});$('live').textContent=mvs.slice(-12).map(x=>x.m).join(' ');if(isSolved(cube))finish()}
 }
+function itick(){if(phase!=='inspect')return;const r=15-(performance.now()-ti)/1000;$('timer').textContent=r>0?Math.ceil(r):r>-2?'+2':'DNF';requestAnimationFrame(itick)}
 function tick(){if(phase!=='running')return;$('timer').textContent=fmt(performance.now()-t0);requestAnimationFrame(tick)}
 function finish(){
   const t=Math.round(performance.now()-t0);
-  solves.push({t,m:mvs.length,s:scr.join(' '),d:Date.now(),p:0});save();
+  solves.push({t,m:mvs.length,s:scr.join(' '),d:Date.now(),p:pen,dv:curDev||undefined});save();celebrate();
   $('timer').textContent=fmt(t);$('live').textContent=mvs.length+' mov · '+(mvs.length/(t/1000)).toFixed(2)+' TPS';
   renderStats();const T=$('timer');newScramble();T.className='';$('timer').textContent=fmt(t);
 }
 function manual(){ // espacio / toque: sin cubo o para saltar pasos
   if(phase==='scramble')setPhase('ready');
-  else if(phase==='ready'){t0=performance.now();mvs=[];setPhase('running');tick()}
+  else if(phase==='ready'){if(cfg.insp){ti=performance.now();setPhase('inspect');itick()}else{pen=0;t0=performance.now();mvs=[];setPhase('running');tick()}}
+  else if(phase==='inspect'){const el=performance.now()-ti;pen=el>17000?2:el>15000?1:0;t0=performance.now();mvs=[];setPhase('running');tick()}
   else if(phase==='running'){const t=Math.round(performance.now()-t0);if(mvs.length===0){solves.push({t,m:0,s:scr.join(' '),d:Date.now(),p:0});save();renderStats()}
     else finish();phase!=='scramble'&&(newScramble(),$('timer').textContent=fmt(t))}
 }
@@ -212,6 +240,7 @@ $('btnNew').onclick=()=>{if(phase!=='running')newScramble()};
 $('btnReset').onclick=()=>{showCube(solvedCube());newScramble();toast('Cubo marcado como resuelto')};
 $('btnApply').onclick=()=>{if(phase==='scramble')scr.forEach(m=>onMove(m))};
 document.addEventListener('keydown',e=>{
+  if(document.querySelector('dialog[open]'))return;
   if(e.code==='Space'){e.preventDefault();if(!e.repeat)manual();return}
   const k=e.key.toUpperCase();if('UDLRFB'.includes(k)&&k.length===1&&!e.ctrlKey&&!e.metaKey)onMove(k+(e.shiftKey?"'":''))});
 const pad=$('pad');for(const f of 'UDLRFB')for(const s of['',"'"]){const b=document.createElement('button');b.textContent=f+s;b.onclick=()=>onMove(f+s);pad.appendChild(b)}
@@ -227,6 +256,8 @@ function renderStats(){
   const v=solves.map(val),rows=[['single',v.length?v[v.length-1]:null,v.length?Math.min(...v):null]];
   for(const n of[5,12,50,100])rows.push(['ao'+n,avg(v,n),best(v,n)]);
   const f=x=>x===null?'-':fmt(x);
+  const q=(n,x)=>x===null?'':`<span>${n} <b>${fmt(x)}</b></span>`;
+  $('quick').innerHTML=[q('ao5',rows[1][1]),q('ao12',rows[2][1]),q('mejor',rows[0][2])].join('');
   $('stats').innerHTML='<tr><th></th><th>Ahora</th><th>Mejor</th></tr>'+rows.map(r=>`<tr><td>${r[0]}</td><td>${f(r[1])}</td><td>${f(r[2])}</td></tr>`).join('');
   const ok=solves.filter(s=>s.p!==2&&s.m>0),tps=ok.length?ok.reduce((a,s)=>a+s.m/(s.t/1000),0)/ok.length:0,fin=v.filter(x=>x!==Infinity);
   $('extra').textContent=`${solves.length} resoluciones · media ${fin.length?fmt(fin.reduce((a,b)=>a+b,0)/fin.length):'-'} · TPS medio ${tps?tps.toFixed(2):'-'}`;
@@ -237,9 +268,58 @@ function renderStats(){
     for(const [l,fn] of[['+2',()=>s.p=s.p===1?0:1],['DNF',()=>s.p=s.p===2?0:2],['✕',()=>solves.splice(i,1)]]){
       const b=document.createElement('button');b.textContent=l;b.onclick=()=>{fn();save();renderStats()};d.appendChild(b)}
     $('hist').appendChild(d)});
+  if($('dlgStats').open)drawChart();
 }
 $('btnClear').onclick=()=>{if(confirm('¿Borrar todas las resoluciones?')){solves=[];save();renderStats()}};
 $('btnExport').onclick=()=>{const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([JSON.stringify(solves,null,1)],{type:'application/json'}));a.download='resoluciones.json';a.click()};
+
+/* ===== Ajustes, dispositivos y animación ===== */
+let cfg={auto:true,success:true,insp:false},devices=[],curDev=null;
+try{Object.assign(cfg,JSON.parse(localStorage.getItem('cfg')||'{}'));devices=JSON.parse(localStorage.getItem('devices')||'[]')}catch(e){}
+const saveCfg=()=>{try{localStorage.setItem('cfg',JSON.stringify(cfg))}catch(e){}},saveDev=()=>{try{localStorage.setItem('devices',JSON.stringify(devices))}catch(e){}};
+function renderDevs(){
+  const box=$('devs');box.innerHTML='';
+  if(!devices.length){box.innerHTML='<p class="mu">Aún no hay cubos guardados. Conecta uno y aparecerá aquí.</p>';return}
+  devices.forEach(d=>{
+    const n=solves.filter(s=>s.dv===d.id).length,c=document.createElement('div');c.className='dev'+(d.id===curDev?' on':'');
+    c.innerHTML='<div class="dt"><b></b><span class="badge">3x3x3</span><button class="ic" title="Editar nombre" aria-label="Editar nombre">✎</button></div><div class="mu"></div><button class="mac" title="Copiar MAC"><span class="mu">MAC</span><code></code><span>⧉</span></button><button class="del">Eliminar dispositivo</button>';
+    c.querySelector('b').textContent=d.alias||d.id;c.querySelector('code').textContent=d.mac;
+    c.querySelector('.mu').textContent='Usado en '+n+' resolución'+(n===1?'':'es')+(d.id===curDev?' · conectado':'');
+    c.querySelector('.ic').onclick=()=>{const v=prompt('Nombre del dispositivo',d.alias||d.id);if(v!==null){d.alias=v.trim()===d.id?'':v.trim();saveDev();renderDevs()}};
+    c.querySelector('.mac').onclick=()=>{navigator.clipboard&&navigator.clipboard.writeText(d.mac).then(()=>toast('MAC copiada'),()=>{})};
+    c.querySelector('.del').onclick=()=>{if(confirm('¿Eliminar este dispositivo? La próxima vez tendrás que volver a introducir su MAC.')){devices=devices.filter(x=>x!==d);saveDev();renderDevs()}};
+    box.appendChild(c)});
+}
+$('btnSet').onclick=()=>{$('oInsp').checked=cfg.insp;$('oAuto').checked=cfg.auto;$('oSucc').checked=cfg.success;renderDevs();$('dlg').showModal()};
+$('dlgClose').onclick=()=>$('dlg').close();
+$('dlg').addEventListener('click',e=>{if(e.target===$('dlg'))$('dlg').close()});
+$('oInsp').onchange=e=>{cfg.insp=e.target.checked;saveCfg();if(phase==='ready')setPhase('ready')};
+$('oAuto').onchange=e=>{cfg.auto=e.target.checked;saveCfg();if(phase==='ready')setPhase('ready')};
+$('oSucc').onchange=e=>{cfg.success=e.target.checked;saveCfg();if(cfg.success)celebrate()};
+$('btnNewDev').onclick=()=>{$('dlg').close();$('btnConn').click()};
+function drawChart(){
+  const cs=$('chart'),r=devicePixelRatio||1,w=cs.clientWidth,h=cs.clientHeight;cs.width=w*r;cs.height=h*r;
+  const x=cs.getContext('2d');x.scale(r,r);x.clearRect(0,0,w,h);
+  const v=solves.map(val).slice(-50),fin=v.filter(a=>a!==Infinity);
+  if(fin.length<2){x.fillStyle='#6b7380';x.font='13px system-ui';x.fillText('Se necesitan al menos 2 resoluciones',4,h/2);return}
+  const mx=Math.max(...fin),mn=Math.min(...fin),p=10,X=i=>p+i*(w-2*p)/(v.length-1),Y=t=>h-p-(t-mn)/(mx-mn||1)*(h-2*p);
+  const line=(pts,col,lw)=>{x.strokeStyle=col;x.lineWidth=lw;x.beginPath();let on=false;pts.forEach(([i,t])=>{on?x.lineTo(X(i),Y(t)):x.moveTo(X(i),Y(t));on=true});x.stroke()};
+  line(v.map((t,i)=>[i,t]).filter(a=>a[1]!==Infinity),'#6b7380',1);
+  x.fillStyle='#e8ecf1';v.forEach((t,i)=>{if(t!==Infinity){x.beginPath();x.arc(X(i),Y(t),2,0,7);x.fill()}});
+  line(v.map((_,i)=>[i,i>=4?avg(v.slice(0,i+1),5):null]).filter(a=>a[1]!==null&&a[1]!==Infinity),'#5aa9ff',2);
+}
+$('btnStats').onclick=()=>{$('dlgStats').showModal();drawChart()};
+$('stClose').onclick=()=>$('dlgStats').close();
+$('dlgStats').addEventListener('click',e=>{if(e.target===$('dlgStats'))$('dlgStats').close()});
+function celebrate(){
+  if(!cfg.success||matchMedia('(prefers-reduced-motion: reduce)').matches)return;
+  const c=document.createElement('canvas');c.style.cssText='position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:50';
+  c.width=innerWidth;c.height=innerHeight;document.body.appendChild(c);const x=c.getContext('2d'),cols=Object.values(COL);
+  const P=Array.from({length:150},()=>({x:c.width/2,y:c.height*0.4,vx:(Math.random()-.5)*16,vy:-Math.random()*14-3,r:Math.random()*5+3,c:cols[Math.random()*6|0],a:Math.random()*6,va:(Math.random()-.5)*.4}));
+  let t=0;(function f(){x.clearRect(0,0,c.width,c.height);t++;
+    P.forEach(p=>{p.vy+=.35;p.x+=p.vx;p.y+=p.vy;p.a+=p.va;x.save();x.translate(p.x,p.y);x.rotate(p.a);x.fillStyle=p.c;x.fillRect(-p.r,-p.r/2,p.r*2,p.r);x.restore()});
+    t<110?requestAnimationFrame(f):c.remove()})();
+}
 
 /* ===== Bluetooth ===== */
 const SERVICES=['6e400001-b5a3-f393-e0a9-e50e24dc4179','00000010-0000-fff7-fff6-fff5fff4fff0','0000aadb-0000-1000-8000-00805f9b34fb',
@@ -266,7 +346,7 @@ async function rawConnect(){
     toast('Conectado a '+(dev.name||'cubo'));
   }catch(e){toast('No se pudo conectar: '+e.message)}
 }
-window.app={onMove:m=>onMove(m),toast,log,setStatus:(t,on)=>{$('status').textContent=t;$('status').className=on?'on':''},setFacelets,resync:()=>{showCube(solvedCube());newScramble()}};
+window.app={onMove:m=>onMove(m),toast,log,setStatus:(t,on)=>{$('status').textContent=t;$('status').className=on?'on':'';if(!on)curDev=null;renderDevs()},getDevice:n=>devices.find(d=>d.id===n),registerDevice:(n,mac)=>{let d=devices.find(x=>x.id===n);if(!d)devices.push(d={id:n,mac,alias:''});d.mac=mac;curDev=n;saveDev();renderDevs()},setFacelets,resync:()=>{showCube(solvedCube());newScramble()}};
 $('btnConn').onclick=()=>window.connectCube?window.connectCube(window.app):rawConnect();
 
 /* ===== Arranque ===== */
