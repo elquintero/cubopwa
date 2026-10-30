@@ -7,20 +7,22 @@ const norm = (m) => {
   return h.length === 12 ? h.match(/../g).join(':') : null;
 };
 const macProvider = async (device, isFallback) => {
+  // Siempre pregunta, con la última MAC usada ya escrita para poder corregirla.
   const k = 'mac:' + (device?.name || device?.id || '');
-  let mac = isFallback ? null : localStorage.getItem(k);
-  while (!mac) {
+  let def = localStorage.getItem(k) || '';
+  for (;;) {
     const t = prompt(
       'Dirección MAC de tu cubo ' + (device?.name ? '(' + device.name + ')' : '') +
-      '\nFormato: AA:BB:CC:DD:EE:FF\n(Cancelar = dejar que la app la intente detectar sola)',
-      ''
+      '\nFormato: AA:BB:CC:DD:EE:FF' + (isFallback ? '\n\nLa anterior no funcionó, revísala.' : '') +
+      '\n(Cancelar = dejar que la app intente detectarla sola)',
+      def
     );
     if (t === null) return null;
-    mac = norm(t);
-    if (!mac) alert('MAC no válida: deben ser 12 caracteres hexadecimales.');
+    const mac = norm(t);
+    if (mac) { localStorage.setItem(k, mac); return mac; }
+    alert('MAC no válida: deben ser 12 caracteres hexadecimales.');
+    def = t;
   }
-  localStorage.setItem(k, mac);
-  return mac;
 };
 // Según la versión de la librería, el argumento es una función o un objeto de opciones: valen ambos.
 macProvider.macAddressProvider = macProvider;
