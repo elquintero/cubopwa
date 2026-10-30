@@ -4,8 +4,8 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#0e1116">
-<link rel="manifest" href="/manifest.webmanifest">
-<link rel="icon" href="/icon-192.png">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icon-192.png">
 <title>Cubo Timer</title>
 <style>
 :root{--bg:#0e1116;--panel:#161b22;--line:#252c36;--tx:#e6edf3;--mu:#7d8590;--ac:#5aa9ff;--ok:#3ddc97;--bad:#ff6b6b;color-scheme:dark}
@@ -115,20 +115,38 @@ const cv=document.getElementById('cv'),g=cv.getContext('2d');
 let A=-0.6,Bt=0.45,flip=false;
 const view=v=>{const a=A,b=flip?-Bt:Bt;let x=v[0]*Math.cos(a)+v[2]*Math.sin(a),z=-v[0]*Math.sin(a)+v[2]*Math.cos(a);
   const y=v[1]*Math.cos(b)-z*Math.sin(b);z=v[1]*Math.sin(b)+z*Math.cos(b);return[x,y,z]};
+let disp=solvedCube(),queue=[],anim=null;
+const clone=c=>c.map(s=>({p:[...s.p],n:[...s.n],c:s.c}));
+const rotV=(v,ax,t)=>{const c=Math.cos(t),s=Math.sin(t),[x,y,z]=v;return ax===0?[x,y*c-z*s,y*s+z*c]:ax===1?[x*c+z*s,y,-x*s+z*c]:[x*c-y*s,x*s+y*c,z]};
 function draw(){
-  const W=cv.width,S=W/5.4;g.clearRect(0,0,W,W);
-  for(const s of cube){
-    const nv=view(s.n);if(nv[2]<=0.001)continue;
-    const n=s.n,u=n[1]?[1,0,0]:n[0]?[0,1,0]:[1,0,0],v=n[1]?[0,0,1]:[0,0,1];
-    const vv=n[2]?[0,1,0]:v,c=s.p.map((x,i)=>x+n[i]*0.5);
-    for(const [h,col] of [[0.5,'#0b0d10'],[0.43,COL[s.c]]]){
-      g.beginPath();
-      [[-1,-1],[1,-1],[1,1],[-1,1]].forEach(([i,j],k)=>{
-        const P=view(c.map((x,t)=>x+h*(i*u[t]+j*vv[t])));const X=W/2+P[0]*S,Y=W/2-P[1]*S;k?g.lineTo(X,Y):g.moveTo(X,Y)});
-      g.closePath();g.fillStyle=col;g.fill();
-    }
+  const W=cv.width,S=W/5.4,Q=[];g.clearRect(0,0,W,W);
+  for(const s of disp){
+    const n=s.n,inL=anim&&s.p[anim.ax]===anim.sg,rot=v=>inL?rotV(v,anim.ax,anim.th):v;
+    const nv=view(rot(n));if(nv[2]<=0.001&&!anim)continue;
+    const u=n[1]||n[2]?[1,0,0]:[0,1,0],vv=n[2]?[0,1,0]:[0,0,1],c=s.p.map((x,i)=>x+n[i]*0.5);
+    const polys=[[0.5,'#0b0d10'],[0.43,COL[s.c]]].map(([h,col])=>[col,[[-1,-1],[1,-1],[1,1],[-1,1]].map(([i,j])=>view(rot(c.map((x,t)=>x+h*(i*u[t]+j*vv[t])))))]);
+    Q.push({z:view(rot(c))[2],polys});
   }
+  Q.sort((a,b)=>a.z-b.z);
+  for(const q of Q)for(const [col,pts] of q.polys){g.beginPath();pts.forEach((P,k)=>{const X=W/2+P[0]*S,Y=W/2-P[1]*S;k?g.lineTo(X,Y):g.moveTo(X,Y)});g.closePath();g.fillStyle=col;g.fill()}
 }
+function pump(){ // anima los giros en cola (más rápido si se acumulan)
+  if(anim||!queue.length)return;
+  const m=queue.shift(),q=m.endsWith("'")?-1:m.endsWith('2')?2:1,n=FACES[m[0]],ax=n.findIndex(x=>x),sg=n[ax];
+  const dur=Math.max(35,140/(1+queue.length)),t0=performance.now(),th=-sg*q*Math.PI/2;
+  const step=now=>{const k=Math.min(1,(now-t0)/dur);anim={ax,sg,th:th*k*k*(3-2*k)};
+    if(k<1){draw();requestAnimationFrame(step)}else{mv(disp,m);anim=null;draw();pump()}};
+  requestAnimationFrame(step);
+}
+function showCube(c){cube=c;disp=clone(c);queue=[];anim=null;draw()}
+function setFacelets(str,first){ // refleja el estado real que reporta el cubo (URFDLB)
+  if(str.length!==54)return;const c=solvedCube();
+  const P={U:(r,k)=>[-1+k,1,-1+r],R:(r,k)=>[1,1-r,1-k],F:(r,k)=>[-1+k,1-r,1],D:(r,k)=>[-1+k,-1,1-r],L:(r,k)=>[-1,1-r,-1+k],B:(r,k)=>[1-k,1-r,-1]};
+  'URFDLB'.split('').forEach((f,fi)=>{for(let i=0;i<9;i++){const p=P[f](i/3|0,i%3);c.find(x=>x.n+''===FACES[f]+''&&x.p+''===p+'').c=str[fi*9+i]}});
+  if(sig(c)===sig(cube)&&!first)return;
+  showCube(c);if(first&&phase==='scramble')newScramble();else checkPhase();
+}
+function checkPhase(){if(phase==='scramble'&&sig(cube)===targetSig)setPhase('ready');else if(phase==='running'&&isSolved(cube))finish()}
 let drag=null;
 cv.addEventListener('pointerdown',e=>{drag=[e.clientX,e.clientY];cv.setPointerCapture(e.pointerId)});
 cv.addEventListener('pointermove',e=>{if(!drag)return;A+=(e.clientX-drag[0])*0.01;Bt=Math.max(-1.4,Math.min(1.4,Bt+(e.clientY-drag[1])*0.01));drag=[e.clientX,e.clientY];draw()});
@@ -144,9 +162,9 @@ function setPhase(p){phase=p;const T=$('timer');
   $('phase').textContent={scramble:'Haz este scramble (blanco arriba, verde delante)',ready:'Listo: haz un movimiento para empezar',running:'Resolviendo…'}[p];
   T.className=p==='ready'?'ready':p==='running'?'run':'';
   if(p==='ready'){T.textContent='0.00';$('live').textContent=''}}
-function newScramble(){scr=genScramble();targetSig=sig(build(scr));$('scr').textContent=scr.join(' ');setPhase('scramble')}
+function newScramble(){scr=genScramble();const c=clone(cube);scr.forEach(m=>mv(c,m));targetSig=sig(c);$('scr').textContent=scr.join(' ');setPhase('scramble')}
 function onMove(m){
-  mv(cube,m);draw();
+  mv(cube,m);queue.push(m);pump();
   if(phase==='scramble'){if(sig(cube)===targetSig)setPhase('ready')}
   else if(phase==='ready'){t0=performance.now();mvs=[{m,t:0}];setPhase('running');tick()}
   else if(phase==='running'){mvs.push({m,t:performance.now()-t0});$('live').textContent=mvs.slice(-12).map(x=>x.m).join(' ');if(isSolved(cube))finish()}
@@ -166,7 +184,7 @@ function manual(){ // espacio / toque: sin cubo o para saltar pasos
 }
 $('timer').onclick=manual;$('btnSkip').onclick=()=>phase==='scramble'&&setPhase('ready');
 $('btnNew').onclick=()=>{if(phase!=='running')newScramble()};
-$('btnReset').onclick=()=>{cube=solvedCube();draw();newScramble();toast('Cubo marcado como resuelto')};
+$('btnReset').onclick=()=>{showCube(solvedCube());newScramble();toast('Cubo marcado como resuelto')};
 $('btnApply').onclick=()=>{if(phase==='scramble')scr.forEach(m=>onMove(m))};
 document.addEventListener('keydown',e=>{
   if(e.code==='Space'){e.preventDefault();if(!e.repeat)manual();return}
@@ -223,13 +241,13 @@ async function rawConnect(){
     toast('Conectado a '+(dev.name||'cubo'));
   }catch(e){toast('No se pudo conectar: '+e.message)}
 }
-window.app={onMove:m=>onMove(m),toast,log,setStatus:(t,on)=>{$('status').textContent=t;$('status').className=on?'on':''},resync:()=>{cube=solvedCube();draw();newScramble()}};
+window.app={onMove:m=>onMove(m),toast,log,setStatus:(t,on)=>{$('status').textContent=t;$('status').className=on?'on':''},setFacelets,resync:()=>{showCube(solvedCube());newScramble()}};
 $('btnConn').onclick=()=>window.connectCube?window.connectCube(window.app):rawConnect();
 
 /* ===== Arranque ===== */
-if('serviceWorker' in navigator&&location.protocol.startsWith('http'))navigator.serviceWorker.register('/sw.js').catch(()=>{});
+if('serviceWorker' in navigator&&location.protocol.startsWith('http'))navigator.serviceWorker.register('sw.js').catch(()=>{});
 draw();renderStats();newScramble();
 </script>
-<script type="module" src="/src/bt.js"></script>
+<script type="module" src="./src/bt.js"></script>
 </body>
 </html>
