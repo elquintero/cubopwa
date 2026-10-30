@@ -27,6 +27,9 @@ h2{font-size:13px;font-weight:600;color:var(--mu);margin:0 0 10px}
 #timer.ready{color:var(--ok)}#timer.run{color:var(--tx)}
 #phase{text-align:center;color:var(--mu);min-height:20px}
 #scr{text-align:center;font-size:19px;letter-spacing:.5px;margin:8px 0;word-spacing:6px;min-height:28px}
+#scr span{font-weight:600}
+#scr .d{color:var(--ok)}#scr .c{color:var(--tx);border-bottom:2px solid var(--tx)}#scr .p{color:#ffd54a;border-bottom:2px solid #ffd54a}#scr .e{color:#ff9a3d;border-bottom:2px solid #ff9a3d}#scr .n{color:var(--tx)}#scr .f{color:var(--mu)}
+#hint{text-align:center;min-height:20px;font-size:14px}#hint.p{color:#ffd54a}#hint.e{color:#ff9a3d}
 #live{text-align:center;color:var(--mu);font-size:13px;min-height:18px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
 .row{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:10px}
 table{width:100%;border-collapse:collapse;font-variant-numeric:tabular-nums}
@@ -71,6 +74,7 @@ details{margin-top:12px}summary{cursor:pointer;color:var(--mu);font-size:13px}
     <section>
       <div id="phase"></div>
       <div id="scr"></div>
+      <div id="hint"></div>
       <div id="timer">0.00</div>
       <div id="live"></div>
       <div class="row"><button id="btnSkip">Saltar scramble</button><button id="btnNew">Otro scramble</button></div>
@@ -146,7 +150,7 @@ function setFacelets(str,first){ // refleja el estado real que reporta el cubo (
   if(sig(c)===sig(cube)&&!first)return;
   showCube(c);if(first&&phase==='scramble')newScramble();else checkPhase();
 }
-function checkPhase(){if(phase==='scramble'&&sig(cube)===targetSig)setPhase('ready');else if(phase==='running'&&isSolved(cube))finish()}
+function checkPhase(){if(phase==='scramble')trackSync();else if(phase==='running'&&isSolved(cube))finish()}
 let drag=null;
 cv.addEventListener('pointerdown',e=>{drag=[e.clientX,e.clientY];cv.setPointerCapture(e.pointerId)});
 cv.addEventListener('pointermove',e=>{if(!drag)return;A+=(e.clientX-drag[0])*0.01;Bt=Math.max(-1.4,Math.min(1.4,Bt+(e.clientY-drag[1])*0.01));drag=[e.clientX,e.clientY];draw()});
@@ -161,11 +165,32 @@ const toast=m=>{const t=$('toast');t.textContent=m;t.className='show';clearTimeo
 function setPhase(p){phase=p;const T=$('timer');
   $('phase').textContent={scramble:'Haz este scramble (blanco arriba, verde delante)',ready:'Listo: haz un movimiento para empezar',running:'Resolviendo…'}[p];
   T.className=p==='ready'?'ready':p==='running'?'run':'';
-  if(p==='ready'){T.textContent='0.00';$('live').textContent=''}}
-function newScramble(){scr=genScramble();const c=clone(cube);scr.forEach(m=>mv(c,m));targetSig=sig(c);$('scr').textContent=scr.join(' ');setPhase('scramble')}
+  if(p==='ready'){T.textContent='0.00';$('live').textContent=''}if(scr.length)renderScr()}
+let prog=0,wrong=[],pre=[];
+const OPP={U:'D',D:'U',L:'R',R:'L',F:'B',B:'F'},qOf=m=>m.endsWith("'")?3:m.endsWith('2')?2:1,qs=(f,q)=>f+['','','2',"'"][q];
+function newScramble(){scr=genScramble();const c=clone(cube);pre=[sig(c)];scr.forEach(m=>{mv(c,m);pre.push(sig(c))});prog=0;wrong=[];setPhase('scramble');renderScr()}
+function renderScr(){ // verde = bien · amarillo = medio giro · naranja = error
+  const el=$('scr'),h=$('hint');el.innerHTML='';
+  const e=scr[prog],half=wrong.length===1&&e&&wrong[0][0]===e[0]&&qOf(e)===2;
+  scr.forEach((m,i)=>{const sp=document.createElement('span');
+    sp.className=phase==='scramble'?(i<prog?'d':i>prog?'n':!wrong.length?'c':half?'p':'e'):phase==='ready'?'d':'f';
+    sp.textContent=m;el.appendChild(sp);el.appendChild(document.createTextNode(' '))});
+  if(phase==='scramble'&&wrong.length){h.className=half?'p':'e';
+    h.textContent=half?'Medio giro hecho: repite el mismo movimiento':'Error. Deshaz: '+wrong.slice().reverse().map(([f,q])=>qs(f,(4-q)%4)).join(' ')}
+  else{h.className='';h.textContent=''}
+}
+function trackSync(){const j=pre.indexOf(sig(cube));if(j>=0){prog=j;wrong=[]}renderScr();if(phase==='scramble'&&prog===scr.length)setPhase('ready')}
+function trackMove(m){
+  const f=m[0],q=qOf(m);let k=wrong.length-1;
+  while(k>=0&&wrong[k][0]!==f&&OPP[f]===wrong[k][0])k--;
+  if(k>=0&&wrong[k][0]===f){wrong[k][1]=(wrong[k][1]+q)%4;if(!wrong[k][1])wrong.splice(k,1)}else wrong.push([f,q]);
+  const e=scr[prog];
+  if(wrong.length===1&&e&&wrong[0][0]===e[0]&&wrong[0][1]===qOf(e)){wrong=[];prog++}
+  trackSync();
+}
 function onMove(m){
   mv(cube,m);queue.push(m);pump();
-  if(phase==='scramble'){if(sig(cube)===targetSig)setPhase('ready')}
+  if(phase==='scramble')trackMove(m);
   else if(phase==='ready'){t0=performance.now();mvs=[{m,t:0}];setPhase('running');tick()}
   else if(phase==='running'){mvs.push({m,t:performance.now()-t0});$('live').textContent=mvs.slice(-12).map(x=>x.m).join(' ');if(isSolved(cube))finish()}
 }
