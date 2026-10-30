@@ -1,42 +1,47 @@
 import { connectSmartCube } from 'smartcube-web-bluetooth';
 
-// Los MoYu cifran los datos con una clave derivada de la dirección MAC del cubo.
-// Si la MAC es incorrecta, la librería se conecta pero no puede leer nada ("Timed out waiting for cube data").
+// Los MoYu cifran los datos con una clave derivada de su MAC. Con una MAC incorrecta la librería
+// conecta pero no puede leer nada ("Timed out waiting for cube data").
 const norm = (m) => {
   const h = (m || '').toUpperCase().replace(/[^0-9A-F]/g, '');
   return h.length === 12 ? h.match(/../g).join(':') : null;
 };
-const macProvider = async (device, isFallback) => {
-  // Siempre pregunta, con la última MAC usada ya escrita para poder corregirla.
-  const k = 'mac:' + (device?.name || device?.id || '');
-  let def = localStorage.getItem(k) || '';
-  for (;;) {
-    const t = prompt(
-      'Dirección MAC de tu cubo ' + (device?.name ? '(' + device.name + ')' : '') +
-      '\nFormato: AA:BB:CC:DD:EE:FF' + (isFallback ? '\n\nLa anterior no funcionó, revísala.' : '') +
-      '\n(Cancelar = dejar que la app intente detectarla sola)',
-      def
-    );
-    if (t === null) return null;
-    const mac = norm(t);
-    if (mac) { localStorage.setItem(k, mac); return mac; }
-    alert('MAC no válida: deben ser 12 caracteres hexadecimales.');
-    def = t;
-  }
+// En tu MoYu32 la MAC es CF:30:16:00 + las 4 últimas cifras del nombre (WCU_MY32_BFA0 -> CF:30:16:00:BF:A0).
+const guessMac = (name) => {
+  const m = /^WCU_MY32_([0-9A-F]{4})$/i.exec(name || '');
+  return m ? 'CF:30:16:00:' + m[1].slice(0, 2).toUpperCase() + ':' + m[1].slice(2).toUpperCase() : '';
 };
-// Según la versión de la librería, el argumento es una función o un objeto de opciones: valen ambos.
-macProvider.macAddressProvider = macProvider;
-macProvider.customMacAddressProvider = macProvider;
-
-const forgetMacs = () => Object.keys(localStorage).filter((k) => k.startsWith('mac:')).forEach((k) => localStorage.removeItem(k));
 
 let conn = null;
 window.connectCube = async (app) => {
   if (!navigator.bluetooth) return app.toast('Web Bluetooth no disponible. Usa Chrome en Android u ordenador.');
+  let used = null, lastName = '';
+  const provider = async (device, isFallback) => {
+    lastName = device?.name || lastName;
+    const saved = app.getDevice(lastName);
+    if (saved?.mac && !isFallback) return (used = saved.mac); // MAC ya probada con este cubo
+    let def = (isFallback && used) || guessMac(lastName);
+    for (;;) {
+      const t = prompt(
+        'MAC de tu cubo ' + (lastName ? '(' + lastName + ')' : '') + '\nFormato: AA:BB:CC:DD:EE:FF' +
+        (def ? '\n\nSugerida a partir del nombre; si no conecta, introduce la correcta.' : '') +
+        (isFallback ? '\nLa anterior no funcionó.' : '') + '\n(Cancelar = intentar detectarla sola)', def);
+      if (t === null) return null;
+      const mac = norm(t);
+      if (mac) return (used = mac);
+      alert('MAC no válida: deben ser 12 caracteres hexadecimales.');
+      def = t;
+    }
+  };
+  // Según la versión de la librería, el argumento es una función o un objeto de opciones: valen ambos.
+  provider.macAddressProvider = provider;
+  provider.customMacAddressProvider = provider;
   try {
-    conn = await connectSmartCube(macProvider);
-    app.setStatus(conn.deviceName || 'Cubo conectado', true);
-    app.toast('Conectado: ' + (conn.deviceName || 'cubo') + ' (' + (conn.protocol || '?') + ')');
+    conn = await connectSmartCube(provider);
+    const name = conn.deviceName || lastName || 'Cubo';
+    if (used) app.registerDevice(name, used); // solo se guarda una MAC que ha funcionado
+    app.setStatus(name, true);
+    app.toast('Conectado: ' + name + ' (' + (conn.protocol || '?') + ')');
     let first = true; // el primer estado real del cubo sustituye al virtual
     conn.events$.subscribe((e) => {
       if (e.type === 'MOVE') { app.log('MOVE ' + e.move); app.onMove(e.move); }
@@ -47,8 +52,7 @@ window.connectCube = async (app) => {
     if (conn.capabilities?.facelets) conn.sendCommand({ type: 'REQUEST_FACELETS' });
     if (conn.capabilities?.battery) conn.sendCommand({ type: 'REQUEST_BATTERY' });
   } catch (err) {
-    forgetMacs(); // una MAC errónea no se vuelve a usar
-    app.toast('No se pudo conectar: ' + err.message + ' · Se ha olvidado la MAC guardada.');
+    app.toast('No se pudo conectar: ' + err.message);
     app.log('ERROR ' + err.message);
     console.error(err);
   }
