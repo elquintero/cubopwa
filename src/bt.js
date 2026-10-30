@@ -1,5 +1,8 @@
 import { connectSmartCube } from 'smartcube-web-bluetooth';
 import pkg from '../package.json';
+import '@fontsource/poppins/600.css';
+import '@fontsource/poppins/700.css';
+import './insight.js';
 
 // La versión se define una sola vez, en package.json, y se muestra en Ajustes.
 window.APP_VERSION = pkg.version;

@@ -8,10 +8,11 @@
     "preview": "vite preview --host"
   },
   "dependencies": {
-    "smartcube-web-bluetooth": "github:poliva/smartcube-web-bluetooth"
+    "smartcube-web-bluetooth": "github:poliva/smartcube-web-bluetooth",
+    "@fontsource/poppins": "^5.0.0"
   },
   "devDependencies": {
     "vite": "^5.4.0"
   },
-  "version": "1.1.0"
+  "version": "1.2.1"
 }
