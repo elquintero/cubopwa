@@ -1,2 +1,17 @@
-{"name":"cubo-timer","private":true,"type":"module","scripts":{"dev":"vite --host","build":"vite build","preview":"vite preview --host"},
-"dependencies":{"smartcube-web-bluetooth":"github:poliva/smartcube-web-bluetooth"},"devDependencies":{"vite":"^5.4.0"}}
+{
+  "name": "cubiq",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite --host",
+    "build": "vite build",
+    "preview": "vite preview --host"
+  },
+  "dependencies": {
+    "smartcube-web-bluetooth": "github:poliva/smartcube-web-bluetooth"
+  },
+  "devDependencies": {
+    "vite": "^5.4.0"
+  },
+  "version": "1.0.0"
+}

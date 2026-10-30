@@ -1,4 +1,10 @@
 import { connectSmartCube } from 'smartcube-web-bluetooth';
+import pkg from '../package.json';
+
+// La versión se define una sola vez, en package.json, y se muestra en Ajustes.
+window.APP_VERSION = pkg.version;
+const verEl = document.getElementById('ver');
+if (verEl) verEl.textContent = pkg.version;
 
 // Los MoYu cifran los datos con una clave derivada de su MAC. Con una MAC incorrecta la librería
 // conecta pero no puede leer nada ("Timed out waiting for cube data").
