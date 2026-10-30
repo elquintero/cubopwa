@@ -86,7 +86,7 @@ details{margin-top:18px}summary{cursor:pointer;color:var(--mu);font-size:13px}
   <div id="quick"></div>
   <canvas id="cv" width="520" height="520" aria-label="Vista 3D del cubo"></canvas>
   <nav class="links">
-    <button id="btnSkip">saltar scramble</button><button id="btnNew">otro scramble</button><button id="btnReset" title="Marca el cubo físico como resuelto">cubo resuelto</button><button id="btnView">girar vista</button>
+    <button id="btnSkip">saltar scramble</button><button id="btnNew">otro scramble</button><button id="btnReset" title="Marca el cubo físico como resuelto">cubo resuelto</button><button id="btnView">girar vista</button><button id="btnGyro" hidden>centrar giroscopio</button>
   </nav>
 </main>
 
@@ -104,6 +104,8 @@ details{margin-top:18px}summary{cursor:pointer;color:var(--mu);font-size:13px}
   <label class="opt"><span><b>Inspección de 15 s</b><small>Cuenta atrás antes de resolver. Tras 15 s se aplica +2 y tras 17 s, DNF</small></span><input type="checkbox" role="switch" id="oInsp"></label>
   <label class="opt"><span><b>Inicio automático</b><small>Empieza al realizar un giro cuando el scramble está hecho y aparece ¡Start!</small></span><input type="checkbox" role="switch" id="oAuto"></label>
   <label class="opt"><span><b>Animación de éxito</b><small>Reproduce una animación cuando el cubo está resuelto o un caso de entrenamiento terminado</small></span><input type="checkbox" role="switch" id="oSucc"></label>
+  <label class="opt"><span><b>Giroscopio</b><small>El cubo virtual se mueve como el real, en tiempo real (si tu cubo lo permite)</small></span><input type="checkbox" role="switch" id="oGyro"></label>
+  <div class="mu" style="display:flex;gap:12px;align-items:center;flex-wrap:wrap;padding:10px 0 0"><span id="gyroSt">Sin datos todavía</span><button class="btn" id="btnCal">Calibrar ejes</button></div>
   <h3>Dispositivos conectados</h3>
   <div id="devs"></div>
   <div class="row"><button class="btn" id="btnNewDev">Conectar otro cubo</button></div>
@@ -115,7 +117,12 @@ details{margin-top:18px}summary{cursor:pointer;color:var(--mu);font-size:13px}
     <div id="log">Aquí aparecerán los datos crudos del cubo.</div>
   </details>
   <h3>Acerca de</h3>
-  <p class="mu" style="margin:0">CubIQ · versión <span id="ver">1.0.0</span></p>
+  <p class="mu" style="margin:0">CubIQ · versión <span id="ver">1.1.0</span></p>
+</dialog>
+<dialog id="dlgCal" aria-label="Calibrar giroscopio">
+  <div class="dh"><h2 id="calT">Calibrar</h2><button id="calX" aria-label="Cerrar">✕</button></div>
+  <p id="calTxt"></p>
+  <div class="row"><button class="btn" id="calNext">Siguiente</button></div>
 </dialog>
 <div id="toast"></div>
 
@@ -152,10 +159,10 @@ function draw(){
   const W=cv.width,S=W/5.4,Q=[];g.clearRect(0,0,W,W);
   for(const s of disp){
     const n=s.n,inL=anim&&s.p[anim.ax]===anim.sg,rot=v=>inL?rotV(v,anim.ax,anim.th):v;
-    const nv=view(rot(n));if(nv[2]<=0.001&&!anim)continue;
+    const nv=view(G(rot(n)));if(nv[2]<=0.001&&!anim)continue;
     const u=n[1]||n[2]?[1,0,0]:[0,1,0],vv=n[2]?[0,1,0]:[0,0,1],c=s.p.map((x,i)=>x+n[i]*0.5);
-    const polys=[[0.5,'#0b0d10'],[0.43,COL[s.c]]].map(([h,col])=>[col,[[-1,-1],[1,-1],[1,1],[-1,1]].map(([i,j])=>view(rot(c.map((x,t)=>x+h*(i*u[t]+j*vv[t])))))]);
-    Q.push({z:view(rot(c))[2],polys});
+    const polys=[[0.5,'#0b0d10'],[0.43,COL[s.c]]].map(([h,col])=>[col,[[-1,-1],[1,-1],[1,1],[-1,1]].map(([i,j])=>view(G(rot(c.map((x,t)=>x+h*(i*u[t]+j*vv[t]))))))]);
+    Q.push({z:view(G(rot(c)))[2],polys});
   }
   Q.sort((a,b)=>a.z-b.z);
   for(const q of Q)for(const [col,pts] of q.polys){g.beginPath();pts.forEach((P,k)=>{const X=W/2+P[0]*S,Y=W/2-P[1]*S;k?g.lineTo(X,Y):g.moveTo(X,Y)});g.closePath();g.fillStyle=col;g.fill()}
@@ -276,7 +283,7 @@ $('btnClear').onclick=()=>{if(confirm('¿Borrar todas las resoluciones?')){solve
 $('btnExport').onclick=()=>{const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([JSON.stringify(solves,null,1)],{type:'application/json'}));a.download='resoluciones.json';a.click()};
 
 /* ===== Ajustes, dispositivos y animación ===== */
-let cfg={auto:true,success:true,insp:false},devices=[],curDev=null;
+let cfg={auto:true,success:true,insp:false,gyro:false},devices=[],curDev=null;
 try{Object.assign(cfg,JSON.parse(localStorage.getItem('cfg')||'{}'));devices=JSON.parse(localStorage.getItem('devices')||'[]')}catch(e){}
 const saveCfg=()=>{try{localStorage.setItem('cfg',JSON.stringify(cfg))}catch(e){}},saveDev=()=>{try{localStorage.setItem('devices',JSON.stringify(devices))}catch(e){}};
 function renderDevs(){
@@ -292,7 +299,7 @@ function renderDevs(){
     c.querySelector('.del').onclick=()=>{if(confirm('¿Eliminar este dispositivo? La próxima vez tendrás que volver a introducir su MAC.')){devices=devices.filter(x=>x!==d);saveDev();renderDevs()}};
     box.appendChild(c)});
 }
-$('btnSet').onclick=()=>{$('oInsp').checked=cfg.insp;$('oAuto').checked=cfg.auto;$('oSucc').checked=cfg.success;renderDevs();$('dlg').showModal()};
+$('btnSet').onclick=()=>{$('oGyro').checked=cfg.gyro;$('oInsp').checked=cfg.insp;$('oAuto').checked=cfg.auto;$('oSucc').checked=cfg.success;renderDevs();$('dlg').showModal()};
 $('dlgClose').onclick=()=>$('dlg').close();
 $('dlg').addEventListener('click',e=>{if(e.target===$('dlg'))$('dlg').close()});
 $('oInsp').onchange=e=>{cfg.insp=e.target.checked;saveCfg();if(phase==='ready')setPhase('ready')};
@@ -323,6 +330,63 @@ function celebrate(){
     t<110?requestAnimationFrame(f):c.remove()})();
 }
 
+/* ===== Giroscopio ===== */
+const qmul=(a,b)=>({w:a.w*b.w-a.x*b.x-a.y*b.y-a.z*b.z,x:a.w*b.x+a.x*b.w+a.y*b.z-a.z*b.y,y:a.w*b.y-a.x*b.z+a.y*b.w+a.z*b.x,z:a.w*b.z+a.x*b.y-a.y*b.x+a.z*b.w});
+const qconj=q=>({w:q.w,x:-q.x,y:-q.y,z:-q.z});
+const qnorm=q=>{const n=Math.hypot(q.w,q.x,q.y,q.z)||1;return{w:q.w/n,x:q.x/n,y:q.y/n,z:q.z/n}};
+const cross=(u,v)=>[u[1]*v[2]-u[2]*v[1],u[2]*v[0]-u[0]*v[2],u[0]*v[1]-u[1]*v[0]];
+const qrot=(q,v)=>{const u=[q.x,q.y,q.z],c1=cross(u,v),c2=cross(u,c1);return[0,1,2].map(i=>v[i]+2*(q.w*c1[i]+c2[i]))};
+const relQ=(q,q0)=>{const r=qmul(q,qconj(q0));return r.w<0?{w:-r.w,x:-r.x,y:-r.y,z:-r.z}:r}; // giro desde la posición de referencia
+const dot3=(a,b)=>a[0]*b[0]+a[1]*b[1]+a[2]*b[2],unit=a=>{const n=Math.hypot(...a)||1;return a.map(x=>x/n)};
+const dispQ=(r,M)=>{const v=[r.x,r.y,r.z];return{w:r.w,x:dot3(M.slice(0,3),v),y:dot3(M.slice(3,6),v),z:dot3(M.slice(6,9),v)}};
+function calcM(q0,qs){ // qs: poses tras inclinar (x), girar y' y girar z'
+  const ax=qs.map(q=>{const r=relQ(q,q0),v=[r.x,r.y,r.z];return Math.hypot(...v)<0.25?null:unit(v)});
+  if(ax.includes(null))return null;
+  const a=ax[0],b0=ax[1],c0=ax[2];
+  const b=unit(b0.map((x,i)=>x-dot3(b0,a)*a[i])),c=unit(c0.map((x,i)=>x-dot3(c0,a)*a[i]-dot3(c0,b)*b[i]));
+  return[...a,...b,...c];
+}
+let gq=null,gt=null,gq0=null,gRaw=null,gM=null,gSeen=false,gRaf=0,calStep=0,calQs=[];
+try{gM=JSON.parse(localStorage.getItem('gyroCal')||'null')}catch(e){}
+const G=v=>cfg.gyro&&gq?qrot(gq,v):v;
+function gloop(){
+  gRaf=0;if(!cfg.gyro||!gt)return;
+  if(!gq)gq=gt;else{const s=(gq.w*gt.w+gq.x*gt.x+gq.y*gt.y+gq.z*gt.z)<0?-1:1,k=0.4;
+    gq=qnorm({w:gq.w+(s*gt.w-gq.w)*k,x:gq.x+(s*gt.x-gq.x)*k,y:gq.y+(s*gt.y-gq.y)*k,z:gq.z+(s*gt.z-gq.z)*k})}
+  draw();gRaf=requestAnimationFrame(gloop);
+}
+function onGyro(q){
+  if(!q||![q.x,q.y,q.z,q.w].every(Number.isFinite))return;
+  gRaw=qnorm(q);if(!gSeen){gSeen=true;$('gyroSt').textContent='Recibiendo datos del giroscopio'}
+  if(!gq0)gq0=gRaw;
+  if(!cfg.gyro)return;
+  gt=dispQ(relQ(gRaw,gq0),gM||[1,0,0,0,1,0,0,0,1]);
+  if(!gRaf)gRaf=requestAnimationFrame(gloop);
+}
+function setGyro(on){cfg.gyro=on;saveCfg();$('btnGyro').hidden=!on;
+  if(on){if(gRaw)onGyro(gRaw);if(!gM)toast('Pulsa "Calibrar ejes" para que los giros coincidan')}
+  else{gq=gt=null;draw()}}
+function gyroWatch(){gSeen=false;$('gyroSt').textContent='Sin datos todavía';
+  setTimeout(()=>{if(cfg.gyro&&!gSeen)toast('Tu cubo no envía datos de giroscopio (o esta librería no los expone en este modelo)')},7000)}
+const CAL=[['Posición inicial','Sujeta el cubo quieto con el blanco arriba y el verde de frente a ti. Pulsa Siguiente.'],
+ ['Paso 1 de 3','Inclina el cubo unos 90° llevando hacia ti la cara de arriba, y mantenlo quieto. Pulsa Siguiente.'],
+ ['Paso 2 de 3',"Vuelve a la posición inicial y gira el cubo entero unos 90° como un y' (la cara frontal pasa a tu derecha). Pulsa Siguiente."],
+ ['Paso 3 de 3',"Vuelve a la posición inicial y gira el cubo entero unos 90° como un z' (la cara de arriba pasa a tu izquierda). Pulsa Siguiente."]];
+function calShow(){$('calT').textContent=CAL[calStep][0];$('calTxt').textContent=CAL[calStep][1]}
+$('btnCal').onclick=()=>{$('dlg').close();calStep=0;calQs=[];calShow();$('dlgCal').showModal()};
+$('calX').onclick=()=>$('dlgCal').close();
+$('calNext').onclick=()=>{
+  if(!gRaw)return toast('Aún no llegan datos del giroscopio');
+  if(calStep===0)gq0=gRaw;else calQs.push(gRaw);
+  if(calStep===3){const M=calcM(gq0,calQs);
+    if(!M){toast('Algún giro fue demasiado pequeño. Repite la calibración.');calStep=0;calQs=[];calShow();return}
+    gM=M;try{localStorage.setItem('gyroCal',JSON.stringify(M))}catch(e){}
+    $('dlgCal').close();toast('Giroscopio calibrado. Vuelve a la posición inicial.');onGyro(gRaw);return}
+  calStep++;calShow();
+};
+$('btnGyro').onclick=()=>{if(gRaw){gq0=gRaw;onGyro(gRaw);toast('Orientación centrada')}};
+$('oGyro').onchange=e=>setGyro(e.target.checked);
+
 /* ===== Bluetooth ===== */
 const SERVICES=['6e400001-b5a3-f393-e0a9-e50e24dc4179','00000010-0000-fff7-fff6-fff5fff4fff0','0000aadb-0000-1000-8000-00805f9b34fb',
   '0000fff0-0000-1000-8000-00805f9b34fb','0783b03e-7735-b5a0-1760-a305d2795cb0','0000180a-0000-1000-8000-00805f9b34fb'];
@@ -348,11 +412,12 @@ async function rawConnect(){
     toast('Conectado a '+(dev.name||'cubo'));
   }catch(e){toast('No se pudo conectar: '+e.message)}
 }
-window.app={onMove:m=>onMove(m),toast,log,setStatus:(t,on)=>{$('status').textContent=t;$('status').className=on?'on':'';if(!on)curDev=null;renderDevs()},getDevice:n=>devices.find(d=>d.id===n),registerDevice:(n,mac)=>{let d=devices.find(x=>x.id===n);if(!d)devices.push(d={id:n,mac,alias:''});d.mac=mac;curDev=n;saveDev();renderDevs()},setFacelets,resync:()=>{showCube(solvedCube());newScramble()}};
+window.app={onMove:m=>onMove(m),toast,log,gyro:onGyro,gyroWatch,setStatus:(t,on)=>{$('status').textContent=t;$('status').className=on?'on':'';if(!on)curDev=null;renderDevs()},getDevice:n=>devices.find(d=>d.id===n),registerDevice:(n,mac)=>{let d=devices.find(x=>x.id===n);if(!d)devices.push(d={id:n,mac,alias:''});d.mac=mac;curDev=n;saveDev();renderDevs()},setFacelets,resync:()=>{showCube(solvedCube());newScramble()}};
 $('btnConn').onclick=()=>window.connectCube?window.connectCube(window.app):rawConnect();
 
 /* ===== Arranque ===== */
 if('serviceWorker' in navigator&&location.protocol.startsWith('http'))navigator.serviceWorker.register('sw.js').catch(()=>{});
+$('btnGyro').hidden=!cfg.gyro;
 draw();renderStats();newScramble();
 </script>
 <script type="module" src="./src/bt.js"></script>

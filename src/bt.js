@@ -52,9 +52,14 @@ window.connectCube = async (app) => {
     conn.events$.subscribe((e) => {
       if (e.type === 'MOVE') { app.log('MOVE ' + e.move); app.onMove(e.move); }
       else if (e.type === 'FACELETS') { app.setFacelets(e.facelets, first); first = false; }
+      else if (e.type === 'GYRO') {
+        if (!window.__gyroLogged) { window.__gyroLogged = true; app.log('GYRO ' + JSON.stringify(e).slice(0, 140)); }
+        app.gyro(e.quaternion || e.quat || e);
+      }
       else if (e.type === 'DISCONNECT') app.setStatus('Desconectado', false);
       else if (e.type === 'BATTERY') app.log('Batería ' + e.batteryLevel + '%');
     });
+    app.gyroWatch();
     if (conn.capabilities?.facelets) conn.sendCommand({ type: 'REQUEST_FACELETS' });
     if (conn.capabilities?.battery) conn.sendCommand({ type: 'REQUEST_BATTERY' });
   } catch (err) {
