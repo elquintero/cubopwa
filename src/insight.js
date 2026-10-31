@@ -1,7 +1,11 @@
 // CubIQ · Análisis de resoluciones: detecta fases (F2L, OLL, PLL), identifica el caso y estima el tiempo ahorrable.
 const CM = () => window.CM;
+// Giros/s mínimos que se suponen al ejecutar un algoritmo ya memorizado (valores propios, ajustables; no vienen de una fuente verificada).
+export const TPS_ALG = { OLL: 5, PLL: 6 };
 const OPP = { U: 'D', D: 'U', L: 'R', R: 'L', F: 'B', B: 'F' };
 const ID = { U: 'U', D: 'D', L: 'L', R: 'R', F: 'F', B: 'B' };
+// Posición de entrenamiento: AMARILLO arriba y VERDE de frente (cubo girado z2 respecto a blanco arriba).
+export const HOLD = { U: 'D', D: 'U', L: 'R', R: 'L', F: 'F', B: 'B' };
 
 // ---- Algoritmos (notación estándar, con giros de capa doble, slices y rotaciones) ----
 export const OLL = {
@@ -30,7 +34,7 @@ export const PLL = {
   Ga: "R2 U R' U R' U' R U' R2 D U' R' U R D'", Gb: "R' U' R U D' R2 U R' U R U' R U' R2 D",
   Gc: "R2 U' R U' R U R' U R2 D' U R U' R' D", Gd: "R U R' U' D R2 U' R U' R' U R' U R2 D'",
   H: "M2 U M2 U2 M2 U M2", Ja: "x R2 F R F' R U2 r' U r U2 x'", Jb: "R U R' F' R U R' U' R' F R2 U' R'",
-  Na: "R U R' U R U R' F' R U R' U' R' F R2 U' R' U2 R U' R'", Nb: "R' U R U' R' F' U' F R U R' F R' F' R U' R",
+  Na: "z U R' D R2 U' R D' U R' D R2 U' R D' z'", Nb: "R' U R U' R' F' U' F R U R' F R' F' R U' R",
   Ra: "R U' R' U' R U R D R' U' R D' R' U2 R'", Rb: "R' U2 R U2 R' F R U R' U' R' F' R2",
   T: "R U R' U' R' F R2 U' R' U' R U R' F'", Ua: "R U' R U R U R U' R' U' R2", Ub: "R2 U R U R' U' R' U' R' U R'",
   V: "R' U R' U' y R' F' R2 U' R' U R' F R F", Y: "F R U' R' U' R U R' F' R U R' U' R' F R F'",
@@ -123,9 +127,27 @@ function matchPLL(S, f) {
   return null;
 }
 
-// ---- Análisis de una resolución ----
-// snap: estado del cubo justo antes del primer giro. mvs: [{m, t}] con t en ms desde el inicio.
-export function analyze(snap, mvs) {
+// ---- Cruz y ranuras de F2L sobre la cara f ----
+const faceAxis = (f) => { const n = CM().FACES[f]; const ax = n.findIndex((v) => v); return { ax, sg: n[ax] }; };
+function crossOK(c, f) {
+  const { NAME } = CM(), { ax, sg } = faceAxis(f);
+  return c.every((s) => !(s.p[ax] === sg && s.p.filter((v) => v !== 0).length === 2) || s.c === NAME[s.n]);
+}
+function slotLayout(f) {
+  const { ax, sg } = faceAxis(f), [o1, o2] = [0, 1, 2].filter((i) => i !== ax), out = [];
+  for (const a of [-1, 1]) for (const b of [-1, 1]) {
+    const P = [0, 0, 0], Q = [0, 0, 0];
+    P[ax] = sg; P[o1] = a; P[o2] = b; Q[ax] = 0; Q[o1] = a; Q[o2] = b;
+    const na = [0, 0, 0], nb = [0, 0, 0]; na[o1] = a; nb[o2] = b;
+    out.push({ P: P + '', Q: Q + '', colors: [CM().NAME[na], CM().NAME[nb]] });
+  }
+  return out;
+}
+const slotSet = (c, f) => { const { NAME } = CM(); return slotLayout(f).map(({ P, Q }) => c.every((s) => (s.p + '' !== P && s.p + '' !== Q) || s.c === NAME[s.n])); };
+
+// ---- Fases de una resolución: cruz, 4 ranuras de F2L, OLL y PLL ----
+// snap: estado justo antes del primer giro. mvs: [{m, t}] con t en ms desde el primer giro.
+export function phases(snap, mvs) {
   const { mv, clone } = CM();
   let c = clone(snap), SF = null, SO = null, f = null, iF = -1, iO = -1;
   mvs.forEach((x, i) => {
@@ -133,56 +155,131 @@ export function analyze(snap, mvs) {
     if (iF < 0) for (const g of 'UDLRFB') if (isF2L(c, g)) { iF = i; f = g; SF = clone(c); break; }
     if (iF >= 0 && iO < 0 && topUniform(c, f) && isF2L(c, f)) { iO = i; SO = clone(c); }
   });
-  const last = mvs.length - 1;
   if (iF < 0 || iO < 0) return null;
-  const out = [];
-  const consider = (kind, id, alg, userMoves, dt, extra) => {
-    const len = expand(alg).length;
-    if (userMoves >= len + extra && dt > 0.2) {
-      const save = dt * (1 - len / userMoves);
-      if (save >= 0.3) out.push({ kind, id, label: kind + ' ' + id, alg, len, userMoves, save });
-    }
+  const last = mvs.length - 1;
+  c = clone(snap);
+  const cross = [], slots = [], init = { cross: crossOK(c, f), slots: slotSet(c, f) };
+  for (let i = 0; i <= iF; i++) { mv(c, mvs[i].m); cross.push(crossOK(c, f)); slots.push(slotSet(c, f)); }
+  const crossIdx = init.cross ? -1 : cross.indexOf(true); // primera vez que la cruz está completa
+  const pairsAt = (j) => (j < 0 ? init.slots : slots[j]).filter(Boolean).length;
+  const layout = slotLayout(f), at = (j) => (j < 0 ? init.slots : slots[j]), idxs = [], used = new Set(), slotCol = [];
+  for (let k = 1; k <= 4; k++) {
+    // Se miran solo los momentos con la cruz intacta (durante una inserción se descoloca un instante).
+    let i = iF;
+    for (let j = iF; j >= Math.max(crossIdx, 0); j--) { if (!cross[j]) continue; if (pairsAt(j) >= k) i = j; else break; }
+    i = Math.max(i, crossIdx); idxs.push(i);
+    const solved = at(i), prevSolved = idxs.length > 1 ? at(idxs[idxs.length - 2]) : init.cross ? init.slots : at(crossIdx);
+    let n = solved.findIndex((v, m) => v && !used.has(m) && !prevSolved[m]);
+    if (n < 0) n = solved.findIndex((v, m) => v && !used.has(m));
+    if (n >= 0) used.add(n);
+    slotCol.push(n >= 0 ? layout[n].colors : null);
+  }
+  const T = (i) => (i < 0 ? 0 : mvs[i].t);
+  const segs = [];
+  let prev = -1;
+  const push = (key, end, extra = {}) => {
+    const turns = end - prev, step = T(end) - T(prev), rec = turns > 0 && prev >= 0 ? T(prev + 1) - T(prev) : 0;
+    segs.push({ key, a: prev, b: end, turns, rec, exec: step - rec, step, total: T(end), tps: step > 0 ? turns / (step / 1000) : 0, ...extra });
+    prev = end;
   };
-  if (iO > iF && !topUniform(SF, f)) {
-    const m = matchOLL(SF, f);
-    if (m) consider('OLL', m.id, m.alg, iO - iF, (mvs[iO].t - mvs[iF].t) / 1000, 3);
-  }
-  if (last > iO && !solvedUpToAUF(SO, f)) {
-    const m = matchPLL(SO, f);
-    if (m) consider('PLL', m.id, m.alg, last - iO, (mvs[last].t - mvs[iO].t) / 1000, 4);
-  }
-  return out.sort((a, b) => b.save - a.save)[0] || null;
+  push('cross', crossIdx);
+  idxs.forEach((e, k) => push('slot' + (k + 1), e, { colors: slotCol[k] }));
+  push('oll', iO); push('pll', last);
+  return { f, ll: OPP[f], iF, iO, last, SF, SO, segs, total: T(last) };
 }
 
-// ---- Casos para entrenar ----
+// ---- Resumen para consejos: qué pesa más en la resolución ----
+export function summarize(P) {
+  const segs = P.segs.filter((s) => s.turns > 0);
+  const rec = segs.reduce((a, s) => a + s.rec, 0), exec = segs.reduce((a, s) => a + s.exec, 0);
+  const worstPause = segs.filter((s) => s.rec > 0).sort((a, b) => b.rec - a.rec)[0] || null;
+  const slowest = segs.filter((s) => s.turns >= 4).sort((a, b) => a.tps - b.tps)[0] || null;
+  return { recShare: rec + exec > 0 ? rec / (rec + exec) : 0, rec, exec, worstPause, slowest };
+}
+
+// ---- Análisis para el aviso instantáneo ----
+export function analyze(snap, mvs) {
+  const P = phases(snap, mvs);
+  if (!P) return null;
+  const { iF, iO, last, SF, SO, f } = P, T = (i) => mvs[i].t;
+  const out = [];
+  const consider = (kind, id, alg, a, b, extra) => {
+    const len = expand(alg).length, userMoves = b - a;
+    const pause = (T(a + 1) - T(a)) / 1000, userTime = (T(b) - T(a + 1)) / 1000;
+    if (userMoves < len + extra || userTime < 0.2) return;
+    const rate = Math.max((userMoves - 1) / userTime, TPS_ALG[kind]);
+    const algTime = (len - 1) / rate, save = userTime - algTime;
+    if (save >= 0.3) out.push({ kind, id, label: kind + ' ' + id, alg, len, userMoves, pause, userTime, algTime, save });
+  };
+  if (iO > iF && !topUniform(SF, f)) { const m = matchOLL(SF, f); if (m) consider('OLL', m.id, m.alg, iF, iO, 3); }
+  if (last > iO && !solvedUpToAUF(SO, f)) { const m = matchPLL(SO, f); if (m) consider('PLL', m.id, m.alg, iO, last, 4); }
+  return out.sort((a, b) => b.save - a.save)[0] || null;
+}
+// Casos identificados en las fases OLL y PLL (para mostrarlos en el detalle de la resolución).
+export function casesOf(P) {
+  const { iF, iO, last, SF, SO, f } = P;
+  return {
+    oll: iO > iF && !topUniform(SF, f) ? matchOLL(SF, f) : null,
+    pll: last > iO && !solvedUpToAUF(SO, f) ? matchPLL(SO, f) : null,
+  };
+}
+
+// ---- Casos para entrenar (cubo con AMARILLO arriba y VERDE de frente) ----
 export function getCase(kind, id) {
   const alg = (kind === 'OLL' ? OLL : PLL)[id];
   if (!alg) return null;
   const { solvedCube } = CM();
-  const faceAlg = expand(alg);
-  const setup = invert(faceAlg);
-  return { kind, id, label: kind + ' ' + id, alg, faceAlg, setup, icon: caseIcon(run(solvedCube(), setup), kind) };
+  const faceAlg = expand(alg, HOLD), setup = invert(faceAlg);
+  const frame = {}; for (const [fr, col] of Object.entries(HOLD)) frame[col] = fr; // cara de color -> posición al sujetarlo
+  return { kind, id, label: kind + ' ' + id, alg, faceAlg, setup, frame, icon: caseIcon(run(solvedCube(), setup), kind, true) };
 }
 
-// Icono de la capa superior (vista desde arriba): OLL = pegatinas orientadas en amarillo; PLL = colores reales de los laterales.
-export function caseIcon(state, kind) {
-  const { COL } = CM();
-  const k = 14, pad = 3, W = pad * 2 + k * 5;
-  let r = '';
-  const rect = (x, y, w, h, col) => (r += `<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="1.5" fill="${col}"/>`);
-  const col = (s) => (kind === 'OLL' ? (s.c === 'U' ? '#ffd500' : '#2a3038') : COL[s.c]);
-  for (const s of state) {
+// Icono de la capa superior vista desde arriba. flip = ver el cubo con amarillo arriba.
+// OLL: pegatinas orientadas en amarillo; PLL: colores reales de los laterales. Sin letras.
+export function caseIcon(state, kind, flip = false) {
+  const { COL, solvedCube } = CM();
+  const tf = (arr) => (flip ? arr.map((s) => ({ p: [-s.p[0], -s.p[1], s.p[2]], n: [-s.n[0], -s.n[1], s.n[2]], c: s.c })) : arr);
+  const st = tf(state);
+  const lit = flip ? 'D' : 'U', k = 16, pad = 4, W = pad * 2 + k * 5, bar = k * 0.3, g = 1.5;
+  const yel = '#ffd500', off = '#262c34';
+  const col = (s) => (kind === 'OLL' ? (s.c === lit ? yel : off) : COL[s.c]);
+  let r = `<rect x="${pad + k - 3}" y="${pad + k - 3}" width="${3 * k + 6}" height="${3 * k + 6}" rx="5" fill="#0b0d10"/>`;
+  const rect = (x, y, w, h, c, rx = 2.5) => (r += `<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="${rx}" fill="${c}"/>`);
+  for (const s of st) {
     if (s.p[1] !== 1) continue;
-    const [x, , z] = s.p, n = s.n.join();
-    if (n === '0,1,0') rect(pad + (x + 2) * k + 1, pad + (z + 2) * k + 1, k - 2, k - 2, kind === 'OLL' ? col(s) : '#e8ecf1');
-    else if (kind === 'OLL' && s.c !== 'U') continue;
-    else if (n === '0,0,1') rect(pad + (x + 2) * k + 1, pad + 5 * k - k * 0.35 - 0, k - 2, k * 0.35, col(s));
-    else if (n === '0,0,-1') rect(pad + (x + 2) * k + 1, pad + 0.0, k - 2, k * 0.35, col(s));
-    else if (n === '1,0,0') rect(pad + 5 * k - k * 0.35, pad + (z + 2) * k + 1, k * 0.35, k - 2, col(s));
-    else if (n === '-1,0,0') rect(pad, pad + (z + 2) * k + 1, k * 0.35, k - 2, col(s));
+    const [x, , z] = s.p, n = s.n.join(), cx = pad + (x + 2) * k, cz = pad + (z + 2) * k;
+    if (n === '0,1,0') rect(cx + g, cz + g, k - 2 * g, k - 2 * g, kind === 'OLL' ? col(s) : COL[lit]);
+    else if (kind === 'OLL' && s.c !== lit) continue;
+    else if (n === '0,0,1') rect(cx + g, pad + 5 * k - bar, k - 2 * g, bar, col(s), 1.5);
+    else if (n === '0,0,-1') rect(cx + g, pad, k - 2 * g, bar, col(s), 1.5);
+    else if (n === '1,0,0') rect(pad + 5 * k - bar, cz + g, bar, k - 2 * g, col(s), 1.5);
+    else if (n === '-1,0,0') rect(pad, cz + g, bar, k - 2 * g, col(s), 1.5);
   }
-  const bg = `<rect x="${pad + k - 1}" y="${pad + k - 1}" width="${3 * k + 2}" height="${3 * k + 2}" rx="3" fill="#0b0d10"/>`;
-  return `<svg viewBox="0 0 ${W} ${W}" width="56" height="56" aria-hidden="true">${bg}${r}</svg>`;
+  if (kind === 'PLL') { // flechas: de dónde viene cada pieza y a dónde debe ir
+    const grp = (arr) => {
+      const m = new Map();
+      for (const s of arr) {
+        if (s.p[1] !== 1 || (s.p[0] === 0 && s.p[2] === 0)) continue;
+        const key = s.p[0] + ',' + s.p[2];
+        (m.get(key) || m.set(key, []).get(key)).push(s.c);
+      }
+      return m;
+    };
+    const home = new Map();
+    for (const [pos, cols] of grp(tf(solvedCube()))) home.set(cols.slice().sort().join(''), pos);
+    const ctr = (pos) => { const [x, z] = pos.split(',').map(Number); return [pad + (x + 2) * k + k / 2, pad + (z + 2) * k + k / 2]; };
+    let arrows = '';
+    for (const [pos, cols] of grp(st)) {
+      const h = home.get(cols.slice().sort().join(''));
+      if (!h || h === pos) continue;
+      const [x1, y1] = ctr(pos), [x2, y2] = ctr(h), d = Math.hypot(x2 - x1, y2 - y1) || 1, ux = (x2 - x1) / d, uy = (y2 - y1) / d;
+      const ax = x1 + ux * 4, ay = y1 + uy * 4, bx = x2 - ux * 4, by = y2 - uy * 4;
+      arrows += `<path d="M${ax.toFixed(1)} ${ay.toFixed(1)}L${bx.toFixed(1)} ${by.toFixed(1)}"/>`
+        + `<path fill="#0b0d10" d="M${bx.toFixed(1)} ${by.toFixed(1)}l${(-ux * 7 - uy * 4.2).toFixed(1)} ${(-uy * 7 + ux * 4.2).toFixed(1)}l${(uy * 8.4).toFixed(1)} ${(-ux * 8.4).toFixed(1)}Z"/>`;
+    }
+    r += `<g stroke="#0b0d10" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" fill="none">${arrows}</g>`;
+  }
+  return `<svg viewBox="0 0 ${W} ${W}" width="56" height="56" aria-hidden="true">${r}</svg>`;
 }
 
-window.Insight = { analyze, getCase, expand, OLL, PLL };
+window.Insight = { analyze, phases, summarize, casesOf, getCase, caseIcon, expand, invert, OLL, PLL, TPS_ALG, HOLD };

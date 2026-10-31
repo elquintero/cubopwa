@@ -5,7 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#0b0d10">
 <link rel="manifest" href="manifest.webmanifest">
-<link rel="icon" href="icon-192.png">
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
 <title>CubIQ</title>
 <style>
 :root{--bg:#0b0d10;--tx:#e8ecf1;--mu:#6b7380;--line:#1c2128;--ac:#5aa9ff;--ok:#3ddc97;--bad:#ff6b6b;color-scheme:dark}
@@ -16,9 +17,11 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer;paddin
 button:focus-visible,summary:focus-visible{outline:2px solid var(--ac);outline-offset:3px;border-radius:6px}
 header{display:flex;align-items:center;gap:6px;height:56px;max-width:560px;margin:0 auto}
 .sp{flex:1}
+.logo{border-radius:7px;margin-right:8px}
 .brand{font:700 20px/1 Poppins,ui-rounded,system-ui,sans-serif;letter-spacing:-.02em}
 .brand span{background:linear-gradient(100deg,#ff9f1c,#ff3d81 40%,#a64dff 70%,#4d7cff);-webkit-background-clip:text;background-clip:text;color:transparent}
-#btnConn{display:flex;align-items:center;gap:8px;color:var(--mu);font-size:13px}
+#btnConn{display:flex;align-items:center;gap:8px;color:var(--mu);font-size:13px;white-space:nowrap;min-width:0}
+#btnConn span{max-width:104px;overflow:hidden;text-overflow:ellipsis}
 #btnConn i{width:8px;height:8px;border-radius:50%;background:#3a414b}
 #btnConn:has(#status.on){color:var(--tx)}#btnConn:has(#status.on) i{background:var(--ok)}
 .icon{width:38px;height:38px;display:grid;place-items:center;color:var(--mu);border-radius:10px}
@@ -89,6 +92,47 @@ kbd{font:600 11px ui-monospace,Menlo,monospace;opacity:.7;margin-left:4px}
 #calAng{text-align:center;min-height:20px}
 .btn:disabled{opacity:.4;cursor:default}
 @media(prefers-reduced-motion:reduce){#calBar{transition:none}}
+.seg{display:flex;gap:4px;background:#0b0d10;border:1px solid var(--line);border-radius:12px;padding:3px;margin:8px 0 12px}
+.seg button{flex:1;padding:8px;border-radius:9px;color:var(--mu);font-weight:600}.seg .on{background:#1c2128;color:var(--tx)}
+#tcGrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(68px,1fr));gap:8px;max-height:50vh;overflow:auto;padding:2px}
+.tile{position:relative;display:grid;gap:4px;justify-items:center;padding:8px 4px 6px;border:1px solid var(--line);border-radius:12px;background:#0f1318}
+.tile.sel{border-color:var(--ac);background:#14202e}.tile svg{width:100%;max-width:56px;height:auto}
+.tile small{color:var(--mu);font-size:11px;font-weight:600}.tile i{position:absolute;top:6px;right:6px;width:8px;height:8px;border-radius:50%;background:#3a414b}
+.tile i.good{background:var(--ok)}.tile i.mid{background:#ffd54a}.tile i.slow{background:#ff9a3d}
+.tc-foot{display:flex;align-items:center;gap:10px;margin-top:12px;flex-wrap:wrap}.tc-foot .mu{flex:1;min-width:120px}
+.keyrow{display:flex;gap:14px;color:var(--mu);font-size:11px;margin:10px 0 0}.keyrow i{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:5px}
+#trainbar{display:grid;gap:10px;width:100%;border:1px solid var(--line);border-radius:16px;padding:12px;margin-bottom:14px;text-align:left}
+.tr-top{display:flex;align-items:center;gap:10px}.tr-info{flex:1;min-width:0;display:grid}.tr-info b{font:600 17px Poppins,system-ui}
+#trIcon svg{width:64px;height:64px;display:block}#trHold svg{width:56px;height:56px;display:block}
+#trAlg{font:13px ui-monospace,Menlo,Consolas,monospace;color:var(--tx);word-break:break-word}#trAlg[hidden]{display:none}
+dialog.wide{width:min(720px,96vw)}
+#svKpi{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:6px 0 12px}
+.kpi{border:1px solid var(--line);border-radius:12px;padding:8px 4px;text-align:center}
+.kpi b{display:block;font:600 19px Poppins,system-ui,sans-serif;font-variant-numeric:tabular-nums}.kpi span{color:var(--mu);font-size:11px}
+.sv-main{display:grid;gap:10px;justify-items:center}#svCv{width:min(300px,74vw);aspect-ratio:1}
+.sv-ctl{width:100%;display:grid;gap:8px}.sv-row{display:flex;align-items:center;gap:8px;justify-content:center}
+#svSeek{-webkit-appearance:none;appearance:none;width:100%;height:12px;border-radius:6px;background:var(--bar,#262d36);outline-offset:4px;margin:0}
+#svSeek::-webkit-slider-thumb{-webkit-appearance:none;width:18px;height:18px;border-radius:50%;background:#fff;border:2px solid #0b0d10}
+#svSeek::-moz-range-thumb{width:16px;height:16px;border-radius:50%;background:#fff;border:2px solid #0b0d10}
+.round{width:46px;height:46px;border-radius:50%;background:#1c2128;display:grid;place-items:center}.round svg,.sm svg{width:20px;height:20px;fill:currentColor}
+.sm{width:36px;height:36px;display:grid;place-items:center;color:var(--mu);border-radius:10px}.sm:hover{color:var(--tx)}
+.speed button{padding:4px 10px;border-radius:8px;color:var(--mu);font-size:13px}.speed .on{background:#1c2128;color:var(--tx)}
+#svTime{text-align:center;font-variant-numeric:tabular-nums}
+#svPhases{display:flex;gap:8px;overflow-x:auto;padding:4px 2px 8px;margin:12px 0 0}
+.ph{flex:none;width:98px;border:1px solid var(--line);border-radius:14px;padding:10px 8px;display:grid;gap:5px;justify-items:center;text-align:center;background:#0f1318}
+.ph.on{border-color:var(--tx)}.ph .g svg{width:40px;height:40px;display:block}.ph .lb{color:var(--mu);font-size:11px;font-weight:600}
+.ph b{font:600 20px Poppins,system-ui,sans-serif;font-variant-numeric:tabular-nums}
+.bar2{display:flex;width:100%;height:6px;border-radius:3px;overflow:hidden;background:#1c2128}.bar2 i{display:block;height:100%}.bar2 .r{background:#f0a43c}.bar2 .e{background:var(--ac)}
+.ph small{color:var(--mu);font-size:11px;font-variant-numeric:tabular-nums}
+.legend{display:flex;gap:14px;justify-content:center;color:var(--mu);font-size:11px;margin:0 0 10px}.legend i{display:inline-block;width:8px;height:8px;border-radius:2px;margin-right:5px}
+#svTips{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.tip{border:1px solid var(--line);border-radius:14px;padding:10px 6px;display:grid;gap:6px;justify-items:center;align-content:start;text-align:center}
+.tip h4{margin:0;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--mu);font-weight:600}
+.tip>svg,.tip .g svg{width:48px;height:48px;display:block}.tip b{font:600 17px Poppins,system-ui,sans-serif}.tip .ok{color:var(--ok)}.tip small{color:var(--mu);font-size:11px}
+.tip .btn{padding:5px 10px;font-size:12px}
+#svScr{margin-top:12px;font:12px ui-monospace,Menlo,monospace;word-break:break-word}
+#trHold svg{width:64px;height:64px}#trainbar.setup #trHold svg{filter:drop-shadow(0 0 8px rgba(255,213,0,.55))}
+#trAlg{font-size:16px;letter-spacing:.04em;line-height:1.7}#svScr summary{cursor:pointer;font:13px system-ui}#svScr p{margin:8px 0 0}
 #toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0));transform:translateX(-50%);background:#1a2027;padding:10px 16px;border-radius:10px;opacity:0;pointer-events:none;transition:opacity .2s;max-width:90vw;font-size:14px}
 #toast.show{opacity:1}
 @media(prefers-reduced-motion:reduce){#toast,input[role=switch],input[role=switch]::after{transition:none}}
@@ -96,14 +140,23 @@ kbd{font:600 11px ui-monospace,Menlo,monospace;opacity:.7;margin-left:4px}
 </head>
 <body>
 <header>
-  <span class="brand">Cub<span>IQ</span></span>
+  <img class="logo" src="logo-96.png" alt="" width="28" height="28"><span class="brand">Cub<span>IQ</span></span>
   <span class="sp"></span>
-  <button id="btnConn"><i></i><span id="status">Conectar cubo</span></button>
+  <button id="btnConn"><i></i><span id="status">Conectar</span></button>
+  <button class="icon" id="btnTrain" aria-label="Entrenar" title="Entrenar"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/></svg></button>
   <button class="icon" id="btnStats" aria-label="Estadísticas" title="Estadísticas"><svg viewBox="0 0 24 24"><path d="M6 20V11M12 20V4M18 20v-6"/></svg></button>
   <button class="icon" id="btnSet" aria-label="Ajustes" title="Ajustes"><svg viewBox="0 0 24 24"><path d="M4 21v-7M4 10V3M12 21v-9M12 8V3M20 21v-5M20 12V3M1 14h6M9 8h6M17 16h6"/></svg></button>
 </header>
 <main>
-  <div id="trainbar" hidden><div id="trIcon"></div><div class="tr-tx"><b id="trTitle"></b><code id="trAlg"></code><span id="trStat" class="mu"></span></div><button class="btn" id="trExit">Salir</button></div>
+  <div id="trainbar" hidden>
+    <div class="tr-top">
+      <div id="trIcon"></div><div id="trHold"></div>
+      <div class="tr-info"><b id="trTitle"></b><span id="trStat" class="mu"></span></div>
+      <button class="icon" id="trEye" aria-label="Mostrar u ocultar el algoritmo" title="Algoritmo"><svg viewBox="0 0 24 24"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12Z"/><circle cx="12" cy="12" r="3"/></svg></button>
+      <button class="icon" id="trExit" aria-label="Salir del entrenamiento" title="Salir"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></svg></button>
+    </div>
+    <code id="trAlg"></code>
+  </div>
   <div id="scr"></div>
   <div id="hint"></div>
   <div id="timer">0.00</div>
@@ -112,7 +165,7 @@ kbd{font:600 11px ui-monospace,Menlo,monospace;opacity:.7;margin-left:4px}
   <div id="quick"></div>
   <canvas id="cv" width="520" height="520" aria-label="Vista 3D del cubo"></canvas>
   <nav class="links">
-    <button id="btnSkip">saltar scramble</button><button id="btnNew">otro scramble</button><button id="btnReset" title="Marca el cubo físico como resuelto">cubo resuelto</button><button id="btnView">girar vista</button><button id="btnGyro" hidden>centrar giroscopio [U4]</button>
+    <button id="btnSkip">saltar scramble</button><button id="btnNew">otro scramble</button><button id="btnReset" title="Marca el cubo físico como resuelto">cubo resuelto</button><button id="btnView">girar vista</button><button id="btnLast">ver última</button><button id="btnGyro" hidden>centrar giroscopio [U4]</button>
   </nav>
 </main>
 
@@ -144,7 +197,7 @@ kbd{font:600 11px ui-monospace,Menlo,monospace;opacity:.7;margin-left:4px}
     <div id="log">Aquí aparecerán los datos crudos del cubo.</div>
   </details>
   <h3>Acerca de</h3>
-  <p class="mu" style="margin:0">CubIQ · versión <span id="ver">1.2.1</span></p>
+  <p class="mu" style="margin:0">CubIQ · versión <span id="ver">1.3.0</span></p>
 </dialog>
 <dialog id="dlgCal" aria-label="Calibrar giroscopio">
   <div class="dh"><h2 id="calT">Calibrar</h2><button id="calX" aria-label="Cerrar">✕</button></div>
@@ -155,6 +208,39 @@ kbd{font:600 11px ui-monospace,Menlo,monospace;opacity:.7;margin-left:4px}
   <div id="calMeter"><div id="calBar"></div></div>
   <div id="calAng" class="mu" role="status" aria-live="polite"></div>
   <div class="row"><button class="btn pri" id="calNext">Siguiente</button><button class="btn" id="calCancel">Cancelar</button></div>
+</dialog>
+<dialog id="dlgTrain" aria-label="Entrenamiento">
+  <div class="dh"><h2>Entrenar</h2><button id="tcX" aria-label="Cerrar">✕</button></div>
+  <div class="seg" id="tcTabs"><button data-k="OLL" class="on">OLL</button><button data-k="PLL">PLL</button></div>
+  <div id="tcGrid"></div>
+  <div class="keyrow"><span><i style="background:#3a414b"></i>nuevo</span><span><i style="background:#ff9a3d"></i>lento</span><span><i style="background:#ffd54a"></i>medio</span><span><i style="background:var(--ok)"></i>rápido</span></div>
+  <div class="tc-foot"><span id="tcCount" class="mu"></span><button class="btn" id="tcAll">Todos</button><button class="btn" id="tcClear">Limpiar</button><button class="btn pri" id="tcGo">Entrenar</button></div>
+</dialog>
+<dialog id="dlgSolve" class="wide" aria-label="Detalle de la resolución">
+  <div class="dh"><h2 id="svT">Resolución</h2><button id="svX" aria-label="Cerrar">✕</button></div>
+  <div id="svKpi"></div>
+  <div id="svBody">
+    <div class="sv-main">
+      <canvas id="svCv" width="560" height="560" aria-label="Repetición de la resolución"></canvas>
+      <div class="sv-ctl">
+        <input type="range" id="svSeek" min="0" max="1000" value="0" aria-label="Posición en la resolución">
+        <div id="svTime" class="mu"></div>
+        <div class="sv-row">
+          <button class="sm" id="svFirst" aria-label="Al inicio"><svg viewBox="0 0 24 24"><path d="M6 5h2v14H6zM20 5v14L9 12z"/></svg></button>
+          <button class="sm" id="svPrev" aria-label="Giro anterior"><svg viewBox="0 0 24 24"><path d="M17 5v14L6 12z"/></svg></button>
+          <button class="round" id="svPlay" aria-label="Reproducir"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></button>
+          <button class="sm" id="svNext" aria-label="Giro siguiente"><svg viewBox="0 0 24 24"><path d="M7 5v14l11-7z"/></svg></button>
+          <button class="sm" id="svLast" aria-label="Al final"><svg viewBox="0 0 24 24"><path d="M16 5h2v14h-2zM4 5v14l11-7z"/></svg></button>
+        </div>
+        <div class="sv-row speed" id="svSpeed"><button data-s="0.5">½×</button><button data-s="1" class="on">1×</button><button data-s="2">2×</button></div>
+      </div>
+    </div>
+    <div id="svPhases"></div>
+    <div class="legend"><span><i style="background:#f0a43c"></i>pausa</span><span><i style="background:var(--ac)"></i>giros</span></div>
+    <div id="svTips"></div>
+  </div>
+  <p id="svNo" class="mu" hidden>Esta resolución se guardó sin movimientos, así que no hay repetición.</p>
+  <div id="svScr" class="mu"></div>
 </dialog>
 <div id="alert" role="status" aria-live="polite" hidden>
   <div class="al-in">
@@ -195,18 +281,19 @@ const view=v=>{const a=A,b=flip?-Bt:Bt;let x=v[0]*Math.cos(a)+v[2]*Math.sin(a),z
 let disp=solvedCube(),queue=[],anim=null;
 const clone=c=>c.map(s=>({p:[...s.p],n:[...s.n],c:s.c}));
 const rotV=(v,ax,t)=>{const c=Math.cos(t),s=Math.sin(t),[x,y,z]=v;return ax===0?[x,y*c-z*s,y*s+z*c]:ax===1?[x*c+z*s,y,-x*s+z*c]:[x*c-y*s,x*s+y*c,z]};
-function draw(){
-  const W=cv.width,S=W/5.4,Q=[];g.clearRect(0,0,W,W);
-  for(const s of disp){
-    const n=s.n,inL=anim&&s.p[anim.ax]===anim.sg,rot=v=>inL?rotV(v,anim.ax,anim.th):v;
-    const nv=view(G(rot(n)));if(nv[2]<=0.001&&!anim)continue;
+function paintCube(g,W,state,an,Gf,vw){
+  const S=W/6,Q=[],GG=v=>Gf?Gf(v):v;g.clearRect(0,0,W,W);
+  for(const s of state){
+    const n=s.n,inL=an&&s.p[an.ax]===an.sg,rot=v=>inL?rotV(v,an.ax,an.th):v;
+    const nv=vw(GG(rot(n)));if(nv[2]<=0.001&&!an)continue;
     const u=n[1]||n[2]?[1,0,0]:[0,1,0],vv=n[2]?[0,1,0]:[0,0,1],c=s.p.map((x,i)=>x+n[i]*0.5);
-    const polys=[[0.5,'#0b0d10'],[0.43,COL[s.c]]].map(([h,col])=>[col,[[-1,-1],[1,-1],[1,1],[-1,1]].map(([i,j])=>view(G(rot(c.map((x,t)=>x+h*(i*u[t]+j*vv[t]))))))]);
-    Q.push({z:view(G(rot(c)))[2],polys});
+    const polys=[[0.5,'#0b0d10'],[0.43,COL[s.c]]].map(([h,col])=>[col,[[-1,-1],[1,-1],[1,1],[-1,1]].map(([i,j])=>vw(GG(rot(c.map((x,t)=>x+h*(i*u[t]+j*vv[t]))))))]);
+    Q.push({z:vw(GG(rot(c)))[2],polys});
   }
   Q.sort((a,b)=>a.z-b.z);
   for(const q of Q)for(const [col,pts] of q.polys){g.beginPath();pts.forEach((P,k)=>{const X=W/2+P[0]*S,Y=W/2-P[1]*S;k?g.lineTo(X,Y):g.moveTo(X,Y)});g.closePath();g.fillStyle=col;g.fill()}
 }
+function draw(){paintCube(g,cv.width,disp,anim,G,view)}
 function pump(){ // anima los giros en cola (más rápido si se acumulan)
   if(anim||!queue.length)return;
   const m=queue.shift(),q=m.endsWith("'")?-1:m.endsWith('2')?2:1,n=FACES[m[0]],ax=n.findIndex(x=>x),sg=n[ax];
@@ -216,10 +303,12 @@ function pump(){ // anima los giros en cola (más rápido si se acumulan)
   requestAnimationFrame(step);
 }
 function showCube(c){cube=c;disp=clone(c);queue=[];anim=null;draw()}
+const FP={U:(r,k)=>[-1+k,1,-1+r],R:(r,k)=>[1,1-r,1-k],F:(r,k)=>[-1+k,1-r,1],D:(r,k)=>[-1+k,-1,1-r],L:(r,k)=>[-1,1-r,-1+k],B:(r,k)=>[1-k,1-r,-1]};
+const stickerAt=(c,f,i)=>{const p=FP[f](i/3|0,i%3);return c.find(x=>x.n+''===FACES[f]+''&&x.p+''===p+'')};
+function fromFacelets(str){const c=solvedCube();'URFDLB'.split('').forEach((f,fi)=>{for(let i=0;i<9;i++)stickerAt(c,f,i).c=str[fi*9+i]});return c}
+function toFacelets(c){let o='';'URFDLB'.split('').forEach(f=>{for(let i=0;i<9;i++)o+=stickerAt(c,f,i).c});return o}
 function setFacelets(str,first){ // refleja el estado real que reporta el cubo (URFDLB)
-  if(str.length!==54)return;const c=solvedCube();
-  const P={U:(r,k)=>[-1+k,1,-1+r],R:(r,k)=>[1,1-r,1-k],F:(r,k)=>[-1+k,1-r,1],D:(r,k)=>[-1+k,-1,1-r],L:(r,k)=>[-1,1-r,-1+k],B:(r,k)=>[1-k,1-r,-1]};
-  'URFDLB'.split('').forEach((f,fi)=>{for(let i=0;i<9;i++){const p=P[f](i/3|0,i%3);c.find(x=>x.n+''===FACES[f]+''&&x.p+''===p+'').c=str[fi*9+i]}});
+  if(str.length!==54)return;const c=fromFacelets(str);
   if(sig(c)===sig(cube)&&!first)return;
   showCube(c);if(first&&phase==='scramble')newScramble();else checkPhase();
 }
@@ -237,22 +326,24 @@ const $=id=>document.getElementById(id);
 const fmt=ms=>{if(ms===Infinity)return'DNF';const s=ms/1000;return s>=60?Math.floor(s/60)+':'+(s%60).toFixed(2).padStart(5,'0'):s.toFixed(2)};
 const toast=m=>{const t=$('toast');t.textContent=m;t.className='show';clearTimeout(toast.h);toast.h=setTimeout(()=>t.className='',2800)};
 function setPhase(p){phase=p;const T=$('timer');
-  $('phase').textContent={scramble:train?'Prepara el caso':'Haz este scramble',ready:train?'Ejecuta el algoritmo hasta resolver el cubo':cfg.insp?'Toca o pulsa espacio para iniciar la inspección':cfg.auto?'Haz un giro para empezar':'Toca o pulsa espacio para empezar',inspect:'Inspección · haz un giro para empezar',running:''}[p];
+  $('phase').textContent={scramble:train?'Prepara el caso · amarillo arriba, verde de frente':'Haz este scramble',ready:train?'Ejecuta el algoritmo hasta resolver el cubo':cfg.insp?'Toca o pulsa espacio para iniciar la inspección':cfg.auto?'Haz un giro para empezar':'Toca o pulsa espacio para empezar',inspect:'Inspección · haz un giro para empezar',running:''}[p];
   T.className=p==='ready'?'ready':p==='running'?'run':p==='inspect'?'insp':'';
   if(p==='ready'){T.textContent=train?'¡Start!':cfg.insp?'15':cfg.auto?'¡Start!':'0.00';$('live').textContent=''}
-  if(scr.length)renderScr()}
+  if(scr.length)renderScr();if(train)renderTrain();$('trainbar').classList.toggle('setup',p==='scramble')}
 let prog=0,wrong=[],pre=[];
 const OPP={U:'D',D:'U',L:'R',R:'L',F:'B',B:'F'},qOf=m=>m.endsWith("'")?3:m.endsWith('2')?2:1,qs=(f,q)=>f+['','','2',"'"][q];
 function setScramble(list){scr=list;const c=clone(cube);pre=[sig(c)];scr.forEach(m=>{mv(c,m);pre.push(sig(c))});prog=0;wrong=[];setPhase('scramble');renderScr()}
 function newScramble(){setScramble(train?train.setup:genScramble())}
+const dsp=m=>train&&train.frame?train.frame[m[0]]+m.slice(1):m; // en entrenamiento, los giros se muestran según cómo sujetas el cubo
 function renderScr(){ // verde = bien · amarillo = medio giro · naranja = error
   const el=$('scr'),h=$('hint');el.innerHTML='';
+  if(train&&phase!=='scramble'){h.className='';h.textContent='';return} // en entrenamiento solo se ve el algoritmo
   const e=scr[prog],half=wrong.length===1&&e&&wrong[0][0]===e[0]&&qOf(e)===2;
   scr.forEach((m,i)=>{const sp=document.createElement('span');
     sp.className=phase==='scramble'?(i<prog?'d':i>prog?'n':!wrong.length?'c':half?'p':'e'):phase==='ready'?'d':'f';
-    sp.textContent=m;el.appendChild(sp);el.appendChild(document.createTextNode(' '))});
+    sp.textContent=dsp(m);el.appendChild(sp);el.appendChild(document.createTextNode(' '))});
   if(phase==='scramble'&&wrong.length){h.className=half?'p':'e';
-    h.textContent=half?'Medio giro hecho: repite el mismo movimiento':'Error. Deshaz: '+wrong.slice().reverse().map(([f,q])=>qs(f,(4-q)%4)).join(' ')}
+    h.textContent=half?'Medio giro hecho: repite el mismo movimiento':'Error. Deshaz: '+wrong.slice().reverse().map(([f,q])=>dsp(qs(f,(4-q)%4))).join(' ')}
   else{h.className='';h.textContent=''}
 }
 function trackSync(){const j=pre.indexOf(sig(cube));if(j>=0){prog=j;wrong=[]}renderScr();if(phase==='scramble'&&prog===scr.length)setPhase('ready')}
@@ -279,7 +370,7 @@ function tick(){if(phase!=='running')return;$('timer').textContent=fmt(performan
 function finish(){
   const t=Math.round(performance.now()-t0);
   if(train)return finishTrain(t);
-  solves.push({t,m:mvs.length,s:scr.join(' '),d:Date.now(),p:pen,dv:curDev||undefined});save();celebrate();
+  solves.push({t,m:mvs.length,s:scr.join(' '),d:Date.now(),p:pen,dv:curDev||undefined,fl:snap?toFacelets(snap):undefined,mv:mvs.map(x=>x.m+' '+Math.round(x.t)).join(',')});save();celebrate();
   $('timer').textContent=fmt(t);$('live').textContent=mvs.length+' mov · '+(mvs.length/(t/1000)).toFixed(2)+' TPS';
   renderStats();const T=$('timer');newScramble();T.className='';$('timer').textContent=fmt(t);
   if(cfg.insight&&snap&&window.Insight&&mvs.length>3){try{const r=Insight.analyze(snap,mvs);if(r)showAlert(r)}catch(e){console.error(e)}}
@@ -303,7 +394,8 @@ const pad=$('pad');for(const f of 'UDLRFB')for(const s of['',"'"]){const b=docum
 
 /* ===== Estadísticas ===== */
 let solves=[];try{solves=JSON.parse(localStorage.getItem('solves')||'[]')}catch(e){}
-const save=()=>{try{localStorage.setItem('solves',JSON.stringify(solves))}catch(e){}};
+const save=()=>{solves.forEach((s,i)=>{if(i<solves.length-200){delete s.mv;delete s.fl}}); // solo las 200 últimas guardan la repetición
+  try{localStorage.setItem('solves',JSON.stringify(solves))}catch(e){}};
 const val=s=>s.p===2?Infinity:s.t+(s.p===1?2000:0);
 function avg(a,n){if(a.length<n)return null;const w=a.slice(-n).sort((x,y)=>x-y),k=Math.ceil(n*0.05),m=w.slice(k,n-k);
   return m.includes(Infinity)?Infinity:m.reduce((x,y)=>x+y,0)/m.length}
@@ -321,8 +413,8 @@ function renderStats(){
   solves.map((s,i)=>[s,i]).slice(-50).reverse().forEach(([s,i])=>{
     const d=document.createElement('div');
     d.innerHTML=`<span class="n">${i+1}</span><span class="t">${fmt(val(s))}${s.p===1?'+':''}</span><span class="i">${s.m?s.m+' mov · '+(s.m/(s.t/1000)).toFixed(1)+' TPS':'manual'}</span>`;
-    for(const [l,fn] of[['+2',()=>s.p=s.p===1?0:1],['DNF',()=>s.p=s.p===2?0:2],['✕',()=>solves.splice(i,1)]]){
-      const b=document.createElement('button');b.textContent=l;b.onclick=()=>{fn();save();renderStats()};d.appendChild(b)}
+    for(const [l,fn,keep] of[...(s.mv?[['▶︎',()=>openSolve(i),1]]:[]),['+2',()=>s.p=s.p===1?0:1],['DNF',()=>s.p=s.p===2?0:2],['✕',()=>solves.splice(i,1)]]){
+      const b=document.createElement('button');b.textContent=l;b.onclick=()=>{fn();if(!keep){save();renderStats()}};d.appendChild(b)}
     $('hist').appendChild(d)});
   if($('dlgStats').open)drawChart();
 }
@@ -330,7 +422,7 @@ $('btnClear').onclick=()=>{if(confirm('¿Borrar todas las resoluciones?')){solve
 $('btnExport').onclick=()=>{const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([JSON.stringify(solves,null,1)],{type:'application/json'}));a.download='resoluciones.json';a.click()};
 
 /* ===== Ajustes, dispositivos y animación ===== */
-let cfg={auto:true,success:true,insp:false,gyro:false,insight:true},devices=[],curDev=null;
+let cfg={auto:true,success:true,insp:false,gyro:false,insight:true,showAlg:true},devices=[],curDev=null;
 try{Object.assign(cfg,JSON.parse(localStorage.getItem('cfg')||'{}'));devices=JSON.parse(localStorage.getItem('devices')||'[]')}catch(e){}
 const saveCfg=()=>{try{localStorage.setItem('cfg',JSON.stringify(cfg))}catch(e){}},saveDev=()=>{try{localStorage.setItem('devices',JSON.stringify(devices))}catch(e){}};
 function renderDevs(){
@@ -395,7 +487,7 @@ function calcM(q0,qs){ // qs: poses tras inclinar (x), girar y' y girar z'
 }
 let gq=null,gt=null,gq0=null,gRaw=null,gM=null,gSeen=false,gRaf=0,calStep=0,calQs=[];
 try{gM=JSON.parse(localStorage.getItem('gyroCal')||'null')}catch(e){}
-const G=v=>cfg.gyro&&gq?qrot(gq,v):v;
+const G=v=>{if(train)v=[-v[0],-v[1],v[2]];return cfg.gyro&&gq?qrot(gq,v):v}; // en entrenamiento el cubo se ve con amarillo arriba (giro z2)
 function gloop(){
   gRaf=0;if(!cfg.gyro||!gt)return;
   if(!gq)gq=gt;else{const s=(gq.w*gt.w+gq.x*gt.x+gq.y*gt.y+gq.z*gt.z)<0?-1:1,k=0.4;
@@ -491,20 +583,56 @@ function showAlert(r){
   clearTimeout(alertTimer);alertTimer=setTimeout(hideAlert,14000);
 }
 function hideAlert(){$('alert').hidden=true;alertData=null;clearTimeout(alertTimer)}
+let tsel=new Set(),tstats={},tses={n:0},tTab='OLL',lastKey='',iconCache={};
+try{tstats=JSON.parse(localStorage.getItem('tstats')||'{}')}catch(e){}
+const saveTS=()=>{try{localStorage.setItem('tstats',JSON.stringify(tstats))}catch(e){}};
+// Cubo de ayuda: así hay que sujetarlo (amarillo arriba, verde de frente, naranja a la derecha)
+const HOLD_SVG='<svg viewBox="0 0 64 64" aria-label="Amarillo arriba, verde de frente"><polygon points="32,5 57,18.5 32,32 7,18.5" fill="#ffd500"/><polygon points="7,18.5 32,32 32,59 7,45.5" fill="#1faa59"/><polygon points="32,32 57,18.5 57,45.5 32,59" fill="#ff8a1f"/><path stroke="#0b0d10" stroke-width="1.4" fill="none" d="M15.3 14 40.3 27.5M23.7 9.5 48.7 23M15.3 23 40.3 9.5M23.7 27.5 48.7 14M15.3 23V50M23.7 27.5V54.5M7 27.5 32 41M7 36.5 32 50M40.3 27.5V54.5M48.7 23V50M32 41 57 27.5M32 50 57 36.5"/></svg>';
 function renderTrain(){
-  const bar=$('trainbar');bar.hidden=!train;if(!train)return;
-  $('trIcon').innerHTML=train.icon;$('trTitle').textContent='Entrenando '+train.label;$('trAlg').textContent=train.alg;
-  $('trStat').textContent=train.times.length?train.times.length+' repeticiones · última '+fmt(train.times[train.times.length-1])+' · mejor '+fmt(Math.min(...train.times)):'Deja el cubo resuelto: la app preparará el caso por ti';
+  const bar=$('trainbar');bar.hidden=!train;if(!train){draw();return}
+  const k=train.kind+' '+train.id,b=tstats[k]&&tstats[k].best;
+  $('trIcon').innerHTML=train.icon;$('trHold').innerHTML=HOLD_SVG;$('trTitle').textContent=train.label;
+  $('trStat').textContent='#'+(tses.n+1)+(b?' · mejor '+fmt(b):'');
+  $('trAlg').hidden=!cfg.showAlg||phase==='scramble';$('trAlg').textContent=train.alg;draw();
 }
-function startTrain(kind,id){
-  if(!isSolved(cube)){toast('Deja el cubo resuelto para empezar el ejercicio');return}
-  train={...Insight.getCase(kind,id),times:[]};hideAlert();renderTrain();newScramble();
+function pickCase(){ // al azar, con más probabilidad para los casos nuevos o lentos
+  const ks=[...tsel];if(!ks.length)return null;
+  const pool=ks.length>1?ks.filter(k=>k!==lastKey):ks;
+  const w=pool.map(k=>1+(tstats[k]?Math.min(3,tstats[k].best/2000):3));
+  let r=Math.random()*w.reduce((a,b)=>a+b,0);
+  for(let i=0;i<pool.length;i++){r-=w[i];if(r<=0)return pool[i]}return pool[pool.length-1];
 }
-function exitTrain(){train=null;renderTrain();newScramble();$('timer').textContent='0.00'}
+function nextCase(){const k=pickCase();if(!k)return exitTrain();lastKey=k;const sp=k.indexOf(' ');train=Insight.getCase(k.slice(0,sp),k.slice(sp+1));renderTrain();newScramble()}
+function startSession(){
+  if(!isSolved(cube)){toast('Deja el cubo resuelto para empezar');return false}
+  tses={n:0};hideAlert();lastKey='';nextCase();return true;
+}
+function startTrain(kind,id){tsel=new Set([kind+' '+id]);return startSession()}
+function exitTrain(){train=null;renderTrain();newScramble();$('timer').textContent='0.00';$('live').textContent=''}
 function finishTrain(t){
-  train.times.push(t);celebrate();renderTrain();newScramble();
-  $('timer').textContent=fmt(t);$('live').textContent=train.label+' · '+fmt(t);
+  const k=train.kind+' '+train.id,e=tstats[k]||(tstats[k]={n:0,best:Infinity,last:0}),rec=t<e.best,lab=train.label;
+  e.n++;e.last=t;if(rec)e.best=t;saveTS();tses.n++;if(rec)celebrate();
+  nextCase();$('timer').textContent=fmt(t);$('live').textContent=(rec?'★ ':'')+lab+' · '+fmt(t);
 }
+function renderCatalog(){
+  const grid=$('tcGrid'),sc=grid.scrollTop,ids=Object.keys(tTab==='OLL'?Insight.OLL:Insight.PLL);grid.innerHTML='';
+  for(const id of ids){
+    const key=tTab+' '+id,st=tstats[key],lv=!st?'':st.best<=2000?'good':st.best<=4000?'mid':'slow',on=tsel.has(key);
+    const ic=iconCache[key]||(iconCache[key]=Insight.getCase(tTab,id).icon);
+    const b=document.createElement('button');b.className='tile'+(on?' sel':'');b.setAttribute('aria-pressed',on);b.setAttribute('aria-label',key);
+    b.innerHTML=ic+'<small>'+id+'</small><i class="'+lv+'"></i>';
+    b.onclick=()=>{on?tsel.delete(key):tsel.add(key);renderCatalog()};grid.appendChild(b);
+  }
+  grid.scrollTop=sc;$('tcCount').textContent=tsel.size?tsel.size+' elegidos':'Toca los casos que quieras practicar';$('tcGo').disabled=!tsel.size;
+}
+$('btnTrain').onclick=()=>{renderCatalog();$('dlgTrain').showModal()};
+$('tcX').onclick=()=>$('dlgTrain').close();
+$('dlgTrain').addEventListener('click',e=>{if(e.target===$('dlgTrain'))$('dlgTrain').close()});
+$('tcTabs').onclick=e=>{const b=e.target.closest('button');if(!b)return;tTab=b.dataset.k;for(const x of $('tcTabs').children)x.classList.toggle('on',x===b);$('tcGrid').scrollTop=0;renderCatalog()};
+$('tcAll').onclick=()=>{Object.keys(tTab==='OLL'?Insight.OLL:Insight.PLL).forEach(id=>tsel.add(tTab+' '+id));renderCatalog()};
+$('tcClear').onclick=()=>{tsel.clear();renderCatalog()};
+$('tcGo').onclick=()=>{if(startSession())$('dlgTrain').close()};
+$('trEye').onclick=()=>{cfg.showAlg=!cfg.showAlg;saveCfg();renderTrain()};
 function gesture(f){ // 4 giros seguidos de la misma cara con el cubo real
   if(f==='R'&&alertData){const a=alertData;startTrain(a.kind,a.id)}
   else if(f==='L'&&alertData)hideAlert();
@@ -513,6 +641,83 @@ function gesture(f){ // 4 giros seguidos de la misma cara con el cubo real
 $('alLearn').onclick=()=>{if(alertData)startTrain(alertData.kind,alertData.id)};
 $('alDismiss').onclick=hideAlert;$('trExit').onclick=exitTrain;
 $('oIns').onchange=e=>{cfg.insight=e.target.checked;saveCfg();if(!cfg.insight)hideAlert()};
+
+/* ===== Detalle de la resolución: repetición, fases y cómo mejorar ===== */
+const PH_COL={cross:'#9b7bf0',slot1:'#5b6bf0',slot2:'#4a82f0',slot3:'#3a9be8',slot4:'#34b0de',oll:'#f0a43c',pll:'#3ddc97'};
+let rp=null;
+const sec=ms=>(ms/1000).toFixed(2);
+const PLAY='<svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>',PAUSE='<svg viewBox="0 0 24 24"><path d="M7 5h4v14H7zM13 5h4v14h-4z"/></svg>';
+function phLabel(seg,cases){return seg.key==='cross'?'Cruz':seg.key.startsWith('slot')?'F2L '+seg.key.slice(4):seg.key==='oll'?'OLL'+(cases.oll?' '+cases.oll.id:''):'PLL'+(cases.pll?' '+cases.pll.id:'')}
+function phGlyph(seg,P,cases){ // imagen de cada fase: cruz, pareja de colores o dibujo del caso
+  if(seg.key==='cross'){const c=COL[P.f];return '<svg viewBox="0 0 40 40"><g fill="'+c+'"><rect x="15" y="3" width="10" height="11" rx="2.5"/><rect x="15" y="26" width="10" height="11" rx="2.5"/><rect x="3" y="15" width="11" height="10" rx="2.5"/><rect x="26" y="15" width="11" height="10" rx="2.5"/></g><rect x="15" y="15" width="10" height="10" rx="2.5" fill="#262c34"/></svg>'}
+  if(seg.key.startsWith('slot')){const [a,b]=seg.colors||['U','U'];return '<svg viewBox="0 0 40 40"><rect x="4" y="4" width="32" height="32" rx="8" fill="'+COL[b]+'"/><path d="M4 12a8 8 0 0 1 8-8H36L4 36Z" fill="'+COL[a]+'"/></svg>'}
+  const c=seg.key==='oll'?cases.oll:cases.pll;
+  return c?Insight.getCase(seg.key.toUpperCase(),c.id).icon:'<svg viewBox="0 0 40 40"><path d="m10 21 7 7 14-15" fill="none" stroke="#3ddc97" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+}
+const ring=(pc,col)=>'<svg viewBox="0 0 36 36"><circle cx="18" cy="18" r="15" fill="none" stroke="#262d36" stroke-width="4"/><circle cx="18" cy="18" r="15" fill="none" stroke="'+col+'" stroke-width="4" stroke-linecap="round" pathLength="100" stroke-dasharray="'+Math.max(1,pc)+' 100" transform="rotate(-90 18 18)"/><text x="18" y="22" text-anchor="middle" font-size="10" font-weight="700" fill="#e8ecf1">'+pc+'%</text></svg>';
+function openSolve(i){
+  const sv=solves[i];if(!sv)return;
+  const moves=sv.mv?sv.mv.split(',').map(x=>{const [m,t]=x.split(' ');return{m,t:+t}}):[],start=sv.fl?fromFacelets(sv.fl):null,has=!!(start&&moves.length);
+  rp={sv,moves,start,T:0,play:false,speed:1,dur:has?moves[moves.length-1].t:0,last:0,P:null,segs:[]};
+  const dv=devices.find(d=>d.id===sv.dv),tps=sv.m&&sv.t?sv.m/(sv.t/1000):0;
+  $('svT').textContent='Resolución #'+(i+1);
+  const kpi=(v,l)=>'<div class="kpi"><b>'+v+'</b><span>'+l+'</span></div>';
+  $('svKpi').innerHTML=kpi(fmt(val(sv))+(sv.p===1?'+':''),'tiempo')+kpi(tps?tps.toFixed(1):'–','giros/s')+kpi(sv.m||'–','giros')+kpi(new Date(sv.d).toLocaleDateString('es',{day:'numeric',month:'short'}),dv?(dv.alias||dv.id).slice(0,12):'fecha');
+  $('svScr').innerHTML=sv.s?'<details><summary>Scramble</summary><p></p></details>':'';if(sv.s)$('svScr').querySelector('p').textContent=sv.s;$('svBody').hidden=!has;$('svNo').hidden=has;
+  if(has){
+    let cases={oll:null,pll:null};
+    try{rp.P=Insight.phases(start,moves);if(rp.P)cases=Insight.casesOf(rp.P)}catch(e){console.error(e)}
+    const P=rp.P,segs=P?P.segs.filter(x=>x.turns>0):[];rp.segs=segs;
+    const bar=segs.length?'linear-gradient(90deg,'+segs.map(x=>{const a=(x.a<0?0:moves[x.a].t)/rp.dur*100,b=moves[x.b].t/rp.dur*100;return PH_COL[x.key]+' '+a+'% '+b+'%'}).join(',')+')':'';
+    $('svSeek').style.setProperty('--bar',bar||'#262d36');$('svSeek').value=0;
+    $('svPhases').innerHTML=P?segs.map((x,n)=>{const r=x.step?x.rec/x.step*100:0;
+      return '<button class="ph" data-n="'+n+'" title="'+phLabel(x,cases)+'"><span class="g">'+phGlyph(x,P,cases)+'</span><span class="lb">'+phLabel(x,cases)+'</span><b>'+sec(x.step)+'</b><div class="bar2"><i class="r" style="width:'+r+'%"></i><i class="e" style="width:'+(100-r)+'%"></i></div><small>'+x.turns+' · '+x.tps.toFixed(1)+'/s</small></button>'}).join(''):'<p class="mu">No se han podido separar las fases (¿no es CFOP?).</p>';
+    renderTips(P,cases,start,moves);
+  }
+  $('svPlay').innerHTML=PLAY;$('dlgSolve').showModal();if(has)rpFrame(0);
+}
+function renderTips(P,cases,start,moves){
+  const box=$('svTips');box.innerHTML='';if(!P){return}
+  const S=Insight.summarize(P),pc=Math.round(S.recShare*100),wp=S.worstPause,sl=S.slowest;
+  const sm=(x)=>'<span class="g">'+phGlyph(x,P,cases)+'</span>',lb=(x)=>phLabel(x,cases);
+  let h='<div class="tip"><h4>Pausas</h4>'+ring(pc,pc<=15?'#3ddc97':'#f0a43c')+(wp?sm(wp)+'<small>'+lb(wp)+' · '+sec(wp.rec)+' s</small>':'')+'</div>';
+  h+='<div class="tip"><h4>Ritmo</h4>'+(sl?sm(sl)+'<b>'+sl.tps.toFixed(1)+'/s</b><small>'+lb(sl)+'</small>':'<b class="ok">✓</b>')+'</div>';
+  let r=null;try{r=Insight.analyze(start,moves)}catch(e){}
+  h+='<div class="tip"><h4>Algoritmo</h4>'+(r?Insight.getCase(r.kind,r.id).icon+'<b>−'+r.save.toFixed(1)+' s</b><button class="btn pri" data-k="'+r.kind+'" data-i="'+r.id+'">Aprender</button>':'<b class="ok">✓</b><small>sin mejoras</small>')+'</div>';
+  box.innerHTML=h;
+}
+function rpIdx(T){let k=-1;const m=rp.moves;while(k+1<m.length&&m[k+1].t<=T)k++;return k}
+function rpFrame(T){
+  const c=$('svCv'),m=rp.moves,k=rpIdx(T),st=clone(rp.start);
+  for(let j=0;j<=k;j++)mv(st,m[j].m);
+  let an=null;const nx=m[k+1];
+  if(nx&&nx.t-T<180){const q=nx.m.endsWith("'")?-1:nx.m.endsWith('2')?2:1,n=FACES[nx.m[0]],ax=n.findIndex(v=>v),sg=n[ax],e=1-(nx.t-T)/180;an={ax,sg,th:-sg*q*Math.PI/2*e*e*(3-2*e)}}
+  paintCube(c.getContext('2d'),c.width,st,an,null,DV);
+  $('svSeek').value=rp.dur?Math.round(T/rp.dur*1000):0;$('svTime').textContent=sec(T)+' / '+sec(rp.dur);
+  rp.segs.forEach((x,n)=>{const a=x.a<0?0:m[x.a].t,b=m[x.b].t,el=$('svPhases').children[n];if(el)el.classList.toggle('on',T>=a&&T<=b&&!(T===a&&n>0))});
+}
+function rpTick(now){
+  if(!rp||!rp.play)return;
+  rp.T=Math.min(rp.dur,rp.T+(now-rp.last)*rp.speed);rp.last=now;rpFrame(rp.T);
+  if(rp.T>=rp.dur){rp.play=false;$('svPlay').innerHTML=PLAY}else requestAnimationFrame(rpTick);
+}
+function rpPlay(on){
+  if(!rp)return;if(on&&rp.T>=rp.dur)rp.T=0;rp.play=on;$('svPlay').innerHTML=on?PAUSE:PLAY;
+  if(on){rp.last=performance.now();requestAnimationFrame(rpTick)}
+}
+function rpSeek(T){rp.T=Math.max(0,Math.min(rp.dur,T));rpFrame(rp.T)}
+$('svPlay').onclick=()=>rpPlay(!rp.play);
+$('svFirst').onclick=()=>{rpPlay(false);rpSeek(0)};$('svLast').onclick=()=>{rpPlay(false);rpSeek(rp.dur)};
+$('svPrev').onclick=()=>{rpPlay(false);const k=rpIdx(rp.T-1);rpSeek(k>=0?rp.moves[k].t:0)};
+$('svNext').onclick=()=>{rpPlay(false);const k=rpIdx(rp.T);rpSeek(rp.moves[Math.min(k+1,rp.moves.length-1)].t)};
+$('svSeek').oninput=e=>{rpPlay(false);rpSeek(e.target.value/1000*rp.dur)};
+$('svSpeed').onclick=e=>{const b=e.target.closest('button');if(!b)return;rp.speed=+b.dataset.s;for(const x of $('svSpeed').children)x.classList.toggle('on',x===b)};
+$('svPhases').onclick=e=>{const b=e.target.closest('.ph');if(!b)return;const x=rp.segs[+b.dataset.n];rpPlay(false);rpSeek(x.a<0?0:rp.moves[x.a].t);rpPlay(true)};
+$('svTips').onclick=e=>{const b=e.target.closest('button');if(!b)return;rpPlay(false);$('dlgSolve').close();if(!startTrain(b.dataset.k,b.dataset.i))toast('Resuelve el cubo antes de entrenar')};
+$('svX').onclick=()=>{rpPlay(false);$('dlgSolve').close()};
+$('dlgSolve').addEventListener('close',()=>{if(rp)rp.play=false});
+$('dlgSolve').addEventListener('click',e=>{if(e.target===$('dlgSolve')){rpPlay(false);$('dlgSolve').close()}});
+$('btnLast').onclick=()=>{if(solves.length)openSolve(solves.length-1);else toast('Aún no hay resoluciones')};
 
 /* ===== Bluetooth ===== */
 const SERVICES=['6e400001-b5a3-f393-e0a9-e50e24dc4179','00000010-0000-fff7-fff6-fff5fff4fff0','0000aadb-0000-1000-8000-00805f9b34fb',
