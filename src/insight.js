@@ -225,14 +225,43 @@ export function casesOf(P) {
 }
 
 // ---- Casos para entrenar (cubo con AMARILLO arriba y VERDE de frente) ----
-export function getCase(kind, id) {
-  const alg = (kind === 'OLL' ? OLL : PLL)[id];
-  if (!alg) return null;
+// Cruz amarilla (primer paso del OLL en 2 tiempos): casos propios para practicar las dos fórmulas de aristas.
+export const OLL2 = { 'cruz I': "F R U R' U' F'", 'cruz L': "f R U R' U' f'" };
+const CRUZ_LABEL = { 'cruz I': 'Cruz amarilla · línea', 'cruz L': 'Cruz amarilla · L' };
+// Giros acumulados (de cara) tras cada ficha del algoritmo: sirve para saber cuántas fichas lleva hechas el usuario.
+export const algSteps = (alg) => { const t = alg.trim().split(/\s+/); return t.map((_, i) => expand(t.slice(0, i + 1).join(' '), HOLD).length); };
+const WORD = { F: 'delante', B: 'detrás', R: 'a la derecha', L: 'a la izquierda' };
+// Texto de reconocimiento: qué se ve en la capa amarilla (que en el estado interno es la capa D).
+function describe(kind, st, frame) {
+  const { NAME } = CM(), D = st.filter((s) => s.p[1] === -1);
+  if (kind === 'OLL') {
+    const up = D.filter((s) => s.n[1] === -1 && s.c === 'D');
+    const e = up.filter((s) => (s.p[0] === 0) !== (s.p[2] === 0)).length, k = up.filter((s) => s.p[0] !== 0 && s.p[2] !== 0).length;
+    return `Mira la cara amarilla de arriba: ves ${e} de 4 aristas y ${k} de 4 esquinas en amarillo.`;
+  }
+  const corners = D.filter((s) => s.p[0] !== 0 && s.p[2] !== 0 && s.n[1] === 0), hl = [];
+  for (const n of [[1, 0, 0], [-1, 0, 0], [0, 0, 1], [0, 0, -1]]) {
+    const ss = corners.filter((s) => s.n + '' === n + '');
+    if (ss.length === 2 && ss[0].c === ss[1].c) hl.push(WORD[frame[NAME[n]]]);
+  }
+  const t = hl.length === 4 ? 'Los 4 lados tienen faros (dos esquinas del mismo color juntas): las esquinas ya están bien.'
+    : hl.length === 0 ? 'No hay faros (dos esquinas del mismo color juntas) en ningún lado.'
+    : `Hay un faro (dos esquinas del mismo color juntas) ${hl[0]}.`;
+  return 'Mira los 4 lados de la capa de arriba. ' + t;
+}
+function mkCase(kind, id, alg, label) {
   const { solvedCube } = CM();
   const faceAlg = expand(alg, HOLD), setup = invert(faceAlg);
   const frame = {}; for (const [fr, col] of Object.entries(HOLD)) frame[col] = fr; // cara de color -> posición al sujetarlo
-  return { kind, id, label: kind + ' ' + id, alg, faceAlg, setup, frame, icon: caseIcon(run(solvedCube(), setup), kind, true) };
+  const st = run(solvedCube(), setup);
+  return { kind, id, label: label || kind + ' ' + id, alg, faceAlg, setup, frame, tokens: alg.trim().split(/\s+/), cum: algSteps(alg), look: describe(kind, st, frame), icon: caseIcon(st, kind, true) };
 }
+export function getCase(kind, id) {
+  const alg = kind === 'OLL' ? OLL[id] || OLL2[id] : PLL[id];
+  return alg ? mkCase(kind, id, alg, CRUZ_LABEL[id]) : null;
+}
+// Caso a partir de cualquier algoritmo (para las demostraciones de las lecciones).
+export const custom = (alg, kind = 'OLL') => mkCase(kind, '', alg, '');
 
 // Icono de la capa superior vista desde arriba. flip = ver el cubo con amarillo arriba.
 // OLL: pegatinas orientadas en amarillo; PLL: colores reales de los laterales. Sin letras.
@@ -282,4 +311,4 @@ export function caseIcon(state, kind, flip = false) {
   return `<svg viewBox="0 0 ${W} ${W}" width="56" height="56" aria-hidden="true">${r}</svg>`;
 }
 
-window.Insight = { analyze, phases, summarize, casesOf, getCase, caseIcon, expand, invert, OLL, PLL, TPS_ALG, HOLD };
+window.Insight = { analyze, phases, summarize, casesOf, getCase, custom, caseIcon, expand, invert, OLL, OLL2, PLL, TPS_ALG, HOLD, algSteps };
