@@ -225,7 +225,7 @@ dialog.wide{width:min(720px,96vw)}
     <div id="log">Aquí aparecerán los datos crudos del cubo.</div>
   </details>
   <h3>Acerca de</h3>
-  <p class="mu" style="margin:0">CubIQ · versión <span id="ver">1.4.1</span></p>
+  <p class="mu" style="margin:0">CubIQ · versión <span id="ver">1.4.2</span></p>
 </dialog>
 <dialog id="dlgCal" aria-label="Calibrar giroscopio">
   <div class="dh"><h2 id="calT">Calibrar</h2><button id="calX" aria-label="Cerrar">✕</button></div>
@@ -621,12 +621,12 @@ function showAlert(r){
   clearTimeout(alertTimer);alertTimer=setTimeout(hideAlert,14000);
 }
 function hideAlert(){$('alert').hidden=true;alertData=null;clearTimeout(alertTimer)}
-let tsel=new Set(),tstats={},tses={n:0},tTab='F2L',lastKey='',iconCache={},at=null;
+let tsel=new Set(),tstats={},tses={n:0},tTab='F2L',tCat='',lastKey='',iconCache={},at=null;
 try{tstats=JSON.parse(localStorage.getItem('tstats')||'{}')}catch(e){}
 const saveTS=()=>{try{localStorage.setItem('tstats',JSON.stringify(tstats))}catch(e){}};
 const GN={F2L:'F2L',EOLL:'OLL aristas',OCLL:'OLL esquinas',OLL:'OLL',CPLL:'PLL esquinas',EPLL:'PLL aristas',PLL:'PLL'};
 const MAINS=[['F2L','F2L'],['OLL','OLL'],['PLL','PLL']]; // pestañas
-const SUBS={F2L:[['F2L','Básico · 8']],OLL:[['OLL','Completo · 57'],['EOLL','Cruz amarilla · 3'],['OCLL','Esquinas · 7']],PLL:[['PLL','Completo · 21'],['CPLL','Esquinas · 2'],['EPLL','Aristas · 4']]}; // grupos de cada pestaña
+const SUBS={F2L:[['F2L','Todos · 41',''],['F2L','Ambas arriba · 24','u'],['F2L','Esquina en la ranura · 6','c'],['F2L','Arista en la ranura · 6','e'],['F2L','Atascadas · 5','s']],OLL:[['OLL','Completo · 57'],['EOLL','Cruz amarilla · 3'],['OCLL','Esquinas · 7']],PLL:[['PLL','Completo · 21'],['CPLL','Esquinas · 2'],['EPLL','Aristas · 4']]}; // grupos de cada pestaña
 const mainOf=k=>k==='F2L'?'F2L':/^(OLL|EOLL|OCLL)$/.test(k)?'OLL':'PLL';
 const caseTitle=c=>/^(OLL|PLL|F2L)$/.test(c.kind)?c.label:GN[c.kind]+' · '+c.id;
 const GREY='#39414b',flipS=s=>({p:[-s.p[0],-s.p[1],s.p[2]],n:[-s.n[0],-s.n[1],s.n[2]],c:s.c});
@@ -717,11 +717,11 @@ function finishTrain(t){
 }
 // --- elegir casos a mano ---
 function renderCatalog(){
-  const grid=$('tcGrid'),sc=grid.scrollTop,ids=Object.keys(Insight.GROUPS[tTab]);grid.innerHTML='';
+  const grid=$('tcGrid'),sc=grid.scrollTop,ids=Object.keys(Insight.GROUPS[tTab]).filter(id=>!tCat||Insight.F2L_CAT[id]===tCat);grid.innerHTML='';
   const mt=mainOf(tTab),cnt=m=>[...tsel].filter(k=>mainOf(k.split(' ')[0])===m).length;
   $('tcTabs').innerHTML=MAINS.map(([k,l])=>'<button data-k="'+k+'" class="'+(k===mt?'on':'')+'">'+l+(cnt(k)?' · '+cnt(k):'')+'</button>').join('');
   $('tcSubs').hidden=SUBS[mt].length<2;
-  $('tcSubs').innerHTML=SUBS[mt].map(([k,l])=>'<button data-k="'+k+'" class="'+(k===tTab?'on':'')+'">'+l+'</button>').join('');
+  $('tcSubs').innerHTML=SUBS[mt].map(([k,l,c])=>'<button data-k="'+k+'" data-c="'+(c||'')+'" class="'+(k===tTab&&(c||'')===tCat?'on':'')+'">'+l+'</button>').join('');
   for(const id of ids){
     const key=tTab+' '+id,st=tstats[key],lv=!st?'':st.best<=2000?'good':st.best<=4000?'mid':'slow',on=tsel.has(key);
     const b=document.createElement('button');b.className='tile'+(on?' sel':'');b.setAttribute('aria-pressed',on);b.setAttribute('aria-label',key);
@@ -732,10 +732,10 @@ function renderCatalog(){
 }
 $('tcX').onclick=()=>$('dlgTrain').close();
 $('dlgTrain').addEventListener('click',e=>{if(e.target===$('dlgTrain'))$('dlgTrain').close()});
-$('tcTabs').onclick=e=>{const b=e.target.closest('button');if(!b)return;tTab=SUBS[b.dataset.k][0][0];$('tcGrid').scrollTop=0;renderCatalog()};
-$('tcSubs').onclick=e=>{const b=e.target.closest('button');if(!b)return;tTab=b.dataset.k;$('tcGrid').scrollTop=0;renderCatalog()};
+$('tcTabs').onclick=e=>{const b=e.target.closest('button');if(!b)return;tTab=SUBS[b.dataset.k][0][0];tCat='';$('tcGrid').scrollTop=0;renderCatalog()};
+$('tcSubs').onclick=e=>{const b=e.target.closest('button');if(!b)return;tTab=b.dataset.k;tCat=b.dataset.c||'';$('tcGrid').scrollTop=0;renderCatalog()};
 $('btnPractice').onclick=()=>{renderCatalog();$('dlgTrain').showModal()};
-$('tcAll').onclick=()=>{Object.keys(Insight.GROUPS[tTab]).forEach(id=>tsel.add(tTab+' '+id));renderCatalog()};
+$('tcAll').onclick=()=>{Object.keys(Insight.GROUPS[tTab]).filter(id=>!tCat||Insight.F2L_CAT[id]===tCat).forEach(id=>tsel.add(tTab+' '+id));renderCatalog()};
 $('tcClear').onclick=()=>{tsel.clear();renderCatalog()};
 $('tcGo').onclick=()=>{if(startSession())$('dlgTrain').close()};
 $('trEye').onclick=()=>{cfg.showAlg=!cfg.showAlg;saveCfg();renderTrain()};
@@ -743,7 +743,7 @@ $('trEye').onclick=()=>{cfg.showAlg=!cfg.showAlg;saveCfg();renderTrain()};
 const LESSONS=[
  {n:0,t:'Leer los giros',img:'notation',goal:'Cada letra es una cara del cubo. Se gira mirándola de frente.',rules:['Una letra sola (R): cuarto de vuelta en el sentido del reloj.',"Con apóstrofo (R'): al revés. Con un 2 (R2): media vuelta.",'U arriba · D abajo · R derecha · L izquierda · F frente · B atrás.','r, f y M giran más de una capa; x, y y z giran el cubo entero.'],practice:[],end:''},
  {n:1,t:'La cruz',img:'cross',goal:'Las 4 aristas de una cara, cada una junto a su centro.',rules:['Hazla abajo: así ves el resto del cubo.','Planifícala en los 15 s de inspección.','Siempre se puede resolver en 8 giros o menos.'],practice:[]},
- {n:2,t:'F2L',img:'f2l',goal:'Las dos primeras capas: 4 parejas de esquina y arista.',rules:['Junta la esquina con su arista arriba y mételas a la vez.','No rompas la cruz ni las parejas ya hechas.','Busca la siguiente pareja mientras metes la actual.'],practice:[['F2L','F2L básico']]},
+ {n:2,t:'F2L',img:'f2l',goal:'Las dos primeras capas: 4 parejas de esquina y arista.',rules:['Junta la esquina con su arista arriba y mételas a la vez.','No rompas la cruz ni las parejas ya hechas.','Busca la siguiente pareja mientras metes la actual.'],practice:[['F2L','F2L · los 41 casos']]},
  {n:3,t:'OLL',img:'oll',goal:'Dejar toda la cara de arriba en amarillo.',rules:['Empieza en 2 pasos: primero la cruz amarilla, luego las esquinas.','Reconoce el dibujo amarillo; no memorices letras.','Cuando domines esos, aprende los 57 de un solo paso.'],practice:[['EOLL','Paso 1 · cruz amarilla'],['OCLL','Paso 2 · esquinas'],['OLL','OLL completo']]},
  {n:4,t:'PLL',img:'pll',goal:'Colocar la última capa: cubo resuelto.',rules:['Empieza en 2 pasos: primero las esquinas, luego las aristas.','Fíjate en los «faros»: dos pegatinas iguales juntas.','Después aprende los 21 PLL.'],practice:[['CPLL','Paso 1 · esquinas'],['EPLL','Paso 2 · aristas'],['PLL','PLL completo']]}];
 const DVb=v=>{const a=-0.6,b=-0.45;let x=v[0]*Math.cos(a)+v[2]*Math.sin(a),z=-v[0]*Math.sin(a)+v[2]*Math.cos(a);const y=v[1]*Math.cos(b)-z*Math.sin(b);z=v[1]*Math.sin(b)+z*Math.cos(b);return[x,y,z]};

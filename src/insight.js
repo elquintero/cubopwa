@@ -46,8 +46,54 @@ export const EOLL = { 'Línea': "F R U R' U' F'", L: "f R U R' U' f'", Punto: "F
 export const OCLL = { Sune: OLL[27], 'Anti-Sune': OLL[26], H: OLL[21], Pi: OLL[22], U: OLL[23], T: OLL[24], L: OLL[25] };
 export const CPLL = { A: PLL.Aa, Y: PLL.Y };
 export const EPLL = { Ua: PLL.Ua, Ub: PLL.Ub, H: PLL.H, Z: PLL.Z };
-// F2L básico: la pareja esquina+arista en la ranura delantera derecha (cruz abajo). Todos comprobados con el simulador.
-export const F2L = { 1: "U R U' R'", 2: "R U R'", 3: "R U' R'", 4: "F' U' F", 5: "F' U F", 6: "R U2 R' U' R U R'", 7: "R U' R' U R U' R'", 8: "R U R' U2 R U R'" };
+// F2L completo: los 41 casos de la pareja esquina+arista en la ranura delantera derecha (cruz abajo).
+// Generados enumerando todas las posiciones posibles del par (24 arriba + 6 + 6 + 5 en la ranura) y buscando
+// la solución más corta con R, U y F; cada uno comprobado con un simulador independiente. Ordenados de más corto a más largo.
+export const F2L = {
+  1: "R U R'",
+  2: "R U' R'",
+  3: "F' U F",
+  4: "F' U' F",
+  5: "F' U F R U R'",
+  6: "F' U' F R U R'",
+  7: "R U' R' F' U' F",
+  8: "F' U F R U2 R'",
+  9: "F' U2 F R U2 R'",
+  10: "R U2 R2 F R F'",
+  11: "F' U F2 R' F' R",
+  12: "F' U' F2 R' F' R",
+  13: "F' U2 F2 R' F' R",
+  14: "R U' R' U R U R'",
+  15: "R U' R' U' R U R'",
+  16: "R U R' U2 R U R'",
+  17: "R U R' U2 R U' R'",
+  18: "R U' R' U2 R U' R'",
+  19: "R U2 R' U' R U R'",
+  20: "R U2 R' U2 R U' R'",
+  21: "R' U2 R2 U R2 U R",
+  22: "R2 U2 R' U' R U' R2",
+  23: "R2 U R2 U R2 U2 R2",
+  24: "F' U F U R U R'",
+  25: "R U R' U F' U' F",
+  26: "R U' R' F R' F' R",
+  27: "R U' R' U F' U' F",
+  28: "R' F R F' R U R'",
+  29: "F' U F U2 R U R'",
+  30: "R U' R' U2 F' U' F",
+  31: "R U2 R' U F' U' F",
+  32: "R2 U2 F R2 F' U2 R2",
+  33: "F2 U2 R' F R U2 F2",
+  34: "F2 U2 R' F' R U2 F2",
+  35: "F' U F U' F' U' F",
+  36: "F2 U2 F U F' U F2",
+  37: "R U2 R U R' U R U2 R2",
+  38: "R F U R U' R' F' U' R'",
+  39: "R U F R U R' U' F' R'",
+  40: "R U' R U2 F R2 F' U2 R2",
+  41: "R U2 R U2 F R F' U2 R2",
+};
+// Categoría de cada caso: u = esquina y arista arriba · c = esquina en la ranura · e = arista en la ranura · s = ambas en la ranura (atascadas)
+export const F2L_CAT = {1: 'u', 2: 'u', 3: 'u', 4: 'u', 5: 'c', 6: 'u', 7: 'c', 8: 'e', 9: 'c', 10: 'u', 11: 'c', 12: 'u', 13: 'u', 14: 'u', 15: 'u', 16: 'e', 17: 'u', 18: 'e', 19: 'u', 20: 'u', 21: 'u', 22: 'u', 23: 'e', 24: 'e', 25: 'e', 26: 'c', 27: 'u', 28: 'c', 29: 'u', 30: 'u', 31: 'u', 32: 'u', 33: 'u', 34: 'u', 35: 'u', 36: 'u', 37: 's', 38: 's', 39: 's', 40: 's', 41: 's'};
 export const GROUPS = { F2L, EOLL, OCLL, OLL, CPLL, EPLL, PLL };
 const STYLE = { OLL: 'OLL', OCLL: 'OLL', EOLL: 'EOLL', PLL: 'PLL', CPLL: 'PLL', EPLL: 'PLL' };
 
@@ -304,4 +350,4 @@ export function caseIcon(state, kind, flip = false) {
   return `<svg viewBox="0 0 ${W} ${W}" width="56" height="56" aria-hidden="true">${r}</svg>`;
 }
 
-window.Insight = { analyze, phases, summarize, casesOf, getCase, caseIcon, expand, invert, OLL, PLL, GROUPS, TPS_ALG, HOLD };
+window.Insight = { F2L_CAT, analyze, phases, summarize, casesOf, getCase, caseIcon, expand, invert, OLL, PLL, GROUPS, TPS_ALG, HOLD };
