@@ -46,54 +46,8 @@ export const EOLL = { 'Línea': "F R U R' U' F'", L: "f R U R' U' f'", Punto: "F
 export const OCLL = { Sune: OLL[27], 'Anti-Sune': OLL[26], H: OLL[21], Pi: OLL[22], U: OLL[23], T: OLL[24], L: OLL[25] };
 export const CPLL = { A: PLL.Aa, Y: PLL.Y };
 export const EPLL = { Ua: PLL.Ua, Ub: PLL.Ub, H: PLL.H, Z: PLL.Z };
-// F2L completo: los 41 casos de la pareja esquina+arista en la ranura delantera derecha (cruz abajo).
-// Generados enumerando todas las posiciones posibles del par (24 arriba + 6 + 6 + 5 en la ranura) y buscando
-// la solución más corta con R, U y F; cada uno comprobado con un simulador independiente. Ordenados de más corto a más largo.
-export const F2L = {
-  1: "R U R'",
-  2: "R U' R'",
-  3: "F' U F",
-  4: "F' U' F",
-  5: "F' U F R U R'",
-  6: "F' U' F R U R'",
-  7: "R U' R' F' U' F",
-  8: "F' U F R U2 R'",
-  9: "F' U2 F R U2 R'",
-  10: "R U2 R2 F R F'",
-  11: "F' U F2 R' F' R",
-  12: "F' U' F2 R' F' R",
-  13: "F' U2 F2 R' F' R",
-  14: "R U' R' U R U R'",
-  15: "R U' R' U' R U R'",
-  16: "R U R' U2 R U R'",
-  17: "R U R' U2 R U' R'",
-  18: "R U' R' U2 R U' R'",
-  19: "R U2 R' U' R U R'",
-  20: "R U2 R' U2 R U' R'",
-  21: "R' U2 R2 U R2 U R",
-  22: "R2 U2 R' U' R U' R2",
-  23: "R2 U R2 U R2 U2 R2",
-  24: "F' U F U R U R'",
-  25: "R U R' U F' U' F",
-  26: "R U' R' F R' F' R",
-  27: "R U' R' U F' U' F",
-  28: "R' F R F' R U R'",
-  29: "F' U F U2 R U R'",
-  30: "R U' R' U2 F' U' F",
-  31: "R U2 R' U F' U' F",
-  32: "R2 U2 F R2 F' U2 R2",
-  33: "F2 U2 R' F R U2 F2",
-  34: "F2 U2 R' F' R U2 F2",
-  35: "F' U F U' F' U' F",
-  36: "F2 U2 F U F' U F2",
-  37: "R U2 R U R' U R U2 R2",
-  38: "R F U R U' R' F' U' R'",
-  39: "R U F R U R' U' F' R'",
-  40: "R U' R U2 F R2 F' U2 R2",
-  41: "R U2 R U2 F R F' U2 R2",
-};
-// Categoría de cada caso: u = esquina y arista arriba · c = esquina en la ranura · e = arista en la ranura · s = ambas en la ranura (atascadas)
-export const F2L_CAT = {1: 'u', 2: 'u', 3: 'u', 4: 'u', 5: 'c', 6: 'u', 7: 'c', 8: 'e', 9: 'c', 10: 'u', 11: 'c', 12: 'u', 13: 'u', 14: 'u', 15: 'u', 16: 'e', 17: 'u', 18: 'e', 19: 'u', 20: 'u', 21: 'u', 22: 'u', 23: 'e', 24: 'e', 25: 'e', 26: 'c', 27: 'u', 28: 'c', 29: 'u', 30: 'u', 31: 'u', 32: 'u', 33: 'u', 34: 'u', 35: 'u', 36: 'u', 37: 's', 38: 's', 39: 's', 40: 's', 41: 's'};
+// F2L básico: la pareja esquina+arista en la ranura delantera derecha (cruz abajo). Todos comprobados con el simulador.
+export const F2L = { 1: "U R U' R'", 2: "R U R'", 3: "R U' R'", 4: "F' U' F", 5: "F' U F", 6: "R U2 R' U' R U R'", 7: "R U' R' U R U' R'", 8: "R U R' U2 R U R'" };
 export const GROUPS = { F2L, EOLL, OCLL, OLL, CPLL, EPLL, PLL };
 const STYLE = { OLL: 'OLL', OCLL: 'OLL', EOLL: 'EOLL', PLL: 'PLL', CPLL: 'PLL', EPLL: 'PLL' };
 
@@ -281,11 +235,62 @@ export function casesOf(P) {
   };
 }
 
+// ---- Algoritmos alternativos ----
+// Candidatos escritos a mano. Solo se conservan los que superan la comprobación con el simulador:
+// partiendo del caso (inverso del algoritmo principal) tienen que dejarlo resuelto igual que él.
+const ALT_SRC = {
+  OLL: {
+    2: ["r U r' U2 r U2 R' U2 R U' r'"],
+    5: ["l' U2 L U L' U l"], 6: ["l U2 L' U' L U' l'"], 7: ["l U L' U L U2 l'"], 8: ["l' U' L U' L' U2 l"],
+    21: ["R U R' U R U' R' U R U2 R'", "F R U R' U' R U R' U' R U R' U' F'"],
+    33: ["R U R' U' R' F R F'"], 37: ["F R U' R' U' R U R' F'"], 45: ["F R U R' U' F'"],
+    41: ["f R U R' U' f' U R U2 R' U' R U' R'"], 26: ["L' U2 L U L' U L"], 27: ["L' U' L U' L' U2 L"],
+  },
+  OCLL: { H: ["F R U R' U' R U R' U' R U R' U' F'"], Sune: ["L' U' L U' L' U2 L"], 'Anti-Sune': ["L' U2 L U L' U L"] },
+  EOLL: { 'Línea': ["F U R U' R' F'"], L: ["F' L' U' L U F"] },
+  PLL: {
+    Aa: ["l' U R' D2 R U' R' D2 R2"], Ab: ["l' U' R D2 R' U R D2 R2"],
+    Ua: ["M2 U M U2 M' U M2"], Ub: ["M2 U' M U2 M' U' M2"], H: ["R2 U2 R U2 R2 U2 R2 U2 R U2 R2"],
+    Z: ["M2 U M2 U M' U2 M2 U2 M'"], Na: ["R U R' U R U R' F' R U R' U' R' F R2 U' R' U2 R U' R'"],
+    Nb: ["R' U L' U2 R U' R' U2 R L U'"], T: ["R2 U R2 U' R2 U' D R2 U' R2 U R2 D'"],
+  },
+  CPLL: { A: ["l' U R' D2 R U' R' D2 R2"] },
+  EPLL: { Ua: ["M2 U M U2 M' U M2"], Ub: ["M2 U' M U2 M' U' M2"], H: ["R2 U2 R U2 R2 U2 R2 U2 R U2 R2"], Z: ["M2 U M2 U M' U2 M2 U2 M'"] },
+  F2L: {
+    1: ["U R U' R'"], 2: ["R U R'", "U' R' F R F'"], 3: ["R U' R'", "R U' R' U2 R U R'"],
+    4: ["F' U' F"], 5: ["F' U F", "R' U' R U2 R' U R"], 6: ["R U2 R' U' R U R'"], 7: ["R U' R' U R U' R'"], 8: ["R U R' U2 R U R'"],
+  },
+};
+// Con la posición de entrenamiento (cruz en la cara física U, última capa en D).
+const altOK = (kind, main, alt) => {
+  try {
+    const { solvedCube } = CM();
+    const c = run(solvedCube(), invert(expand(main, HOLD)));
+    run(c, expand(alt, HOLD));
+    const { isSolved } = CM();
+    if (kind === 'OLL' || kind === 'OCLL') return topUniform(c, 'U') && isF2L(c, 'U');
+    if (kind === 'EOLL') return isF2L(c, 'U') && c.every((s) => !(s.n[1] === -1 && Math.abs(s.p[0]) + Math.abs(s.p[2]) === 1) || s.c === 'D');
+    if (kind === 'F2L') return isF2L(c, 'U');
+    return isSolved(c); // PLL: el estado de partida es exactamente el mismo
+  } catch (e) { return false; }
+};
+const _algs = {};
+export function algsOf(kind, id) {
+  const k = kind + ' ' + id;
+  if (_algs[k]) return _algs[k];
+  const main = (GROUPS[kind] || {})[id];
+  if (!main) return [];
+  const out = [main];
+  for (const a of (ALT_SRC[kind] || {})[id] || []) if (!out.includes(a) && altOK(kind, main, a)) out.push(a);
+  return (_algs[k] = out);
+}
+
 // ---- Casos para entrenar (cubo con AMARILLO arriba y VERDE de frente) ----
-export function getCase(kind, id) {
-  const alg = (GROUPS[kind] || {})[id];
-  if (!alg) return null;
-  const { solvedCube, NAME } = CM();
+export function getCase(kind, id, alt = 0) {
+  const algs = algsOf(kind, id);
+  if (!algs.length) return null;
+  const ai = Math.max(0, Math.min(alt | 0, algs.length - 1)), alg = algs[ai];
+  const { solvedCube } = CM();
   const ends = [], faceAlg = expand(alg, HOLD, ends), setup = invert(faceAlg);
   const steps = alg.trim().split(/\s+/).map((t, i) => ({ t, end: ends[i] })); // símbolo + giros de cara acumulados
   const frame = {}; for (const [fr, col] of Object.entries(HOLD)) frame[col] = fr; // cara de color -> posición al sujetarlo
@@ -297,8 +302,26 @@ export function getCase(kind, id) {
     const where = (set) => { const g = new Map(); for (const s of shown) (g.get(s.p + '') || g.set(s.p + '', []).get(s.p + '')).push(s.c); for (const [p, cs] of g) if (cs.slice().sort().join('') === set) return p; };
     pair = [where(colorsAt('1,-1,1')), where(colorsAt('1,0,1'))];
   }
-  return { kind, id, label: kind === 'F2L' ? 'F2L ' + id : kind + ' ' + id, alg, steps, faceAlg, setup, frame, shown, pair,
+  return { kind, id, key: kind + ' ' + id, label: kind === 'F2L' ? 'F2L ' + id : kind + ' ' + id, alg, algs, ai, steps, faceAlg, setup, frame, shown, pair,
     icon: kind === 'F2L' ? null : caseIcon(run(solvedCube(), setup), STYLE[kind], true) };
+}
+
+// F2L básico en una resolución: para cada ranura, ¿qué caso de los 8 básicos era la situación de partida?
+export function f2lCases(P, snap, mvs) {
+  const { mv, clone } = CM(), f = P.f, out = {};
+  const after = (i) => { const c = clone(snap); for (let j = 0; j <= i; j++) mv(c, mvs[j].m); return c; };
+  for (const seg of P.segs) {
+    if (!/^slot\d$/.test(seg.key) || seg.turns <= 0) continue;
+    const S = after(seg.a), E = after(seg.b), need = slotSet(E, f), had = slotSet(S, f);
+    if (!need.some((v, i) => v && !had[i])) continue;
+    search: for (const [id, alg] of Object.entries(F2L)) for (const o of orisWithD(f)) for (let u = 0; u < 4; u++) {
+      const c = clone(S);
+      for (let i = 0; i < u; i++) mv(c, OPP[f]);
+      run(c, expand(alg, o));
+      if (crossOK(c, f) && slotSet(c, f).every((v, i) => !need[i] || v)) { out[seg.key] = { id, alg }; break search; }
+    }
+  }
+  return out;
 }
 
 // Icono de la capa superior vista desde arriba. flip = ver el cubo con amarillo arriba.
@@ -350,4 +373,4 @@ export function caseIcon(state, kind, flip = false) {
   return `<svg viewBox="0 0 ${W} ${W}" width="56" height="56" aria-hidden="true">${r}</svg>`;
 }
 
-window.Insight = { F2L_CAT, analyze, phases, summarize, casesOf, getCase, caseIcon, expand, invert, OLL, PLL, GROUPS, TPS_ALG, HOLD };
+window.Insight = { analyze, phases, summarize, casesOf, f2lCases, algsOf, getCase, caseIcon, expand, invert, OLL, PLL, GROUPS, TPS_ALG, HOLD };
