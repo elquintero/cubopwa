@@ -133,38 +133,32 @@ dialog.wide{width:min(720px,96vw)}
 #svScr{margin-top:12px;font:12px ui-monospace,Menlo,monospace;word-break:break-word}
 #trHold svg{width:64px;height:64px}#trainbar.setup #trHold svg{filter:drop-shadow(0 0 8px rgba(255,213,0,.55))}
 #trAlg{font-size:16px;letter-spacing:.04em;line-height:1.7}#svScr summary{cursor:pointer;font:13px system-ui}#svScr p{margin:8px 0 0}
+#cv.ok{filter:drop-shadow(0 0 16px rgba(61,220,151,.5))}#cv.bad{filter:drop-shadow(0 0 16px rgba(255,154,61,.6))}
+#trSteps{display:flex;gap:6px;flex-wrap:wrap}#trSteps span{padding:3px 10px;border-radius:99px;font-size:12px;border:1px solid var(--line);color:var(--mu)}
+#trSteps .on{color:var(--tx);border-color:var(--tx)}#trSteps .done{color:var(--ok);border-color:var(--ok)}
+#trSay{margin:0;font-size:14px;line-height:1.4}#trSay.e{color:#ff9a3d}
+.algrow{display:flex;gap:8px;align-items:baseline;flex-wrap:wrap}.algrow .cap{color:var(--mu);font-size:12px}
+#trAlg span{margin:0 .1em;padding-bottom:1px;font-weight:600}#trAlg .d{color:var(--ok)}#trAlg .c{border-bottom:2px solid var(--tx)}
+#trAlg .e{color:#ff9a3d;border-bottom:2px solid #ff9a3d}#trAlg .n{color:var(--tx)}
+#trIcon img,.tile img{width:100%;max-width:64px;height:auto;display:block;border-radius:8px}
+.chips{display:flex;gap:6px;overflow-x:auto;padding:2px 0 10px;margin:6px 0 0}
+.chips button{flex:none;padding:7px 12px;border-radius:99px;border:1px solid var(--line);color:var(--mu);font-size:13px;font-weight:600}
+.chips .on{background:#1c2128;color:var(--tx);border-color:#3a414b}
+.stage,.prac{display:flex;gap:12px;align-items:center;width:100%;padding:10px;border:1px solid var(--line);border-radius:16px;text-align:left;background:#0f1318;margin-bottom:10px}
+.stage:hover,.prac:hover{border-color:#3a414b}
+.stage img{width:76px;height:76px;border-radius:12px;flex:none;background:#0b0d10}
+.stage .tx,.prac .tx{flex:1;min-width:0;display:grid;gap:3px}.stage b{font:600 16px Poppins,system-ui,sans-serif}.stage .tx span,.prac small{color:var(--mu);font-size:13px}
+#scr[data-cap]:not([data-cap=""])::before{content:attr(data-cap);display:block;font:600 11px system-ui,sans-serif;letter-spacing:.08em;text-transform:uppercase;color:var(--mu);margin-bottom:2px}
+.hero{display:block;margin:4px auto 10px;width:min(210px,58vw);border-radius:16px;background:#0b0d10}
+.goal{text-align:center;margin:0 0 6px;font-weight:600}
+.rule{display:flex;gap:10px;align-items:flex-start;margin:12px 0;font-size:14px}
+.rule i{flex:none;width:24px;height:24px;border-radius:50%;background:#1c2128;display:grid;place-items:center;font:600 12px Poppins,system-ui,sans-serif;font-style:normal}
+.prac .ic{display:flex;gap:4px;flex:none}.prac .ic svg,.prac .ic img{width:40px;height:40px;display:block;border-radius:6px}.prac b{font-size:14px}
+.meter{height:4px;border-radius:2px;background:#1c2128;overflow:hidden}.meter i{display:block;height:100%;background:var(--ok)}
+.lnbar{display:flex;align-items:center;gap:8px;margin-bottom:8px}
 #toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0));transform:translateX(-50%);background:#1a2027;padding:10px 16px;border-radius:10px;opacity:0;pointer-events:none;transition:opacity .2s;max-width:90vw;font-size:14px}
 #toast.show{opacity:1}
 @media(prefers-reduced-motion:reduce){#toast,input[role=switch],input[role=switch]::after{transition:none}}
-#trSteps{display:flex;gap:6px;list-style:none;margin:0;padding:0}
-#trSteps li{flex:1;display:flex;align-items:center;gap:6px;padding:6px 8px;border:1px solid var(--line);border-radius:10px;color:var(--mu);font-size:12px;font-weight:600;min-width:0}
-#trSteps li b{width:18px;height:18px;border-radius:50%;background:#262d36;display:grid;place-items:center;font-size:11px;color:var(--tx);flex:none}
-#trSteps li.on{border-color:var(--ac);color:var(--tx)}#trSteps li.on b{background:var(--ac);color:#06101c}
-#trSteps li.done{color:var(--ok)}#trSteps li.done b{background:var(--ok);color:#06101c}
-#trSay{font-size:14px;font-weight:500;padding:8px 10px;border-radius:10px;background:#0f1318;line-height:1.4}
-#trSay.ok{color:var(--ok)}#trSay.warn{color:#ffd54a}#trSay.err{color:#ff9a3d}
-#trLook{font-size:12.5px;line-height:1.4;margin:0}#trLook[hidden]{display:none}
-#trAlg .lbl{display:block;color:var(--mu);font:600 11px system-ui,sans-serif;letter-spacing:.06em;text-transform:uppercase}
-#trAlg span{margin:0 .12em}#trAlg span.d{color:var(--ok)}#trAlg span.c{border-bottom:2px solid var(--tx)}#trAlg span.e{color:#ff9a3d;border-bottom:2px solid #ff9a3d}
-#trAlg.pre{opacity:.65}
-#trEye .slash{display:none}#trEye.off .slash{display:block}#trEye{color:var(--tx)}#trEye.off{color:var(--mu)}
-#trHelp{margin:0}#trHelp ul{margin:8px 0 0;padding-left:18px;font-size:13px;color:var(--mu)}#trHelp li{margin:5px 0}#trHelp b{color:var(--tx)}
-#tcPacks{display:flex;gap:6px;flex-wrap:wrap;margin:0 0 10px}#tcPacks button{border:1px solid var(--line);border-radius:99px;padding:5px 12px;font-size:12.5px;color:var(--tx)}#tcPacks button:hover{border-color:var(--ac)}
-#lnList{display:grid;gap:8px}
-.les{display:flex;gap:12px;align-items:center;text-align:left;border:1px solid var(--line);border-radius:14px;padding:12px;background:#0f1318;width:100%}
-.les .no{width:28px;height:28px;border-radius:50%;background:#1c2128;display:grid;place-items:center;font-weight:600;flex:none;font-size:13px}
-.les.seen .no{background:var(--ok);color:#06101c}.les.here{border-color:var(--ac)}
-.les b{display:block;font-size:15px}.les small{color:var(--mu);font-size:12.5px}.les .tag{margin-left:auto;font-size:11px;color:var(--ac);border:1px solid var(--line);border-radius:99px;padding:2px 8px;flex:none}
-#lnView[hidden],#lnList[hidden]{display:none}
-#lnView .idea{font-size:15px;margin:10px 0}#lnView ul{padding-left:18px;margin:8px 0}#lnView li{margin:8px 0;line-height:1.45}
-#lnView h4{margin:16px 0 6px;font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--mu);font-weight:600}
-#lnDemo{display:grid;gap:8px;justify-items:center;margin:12px 0}
-#lnCv{width:min(280px,70vw);aspect-ratio:1}
-#lnAlg{font:16px/1.7 ui-monospace,Menlo,Consolas,monospace;letter-spacing:.04em;text-align:center}#lnAlg span{margin:0 .12em}#lnAlg .d{color:var(--ok)}
-#lnTiles{display:flex;flex-wrap:wrap;gap:8px;justify-content:center}
-.lt{border:1px solid var(--line);border-radius:12px;padding:6px 4px;display:grid;gap:3px;justify-items:center;background:#0f1318;width:76px}.lt.on{border-color:var(--ac);background:#14202e}.lt svg{width:52px;height:52px}.lt small{font-size:11px;color:var(--mu);font-weight:600;text-align:center;line-height:1.2}
-.plan{border:1px solid var(--line);border-radius:14px;padding:12px;margin:8px 0;background:#0f1318}.plan.here{border-color:var(--ac)}.plan b{display:block}.plan ul{margin:6px 0 0}
-.plan .you{color:var(--ac);font-size:12px;font-weight:600}
 </style>
 </head>
 <body>
@@ -172,32 +166,24 @@ dialog.wide{width:min(720px,96vw)}
   <img class="logo" src="logo-96.png" alt="" width="28" height="28"><span class="brand">Cub<span>IQ</span></span>
   <span class="sp"></span>
   <button id="btnConn"><i></i><span id="status">Conectar</span></button>
-  <button class="icon" id="btnLearn" aria-label="Aprender CFOP" title="Aprender CFOP"><svg viewBox="0 0 24 24"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v15H6.5A2.5 2.5 0 0 0 4 20.5ZM4 20.5A2.5 2.5 0 0 0 6.5 23H20v-5"/><path d="M8 7h8M8 11h6"/></svg></button>
-  <button class="icon" id="btnTrain" aria-label="Entrenar" title="Entrenar"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/></svg></button>
+  <button class="icon" id="btnTrain" aria-label="Aprender y entrenar" title="Aprender y entrenar"><svg viewBox="0 0 24 24"><path d="M3 7.5 12 3l9 4.5-9 4.5Z"/><path d="M7 10.5v5c0 1.4 2.2 2.8 5 2.8s5-1.4 5-2.8v-5"/><path d="M21 7.5v6"/></svg></button>
   <button class="icon" id="btnStats" aria-label="Estadísticas" title="Estadísticas"><svg viewBox="0 0 24 24"><path d="M6 20V11M12 20V4M18 20v-6"/></svg></button>
   <button class="icon" id="btnSet" aria-label="Ajustes" title="Ajustes"><svg viewBox="0 0 24 24"><path d="M4 21v-7M4 10V3M12 21v-9M12 8V3M20 21v-5M20 12V3M1 14h6M9 8h6M17 16h6"/></svg></button>
 </header>
 <main>
   <div id="trainbar" hidden>
+    <div id="trSteps"><span id="st1">1 · Prepara el caso</span><span id="st2">2 · Haz el algoritmo</span></div>
     <div class="tr-top">
       <div id="trIcon"></div><div id="trHold"></div>
       <div class="tr-info"><b id="trTitle"></b><span id="trStat" class="mu"></span></div>
-      <button class="icon" id="trEye" aria-label="Mostrar u ocultar el algoritmo" aria-pressed="true" title="Mostrar u ocultar el algoritmo"><svg viewBox="0 0 24 24"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12Z"/><circle cx="12" cy="12" r="3"/><path class="slash" d="M3 3l18 18"/></svg></button>
+      <button class="icon" id="trHelp" aria-label="¿Qué significan las letras?" title="¿Qué significan las letras?"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M9.6 9.3a2.5 2.5 0 0 1 4.8.8c0 1.7-2.4 2-2.4 3.8M12 17.2v.1"/></svg></button>
+      <button class="icon" id="trEye" aria-label="Mostrar u ocultar el algoritmo"></button>
       <button class="icon" id="trExit" aria-label="Salir del entrenamiento" title="Salir"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></svg></button>
     </div>
-    <ol id="trSteps" aria-label="Pasos"><li><b>1</b>Sujeta</li><li><b>2</b>Crea el caso</li><li><b>3</b>Resuelve</li></ol>
-    <div id="trSay" role="status" aria-live="polite"></div>
-    <p id="trLook" class="mu" hidden></p>
-    <code id="trAlg"></code>
-    <details id="trHelp"><summary>¿Cómo se leen los giros?</summary><ul>
-      <li><b>R L U D F B</b> = derecha, izquierda, arriba, abajo, frente y detrás.</li>
-      <li>Letra sola = un cuarto de vuelta como las agujas del reloj, <i>mirando esa cara de frente</i>. Con apóstrofo (<b>R'</b>) = al revés. Con un 2 (<b>R2</b>) = media vuelta.</li>
-      <li><b>r f</b> en minúscula = esa cara junto con la capa del medio. <b>M</b> = capa del medio. <b>x y z</b> = girar el cubo entero.</li>
-      <li>Sujeta el cubo con el <b>amarillo arriba</b> y el <b>verde de frente</b> (el cubito de la barra te lo recuerda).</li>
-      <li>Colores: <b style="color:var(--ok)">verde</b> = hecho bien · <b style="color:#ffd54a">amarillo</b> = medio giro · <b style="color:#ff9a3d">naranja</b> = error, te dice cómo deshacerlo.</li>
-    </ul></details>
+    <p id="trSay"></p>
+    <div class="algrow"><span class="cap" id="trCap">Algoritmo</span><code id="trAlg"></code></div>
   </div>
-  <div id="scr"></div>
+    <div id="scr"></div>
   <div id="hint"></div>
   <div id="timer">0.00</div>
   <div id="phase"></div>
@@ -237,7 +223,7 @@ dialog.wide{width:min(720px,96vw)}
     <div id="log">Aquí aparecerán los datos crudos del cubo.</div>
   </details>
   <h3>Acerca de</h3>
-  <p class="mu" style="margin:0">CubIQ · versión <span id="ver">1.4.1</span></p>
+  <p class="mu" style="margin:0">CubIQ · versión <span id="ver">1.4.0</span></p>
 </dialog>
 <dialog id="dlgCal" aria-label="Calibrar giroscopio">
   <div class="dh"><h2 id="calT">Calibrar</h2><button id="calX" aria-label="Cerrar">✕</button></div>
@@ -249,21 +235,16 @@ dialog.wide{width:min(720px,96vw)}
   <div id="calAng" class="mu" role="status" aria-live="polite"></div>
   <div class="row"><button class="btn pri" id="calNext">Siguiente</button><button class="btn" id="calCancel">Cancelar</button></div>
 </dialog>
-<dialog id="dlgTrain" aria-label="Entrenamiento">
-  <div class="dh"><h2>Entrenar</h2><button id="tcX" aria-label="Cerrar">✕</button></div>
-  <div class="seg" id="tcTabs"><button data-k="OLL" class="on">OLL</button><button data-k="PLL">PLL</button></div>
-  <div id="tcPacks"><button data-p="OLL2">OLL en 2 pasos · 9</button><button data-p="PLL2">PLL en 2 pasos · 7</button></div>
+<dialog id="dlgLearn" aria-label="Aprender CFOP">
+  <div class="dh"><h2 id="lnT">Aprender CFOP</h2><button id="lnX" aria-label="Cerrar">✕</button></div>
+  <div id="lnBody"></div>
+</dialog>
+<dialog id="dlgTrain" aria-label="Elegir casos">
+  <div class="dh"><h2>Elegir casos</h2><button id="tcX" aria-label="Cerrar">✕</button></div>
+  <div class="chips" id="tcTabs"></div>
   <div id="tcGrid"></div>
   <div class="keyrow"><span><i style="background:#3a414b"></i>nuevo</span><span><i style="background:#ff9a3d"></i>lento</span><span><i style="background:#ffd54a"></i>medio</span><span><i style="background:var(--ok)"></i>rápido</span></div>
   <div class="tc-foot"><span id="tcCount" class="mu"></span><button class="btn" id="tcAll">Todos</button><button class="btn" id="tcClear">Limpiar</button><button class="btn pri" id="tcGo">Entrenar</button></div>
-</dialog>
-<dialog id="dlgLearn" class="wide" aria-label="Aprender CFOP">
-  <div class="dh"><h2 id="lnT">Aprender CFOP</h2><button id="lnX" aria-label="Cerrar">✕</button></div>
-  <div id="lnList"></div>
-  <div id="lnView" hidden>
-    <button class="btn" id="lnBack">← Lecciones</button>
-    <div id="lnBody"></div>
-  </div>
 </dialog>
 <dialog id="dlgSolve" class="wide" aria-label="Detalle de la resolución">
   <div class="dh"><h2 id="svT">Resolución</h2><button id="svX" aria-label="Cerrar">✕</button></div>
@@ -330,13 +311,13 @@ const view=v=>{const a=A,b=flip?-Bt:Bt;let x=v[0]*Math.cos(a)+v[2]*Math.sin(a),z
 let disp=solvedCube(),queue=[],anim=null;
 const clone=c=>c.map(s=>({p:[...s.p],n:[...s.n],c:s.c}));
 const rotV=(v,ax,t)=>{const c=Math.cos(t),s=Math.sin(t),[x,y,z]=v;return ax===0?[x,y*c-z*s,y*s+z*c]:ax===1?[x*c+z*s,y,-x*s+z*c]:[x*c-y*s,x*s+y*c,z]};
-function paintCube(g,W,state,an,Gf,vw){
+function paintCube(g,W,state,an,Gf,vw,cf){
   const S=W/6,Q=[],GG=v=>Gf?Gf(v):v;g.clearRect(0,0,W,W);
   for(const s of state){
     const n=s.n,inL=an&&s.p[an.ax]===an.sg,rot=v=>inL?rotV(v,an.ax,an.th):v;
     const nv=vw(GG(rot(n)));if(nv[2]<=0.001&&!an)continue;
     const u=n[1]||n[2]?[1,0,0]:[0,1,0],vv=n[2]?[0,1,0]:[0,0,1],c=s.p.map((x,i)=>x+n[i]*0.5);
-    const polys=[[0.5,'#0b0d10'],[0.43,COL[s.c]]].map(([h,col])=>[col,[[-1,-1],[1,-1],[1,1],[-1,1]].map(([i,j])=>vw(GG(rot(c.map((x,t)=>x+h*(i*u[t]+j*vv[t]))))))]);
+    const polys=[[0.5,'#0b0d10'],[0.43,cf?cf(s):COL[s.c]]].map(([h,col])=>[col,[[-1,-1],[1,-1],[1,1],[-1,1]].map(([i,j])=>vw(GG(rot(c.map((x,t)=>x+h*(i*u[t]+j*vv[t]))))))]);
     Q.push({z:vw(GG(rot(c)))[2],polys});
   }
   Q.sort((a,b)=>a.z-b.z);
@@ -361,7 +342,7 @@ function setFacelets(str,first){ // refleja el estado real que reporta el cubo (
   if(sig(c)===sig(cube)&&!first)return;
   showCube(c);if(first&&phase==='scramble')newScramble();else checkPhase();
 }
-function checkPhase(){if(phase==='scramble')trackSync();else if(phase==='running'&&isSolved(cube))finish()}
+function checkPhase(){if(phase==='scramble')trackSync();else{if(train&&at&&(phase==='ready'||phase==='running'))algSync();if(phase==='running'&&isSolved(cube))finish()}}
 let drag=null;
 cv.addEventListener('pointerdown',e=>{drag=[e.clientX,e.clientY];cv.setPointerCapture(e.pointerId)});
 cv.addEventListener('pointermove',e=>{if(!drag)return;A+=(e.clientX-drag[0])*0.01;Bt=Math.max(-1.4,Math.min(1.4,Bt+(e.clientY-drag[1])*0.01));drag=[e.clientX,e.clientY];draw()});
@@ -374,10 +355,11 @@ let cube=solvedCube(),phase='scramble',scr=[],targetSig='',t0=0,mvs=[],ti=0,pen=
 const $=id=>document.getElementById(id);
 const fmt=ms=>{if(ms===Infinity)return'DNF';const s=ms/1000;return s>=60?Math.floor(s/60)+':'+(s%60).toFixed(2).padStart(5,'0'):s.toFixed(2)};
 const toast=m=>{const t=$('toast');t.textContent=m;t.className='show';clearTimeout(toast.h);toast.h=setTimeout(()=>t.className='',2800)};
-function setPhase(p){phase=p;const T=$('timer');if(p==='ready'&&train)ap=mkTk(train.faceAlg,cube);else if(p==='scramble')ap=null;
+function setPhase(p){phase=p;const T=$('timer');
   $('phase').textContent={scramble:train?'Prepara el caso · amarillo arriba, verde de frente':'Haz este scramble',ready:train?'Ejecuta el algoritmo hasta resolver el cubo':cfg.insp?'Toca o pulsa espacio para iniciar la inspección':cfg.auto?'Haz un giro para empezar':'Toca o pulsa espacio para empezar',inspect:'Inspección · haz un giro para empezar',running:''}[p];
   T.className=p==='ready'?'ready':p==='running'?'run':p==='inspect'?'insp':'';
   if(p==='ready'){T.textContent=train?'¡Start!':cfg.insp?'15':cfg.auto?'¡Start!':'0.00';$('live').textContent=''}
+  if(p==='ready'&&train)initAlg();
   if(scr.length)renderScr();if(train)renderTrain();$('trainbar').classList.toggle('setup',p==='scramble')}
 let prog=0,wrong=[],pre=[];
 const OPP={U:'D',D:'U',L:'R',R:'L',F:'B',B:'F'},qOf=m=>m.endsWith("'")?3:m.endsWith('2')?2:1,qs=(f,q)=>f+['','','2',"'"][q];
@@ -386,7 +368,9 @@ function newScramble(){setScramble(train?train.setup:genScramble())}
 const dsp=m=>train&&train.frame?train.frame[m[0]]+m.slice(1):m; // en entrenamiento, los giros se muestran según cómo sujetas el cubo
 function renderScr(){ // verde = bien · amarillo = medio giro · naranja = error
   const el=$('scr'),h=$('hint');el.innerHTML='';
-  if(train&&phase!=='scramble'){h.className='';h.textContent='';return} // en entrenamiento solo se ve el algoritmo
+  $('cv').className=phase==='scramble'&&scr.length?(wrong.length?'bad':prog>0&&prog<scr.length?'ok':''):'';
+  $('scr').dataset.cap=train&&phase==='scramble'?'Giros para crear el caso':'';
+  if(train&&phase!=='scramble'){h.className='';h.textContent='';sayTrain();return} // en entrenamiento solo se ve el algoritmo
   const e=scr[prog],half=wrong.length===1&&e&&wrong[0][0]===e[0]&&qOf(e)===2;
   scr.forEach((m,i)=>{const sp=document.createElement('span');
     sp.className=phase==='scramble'?(i<prog?'d':i>prog?'n':!wrong.length?'c':half?'p':'e'):phase==='ready'?'d':'f';
@@ -394,7 +378,7 @@ function renderScr(){ // verde = bien · amarillo = medio giro · naranja = erro
   if(phase==='scramble'&&wrong.length){h.className=half?'p':'e';
     h.textContent=half?'Medio giro hecho: repite el mismo movimiento':'Error. Deshaz: '+wrong.slice().reverse().map(([f,q])=>dsp(qs(f,(4-q)%4))).join(' ')}
   else{h.className='';h.textContent=''}
-  if(train)renderTrain();
+  if(train)sayTrain(); // el aviso se calcula al final, cuando ya se sabe qué giro hay que deshacer
 }
 function trackSync(){const j=pre.indexOf(sig(cube));if(j>=0){prog=j;wrong=[]}renderScr();if(phase==='scramble'&&prog===scr.length)setPhase('ready')}
 function trackMove(m){
@@ -405,26 +389,14 @@ function trackMove(m){
   if(wrong.length===1&&e&&wrong[0][0]===e[0]&&wrong[0][1]===qOf(e)){wrong=[];prog++}
   trackSync();
 }
-/* Seguimiento del algoritmo al resolver: avanza con cada giro correcto y detecta errores (como el scramble). */
-let ap=null;
-function mkTk(list,start){const c=clone(start),pre=[sig(c)];list.forEach(m=>{mv(c,m);pre.push(sig(c))});return{list,pre,prog:0,wrong:[],errs:0}}
-function tkMove(t,m){
-  const f=m[0],q=qOf(m),had=t.wrong.length;let k=t.wrong.length-1;
-  while(k>=0&&t.wrong[k][0]!==f&&OPP[f]===t.wrong[k][0])k--;
-  if(k>=0&&t.wrong[k][0]===f){t.wrong[k][1]=(t.wrong[k][1]+q)%4;if(!t.wrong[k][1])t.wrong.splice(k,1)}else t.wrong.push([f,q]);
-  const e=t.list[t.prog];
-  if(t.wrong.length===1&&e&&t.wrong[0][0]===e[0]&&t.wrong[0][1]===qOf(e)){t.wrong=[];t.prog++}
-  const j=t.pre.indexOf(sig(cube));if(j>=0){t.prog=j;t.wrong=[]}
-  if(t.wrong.length&&!had)t.errs++;
-}
 function onMove(m){
   if(phase==='ready'||phase==='inspect')snap=clone(cube);
   mv(cube,m);queue.push(m);pump();
-  if(train&&ap&&(phase==='ready'||phase==='running')){tkMove(ap,m);renderTrain()}
   if(phase==='scramble')trackMove(m);
   else if(phase==='ready'){if(!train&&(!cfg.auto||cfg.insp))return;pen=0;t0=performance.now();mvs=[{m,t:0}];setPhase('running');tick()}
   else if(phase==='inspect'){const el=performance.now()-ti;pen=el>17000?2:el>15000?1:0;t0=performance.now();mvs=[{m,t:0}];setPhase('running');tick()}
   else if(phase==='running'){mvs.push({m,t:performance.now()-t0});$('live').textContent=mvs.slice(-12).map(x=>x.m).join(' ');if(isSolved(cube))finish()}
+  if(train&&at&&(phase==='ready'||phase==='running'))algMove(m);
   gest.push(m);if(gest.length>4)gest.shift();
   if(gest.length===4&&gest.every(x=>x===m)&&'RLU'.includes(m[0])&&phase!=='running'){gest=[];gesture(m[0])}
 }
@@ -646,42 +618,77 @@ function showAlert(r){
   clearTimeout(alertTimer);alertTimer=setTimeout(hideAlert,14000);
 }
 function hideAlert(){$('alert').hidden=true;alertData=null;clearTimeout(alertTimer)}
-let tsel=new Set(),tstats={},tses={n:0},tTab='OLL',lastKey='',iconCache={};
+let tsel=new Set(),tstats={},tses={n:0},tTab='OLL',lastKey='',iconCache={},at=null;
 try{tstats=JSON.parse(localStorage.getItem('tstats')||'{}')}catch(e){}
 const saveTS=()=>{try{localStorage.setItem('tstats',JSON.stringify(tstats))}catch(e){}};
+const GN={F2L:'F2L',EOLL:'OLL aristas',OCLL:'OLL esquinas',OLL:'OLL',CPLL:'PLL esquinas',EPLL:'PLL aristas',PLL:'PLL'};
+const TABS=[['F2L','F2L básico'],['EOLL','OLL aristas'],['OCLL','OLL esquinas'],['OLL','OLL completo'],['CPLL','PLL esquinas'],['EPLL','PLL aristas'],['PLL','PLL completo']];
+const caseTitle=c=>/^(OLL|PLL|F2L)$/.test(c.kind)?c.label:GN[c.kind]+' · '+c.id;
+const GREY='#39414b',flipS=s=>({p:[-s.p[0],-s.p[1],s.p[2]],n:[-s.n[0],-s.n[1],s.n[2]],c:s.c});
+const EYE='<svg viewBox="0 0 24 24"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12Z"/><circle cx="12" cy="12" r="3"/></svg>';
+const EYEOFF='<svg viewBox="0 0 24 24"><path d="M3 3l18 18M10.6 5.1A10 10 0 0 1 12 5c6.4 0 10 7 10 7a17 17 0 0 1-3.2 4M6.5 6.6C3.6 8.4 2 12 2 12s3.6 7 10 7a10 10 0 0 0 4-.8M9.9 9.9a3 3 0 0 0 4.2 4.2"/></svg>';
 // Cubo de ayuda: así hay que sujetarlo (amarillo arriba, verde de frente, naranja a la derecha)
 const HOLD_SVG='<svg viewBox="0 0 64 64" aria-label="Amarillo arriba, verde de frente"><polygon points="32,5 57,18.5 32,32 7,18.5" fill="#ffd500"/><polygon points="7,18.5 32,32 32,59 7,45.5" fill="#1faa59"/><polygon points="32,32 57,18.5 57,45.5 32,59" fill="#ff8a1f"/><path stroke="#0b0d10" stroke-width="1.4" fill="none" d="M15.3 14 40.3 27.5M23.7 9.5 48.7 23M15.3 23 40.3 9.5M23.7 27.5 48.7 14M15.3 23V50M23.7 27.5V54.5M7 27.5 32 41M7 36.5 32 50M40.3 27.5V54.5M48.7 23V50M32 41 57 27.5M32 50 57 36.5"/></svg>';
+// Dibujo 3D de un caso de F2L: solo la pareja a color, el resto en gris
+function f2lImg(c){
+  const key='F2L '+c.id;if(iconCache[key])return iconCache[key];
+  const cs=document.createElement('canvas');cs.width=cs.height=168;
+  paintCube(cs.getContext('2d'),168,c.shown,null,null,DV,s=>c.pair.includes(s.p+'')?COL[s.c]:GREY);
+  return iconCache[key]='<img src="'+cs.toDataURL()+'" alt="">';
+}
+const iconOf=c=>c.icon||f2lImg(c);
+function iconFor(kind,id){const key=kind+' '+id;return iconCache[key]||(iconCache[key]=iconOf(Insight.getCase(kind,id)))}
+// --- seguimiento del algoritmo: verde = bien, naranja = error (también si lo haces con giros dobles, slices, etc.) ---
+function initAlg(){
+  if(!train){at=null;return}
+  const c=clone(cube),pr=[sig(c)];train.faceAlg.forEach(m=>{mv(c,m);pr.push(sig(c))});
+  at={list:train.faceAlg,prog:0,wrong:[],pre:pr};
+}
+function algSync(){const j=at.pre.indexOf(sig(cube));if(j>=0){at.prog=j;at.wrong=[]}renderAlg()}
+function algMove(m){
+  const f=m[0],q=qOf(m),w=at.wrong;let k=w.length-1;
+  while(k>=0&&w[k][0]!==f&&OPP[f]===w[k][0])k--;
+  if(k>=0&&w[k][0]===f){w[k][1]=(w[k][1]+q)%4;if(!w[k][1])w.splice(k,1)}else w.push([f,q]);
+  const e=at.list[at.prog];
+  if(w.length===1&&e&&w[0][0]===e[0]&&w[0][1]===qOf(e)){at.wrong=[];at.prog++}
+  algSync();
+}
+function sayTrain(){ // una sola frase, clara, según el momento
+  if(!train)return;
+  const half=/^Medio giro/.test($('hint').textContent);
+  const W=half?0:phase==='scramble'?wrong.length:at?at.wrong.length:0;
+  const undo=$('hint').textContent.replace(/^Error\.\s*Deshaz:\s*/,'');$('hint').textContent='';$('hint').className='';
+  $('trSay').textContent=phase==='scramble'?(half?'Vas bien: repite el mismo giro para completar la media vuelta.':W?'¡Ojo! Te has equivocado.'+(undo?' Deshaz: '+undo:' Deshaz el último giro.'):'Sujeta el cubo con el amarillo arriba y el verde de frente. Haz estos giros para crear el caso.')
+    :phase==='ready'?'¡Caso listo! El dibujo de arriba es lo que ves en tu cubo. Ahora haz el algoritmo.'
+    :W?'¡Ojo! Giro equivocado.'+(undo?' Deshaz: '+undo:' Deshazlo para seguir.'):'Sigue el algoritmo. Cada giro bien se pone en verde.';
+  $('trSay').className=W?'e':'';
+}
+function renderAlg(){
+  if(!train)return;
+  const el=$('trAlg'),A=at&&(phase==='ready'||phase==='running')?at:null,hide=!cfg.showAlg;
+  const cur=A?train.steps.findIndex(x=>x.end>A.prog):-1;
+  el.innerHTML='';
+  train.steps.forEach((x,i)=>{const sp=document.createElement('span');
+    sp.className=!A?'n':x.end<=A.prog?'d':i===cur?(A.wrong.length?'e':'c'):'n';
+    sp.textContent=hide?'•':x.t;el.appendChild(sp);el.appendChild(document.createTextNode(' '))});
+  if(A){const h=$('hint');
+    if(A.wrong.length){h.className='e';h.textContent='Error. Deshaz: '+A.wrong.slice().reverse().map(([f,q])=>dsp(qs(f,(4-q)%4))).join(' ')}
+    else{h.className='';h.textContent=''}
+    $('cv').className=A.wrong.length?'bad':A.prog>0?'ok':'';
+  }
+  sayTrain();
+}
 function renderTrain(){
-  const bar=$('trainbar');bar.hidden=!train;if(!train){draw();return}
-  const k=train.kind+' '+train.id,b=tstats[k]&&tstats[k].best,setup=phase==='scramble',n=train.setup.length;
-  $('trIcon').innerHTML=train.icon;$('trHold').innerHTML=HOLD_SVG;$('trTitle').textContent=train.label;
+  const bar=$('trainbar');bar.hidden=!train;$('phase').hidden=!!train;
+  if(!train){$('cv').className='';draw();return}
+  const k=train.kind+' '+train.id,b=tstats[k]&&tstats[k].best;
+  $('trIcon').innerHTML=iconOf(train);$('trHold').innerHTML=HOLD_SVG;$('trTitle').textContent=caseTitle(train);
   $('trStat').textContent='#'+(tses.n+1)+(b?' · mejor '+fmt(b):'');
-  // pasos: 1 sujeta · 2 crea el caso · 3 resuelve
-  const cur=setup?(prog>0||wrong.length?2:1):3,li=$('trSteps').children;
-  for(let i=0;i<3;i++)li[i].className=i+1<cur?'done':i+1===cur?'on':'';
-  // mensaje de ayuda: dice si lo estás haciendo bien
-  let msg='',cls='ok';
-  if(setup){
-    const e=scr[prog],half=wrong.length===1&&e&&wrong[0][0]===e[0]&&qOf(e)===2;
-    if(wrong.length){cls=half?'warn':'err';msg=half?'Medio giro hecho: repite el mismo movimiento.':'✗ Te has equivocado. Deshaz: '+wrong.slice().reverse().map(([f,q])=>dsp(qs(f,(4-q)%4))).join(' ')}
-    else if(prog===0)msg='Paso 1 y 2 · Sujeta el cubo como el dibujo y haz los giros de arriba, de izquierda a derecha.';
-    else msg='✓ Vas bien · giro '+prog+' de '+n+'. Sigue con el siguiente.';
-  }else if(ap){
-    const tot=ap.list.length;
-    if(ap.wrong.length){cls='err';msg='✗ Te has salido del algoritmo. Deshaz: '+ap.wrong.slice().reverse().map(([f,q])=>dsp(qs(f,(4-q)%4))).join(' ')}
-    else if(phase==='ready')msg='✓ Caso creado. Ahora resuélvelo con el algoritmo; el tiempo empieza con tu primer giro.';
-    else msg='✓ Vas bien · '+ap.prog+' de '+tot+' giros.';
-  }
-  const say=$('trSay');say.className=cls;say.textContent=msg;
-  const lk=$('trLook');lk.hidden=!train.look;lk.textContent=train.look?(setup?'Al terminar, comprueba que se parece al dibujo. ':'Cómo reconocerlo: ')+train.look:'';
-  // algoritmo: el ojo lo muestra u oculta en cualquier momento
-  const eye=$('trEye');eye.classList.toggle('off',!cfg.showAlg);eye.setAttribute('aria-pressed',cfg.showAlg);
-  const al=$('trAlg');al.hidden=!cfg.showAlg;al.className=setup?'pre':'';
-  if(cfg.showAlg){
-    const tk=setup?null:ap,done=tk?tk.prog:0,cu=tk?train.cum.findIndex(c=>c>done):-1;
-    al.innerHTML='<span class="lbl">'+(setup?'Así se resolverá':'Algoritmo')+'</span>'+train.tokens.map((x,i)=>'<span class="'+(tk?(train.cum[i]<=done?'d':i===cu?(tk.wrong.length?'e':'c'):''):'')+'">'+x+'</span>').join(' ');
-  }
-  draw();
+  $('trEye').innerHTML=cfg.showAlg?EYE:EYEOFF;$('trEye').setAttribute('aria-pressed',cfg.showAlg);
+  $('trEye').title=cfg.showAlg?'Ocultar el algoritmo (hazlo de memoria)':'Mostrar el algoritmo';
+  $('trCap').textContent=cfg.showAlg?'Algoritmo':'Algoritmo oculto: hazlo de memoria';
+  $('st1').className=phase==='scramble'?'on':'done';$('st2').className=phase==='scramble'?'':'on';
+  renderAlg();draw();
 }
 function pickCase(){ // al azar, con más probabilidad para los casos nuevos o lentos
   const ks=[...tsel];if(!ks.length)return null;
@@ -690,40 +697,94 @@ function pickCase(){ // al azar, con más probabilidad para los casos nuevos o l
   let r=Math.random()*w.reduce((a,b)=>a+b,0);
   for(let i=0;i<pool.length;i++){r-=w[i];if(r<=0)return pool[i]}return pool[pool.length-1];
 }
-function nextCase(){const k=pickCase();if(!k)return exitTrain();lastKey=k;const sp=k.indexOf(' ');train=Insight.getCase(k.slice(0,sp),k.slice(sp+1));renderTrain();newScramble()}
+function nextCase(){const k=pickCase();if(!k)return exitTrain();lastKey=k;const sp=k.indexOf(' ');train=Insight.getCase(k.slice(0,sp),k.slice(sp+1));at=null;renderTrain();newScramble()}
 function startSession(){
   if(!isSolved(cube)){toast('Deja el cubo resuelto para empezar');return false}
-  tses={n:0};hideAlert();lastKey='';ap=null;nextCase();return true;
+  tses={n:0};hideAlert();lastKey='';nextCase();return true;
 }
 function startTrain(kind,id){tsel=new Set([kind+' '+id]);return startSession()}
-function exitTrain(){train=null;ap=null;renderTrain();newScramble();$('timer').textContent='0.00';$('live').textContent=''}
+function startGroup(kind){tsel=new Set(Object.keys(Insight.GROUPS[kind]).map(id=>kind+' '+id));return startSession()}
+function exitTrain(){train=null;at=null;renderTrain();newScramble();$('timer').textContent='0.00';$('live').textContent=''}
 function finishTrain(t){
-  const k=train.kind+' '+train.id,e=tstats[k]||(tstats[k]={n:0,best:Infinity,last:0}),rec=t<e.best,lab=train.label,er=ap?ap.errs:0;
+  const k=train.kind+' '+train.id,e=tstats[k]||(tstats[k]={n:0,best:Infinity,last:0}),rec=t<e.best,lab=caseTitle(train);
   e.n++;e.last=t;if(rec)e.best=t;saveTS();tses.n++;if(rec)celebrate();
-  nextCase();$('timer').textContent=fmt(t);$('live').textContent=(rec?'★ ':'')+lab+' · '+fmt(t)+(er?' · '+er+(er>1?' errores':' error'):' · sin errores');
+  nextCase();$('timer').textContent=fmt(t);$('live').textContent=(rec?'★ ':'')+lab+' · '+fmt(t);
 }
+// --- elegir casos a mano ---
+function renderTabs(){const box=$('tcTabs');box.innerHTML='';for(const [k,l] of TABS){const b=document.createElement('button');b.textContent=l;b.dataset.k=k;box.appendChild(b)}}
 function renderCatalog(){
-  const grid=$('tcGrid'),sc=grid.scrollTop,ids=tTab==='OLL'?[...Object.keys(Insight.OLL2),...Object.keys(Insight.OLL)]:Object.keys(Insight.PLL);grid.innerHTML='';
+  const grid=$('tcGrid'),sc=grid.scrollTop,ids=Object.keys(Insight.GROUPS[tTab]);grid.innerHTML='';
+  for(const b of $('tcTabs').children)b.classList.toggle('on',b.dataset.k===tTab);
   for(const id of ids){
     const key=tTab+' '+id,st=tstats[key],lv=!st?'':st.best<=2000?'good':st.best<=4000?'mid':'slow',on=tsel.has(key);
-    const ic=iconCache[key]||(iconCache[key]=Insight.getCase(tTab,id).icon);
     const b=document.createElement('button');b.className='tile'+(on?' sel':'');b.setAttribute('aria-pressed',on);b.setAttribute('aria-label',key);
-    b.innerHTML=ic+'<small>'+id+'</small><i class="'+lv+'"></i>';
+    b.innerHTML=iconFor(tTab,id)+'<small>'+id+'</small><i class="'+lv+'"></i>';
     b.onclick=()=>{on?tsel.delete(key):tsel.add(key);renderCatalog()};grid.appendChild(b);
   }
   grid.scrollTop=sc;$('tcCount').textContent=tsel.size?tsel.size+' elegidos':'Toca los casos que quieras practicar';$('tcGo').disabled=!tsel.size;
 }
-$('btnTrain').onclick=()=>{renderCatalog();$('dlgTrain').showModal()};
 $('tcX').onclick=()=>$('dlgTrain').close();
 $('dlgTrain').addEventListener('click',e=>{if(e.target===$('dlgTrain'))$('dlgTrain').close()});
-$('tcTabs').onclick=e=>{const b=e.target.closest('button');if(!b)return;tTab=b.dataset.k;for(const x of $('tcTabs').children)x.classList.toggle('on',x===b);$('tcGrid').scrollTop=0;renderCatalog()};
-$('tcAll').onclick=()=>{Object.keys(tTab==='OLL'?Insight.OLL:Insight.PLL).forEach(id=>tsel.add(tTab+' '+id));renderCatalog()};
+$('tcTabs').onclick=e=>{const b=e.target.closest('button');if(!b)return;tTab=b.dataset.k;$('tcGrid').scrollTop=0;renderCatalog()};
+$('tcAll').onclick=()=>{Object.keys(Insight.GROUPS[tTab]).forEach(id=>tsel.add(tTab+' '+id));renderCatalog()};
 $('tcClear').onclick=()=>{tsel.clear();renderCatalog()};
 $('tcGo').onclick=()=>{if(startSession())$('dlgTrain').close()};
 $('trEye').onclick=()=>{cfg.showAlg=!cfg.showAlg;saveCfg();renderTrain()};
-const PK={OLL2:['OLL cruz I','OLL cruz L',...[21,22,23,24,25,26,27].map(n=>'OLL '+n)],PLL2:['PLL Aa','PLL T','PLL Y','PLL Ua','PLL Ub','PLL H','PLL Z']};
-function startPack(keys){tsel=new Set(keys);if(!isSolved(cube)){toast('Deja el cubo resuelto para empezar');return false}return startSession()}
-$('tcPacks').onclick=e=>{const b=e.target.closest('button');if(!b)return;tsel=new Set(PK[b.dataset.p]);tTab=b.dataset.p.startsWith('OLL')?'OLL':'PLL';for(const x of $('tcTabs').children)x.classList.toggle('on',x.dataset.k===tTab);$('tcGrid').scrollTop=0;renderCatalog()};
+// --- Aprender CFOP: cuatro fases, solo lo fundamental ---
+const LESSONS=[
+ {n:0,t:'Leer los giros',img:'notation',goal:'Cada letra es una cara del cubo. Se gira mirándola de frente.',rules:['Una letra sola (R): cuarto de vuelta en el sentido del reloj.',"Con apóstrofo (R'): al revés. Con un 2 (R2): media vuelta.",'U arriba · D abajo · R derecha · L izquierda · F frente · B atrás.','r, f y M giran más de una capa; x, y y z giran el cubo entero.'],practice:[],end:''},
+ {n:1,t:'La cruz',img:'cross',goal:'Las 4 aristas de una cara, cada una junto a su centro.',rules:['Hazla abajo: así ves el resto del cubo.','Planifícala en los 15 s de inspección.','Siempre se puede resolver en 8 giros o menos.'],practice:[]},
+ {n:2,t:'F2L',img:'f2l',goal:'Las dos primeras capas: 4 parejas de esquina y arista.',rules:['Junta la esquina con su arista arriba y mételas a la vez.','No rompas la cruz ni las parejas ya hechas.','Busca la siguiente pareja mientras metes la actual.'],practice:[['F2L','F2L básico']]},
+ {n:3,t:'OLL',img:'oll',goal:'Dejar toda la cara de arriba en amarillo.',rules:['Empieza en 2 pasos: primero la cruz amarilla, luego las esquinas.','Reconoce el dibujo amarillo; no memorices letras.','Cuando domines esos, aprende los 57 de un solo paso.'],practice:[['EOLL','Paso 1 · cruz amarilla'],['OCLL','Paso 2 · esquinas'],['OLL','OLL completo']]},
+ {n:4,t:'PLL',img:'pll',goal:'Colocar la última capa: cubo resuelto.',rules:['Empieza en 2 pasos: primero las esquinas, luego las aristas.','Fíjate en los «faros»: dos pegatinas iguales juntas.','Después aprende los 21 PLL.'],practice:[['CPLL','Paso 1 · esquinas'],['EPLL','Paso 2 · aristas'],['PLL','PLL completo']]}];
+const DVb=v=>{const a=-0.6,b=-0.45;let x=v[0]*Math.cos(a)+v[2]*Math.sin(a),z=-v[0]*Math.sin(a)+v[2]*Math.cos(a);const y=v[1]*Math.cos(b)-z*Math.sin(b);z=v[1]*Math.sin(b)+z*Math.cos(b);return[x,y,z]};
+const STAGE={ // qué piezas se colorean en cada fase (cubo con amarillo arriba)
+  cross:s=>s.p[1]===-1&&s.p.filter(v=>v!==0).length<=2?COL[s.c]:GREY,
+  f2l:s=>s.p[1]<=0?COL[s.c]:GREY,
+  oll:s=>s.p[1]<=0||(s.p[1]===1&&s.n[1]===1)?COL[s.c]:GREY,
+  pll:s=>COL[s.c]};
+function notationImg(cs){ // la cara R resaltada, con su flecha en el sentido del reloj
+  const W=cs.width,g2=cs.getContext('2d'),S=W/6,P=v=>{const q=DV(v);return[W/2+q[0]*S,W/2-q[1]*S]};
+  paintCube(g2,W,solvedCube(),null,null,DV,s=>s.p[0]===1?COL[s.c]:GREY);
+  const pts=[];for(let i=0;i<=24;i++){const f=1.7-i/24*1.9;pts.push(P([2.5,1.9*Math.cos(f),1.9*Math.sin(f)]))}
+  g2.strokeStyle='#ffd54a';g2.lineWidth=7;g2.lineCap='round';g2.setLineDash([2,12]);g2.beginPath();pts.forEach((p,k)=>k?g2.lineTo(p[0],p[1]):g2.moveTo(p[0],p[1]));g2.stroke();g2.setLineDash([]);
+  const e=pts[pts.length-1],b=pts[pts.length-3],a=Math.atan2(e[1]-b[1],e[0]-b[0]);
+  g2.fillStyle='#ffd54a';g2.beginPath();g2.moveTo(e[0]+Math.cos(a)*16,e[1]+Math.sin(a)*16);g2.lineTo(e[0]+Math.cos(a+2.4)*16,e[1]+Math.sin(a+2.4)*16);g2.lineTo(e[0]+Math.cos(a-2.4)*16,e[1]+Math.sin(a-2.4)*16);g2.fill();
+  g2.font='700 22px system-ui,sans-serif';g2.textAlign='center';g2.textBaseline='middle';
+  for(const [t,v] of [['U',[0,2.2,0]],['F',[0,-0.1,2.3]],['R',[1.9,0.1,0]]]){const p=P(v);g2.fillStyle='rgba(11,13,16,.88)';g2.beginPath();g2.arc(p[0],p[1],17,0,7);g2.fill();g2.fillStyle='#fff';g2.fillText(t,p[0],p[1]+1)}
+}
+function stageImg(key){
+  const ck='stage '+key;if(iconCache[ck])return iconCache[ck];
+  const cs=document.createElement('canvas');cs.width=cs.height=220;
+  if(key==='notation'){notationImg(cs);return iconCache[ck]=cs.toDataURL()}
+  paintCube(cs.getContext('2d'),220,solvedCube().map(flipS),null,null,key==='cross'?DVb:DV,STAGE[key]);
+  return iconCache[ck]=cs.toDataURL();
+}
+function meterOf(kind){const ids=Object.keys(Insight.GROUPS[kind]);let good=0;for(const id of ids){const st=tstats[kind+' '+id];if(st&&st.best<=2500)good++}return{good,n:ids.length}}
+function renderLearn(i){
+  const box=$('lnBody');
+  if(i==null){
+    $('lnT').textContent='Aprender CFOP';
+    box.innerHTML='<p class="mu" style="margin:0 0 12px">Cruz → F2L → OLL → PLL. Toca una fase.</p>'+LESSONS.map((L,n)=>'<button class="stage" data-i="'+n+'"><img src="'+stageImg(L.img)+'" alt=""><span class="tx"><b>'+L.n+' · '+L.t+'</b><span>'+L.goal+'</span></span></button>').join('')+'<div class="row"><button class="btn" id="lnFree">Elegir casos a mano</button></div>';
+    return;
+  }
+  const L=LESSONS[i];$('lnT').textContent=L.n+' · '+L.t;
+  box.innerHTML='<div class="lnbar"><button class="btn" data-back>← Fases</button></div><img class="hero" src="'+stageImg(L.img)+'" alt=""><p class="goal">'+L.goal+'</p>'
+    +L.rules.map((r,n)=>'<div class="rule"><i>'+(n+1)+'</i><span>'+r+'</span></div>').join('')
+    +(L.practice.length?'<h3>Practicar</h3>'+L.practice.map(([k,name])=>{const m=meterOf(k),ids=Object.keys(Insight.GROUPS[k]).slice(0,3);
+        return '<button class="prac" data-k="'+k+'"><span class="ic">'+ids.map(id=>iconFor(k,id)).join('')+'</span><span class="tx"><b>'+name+'</b><small>'+m.n+' casos · '+m.good+' rápidos</small><span class="meter"><i style="width:'+(m.good/m.n*100)+'%"></i></span></span></button>'}).join('')
+      :(L.end!==undefined?L.end:'<p class="mu">Practica con el timer normal. En el detalle de cada resolución verás cuánto tardas en la cruz.</p>')+'<div class="row"><button class="btn" data-back>Entendido</button></div>');
+}
+$('btnTrain').onclick=()=>{renderLearn();$('dlgLearn').showModal()};
+$('trHelp').onclick=()=>{renderLearn(0);$('dlgLearn').showModal()};
+$('lnX').onclick=()=>$('dlgLearn').close();
+$('dlgLearn').addEventListener('click',e=>{if(e.target===$('dlgLearn')){$('dlgLearn').close();return}
+  const st=e.target.closest('.stage'),pr=e.target.closest('.prac');
+  if(st)renderLearn(+st.dataset.i);
+  else if(pr){if(startGroup(pr.dataset.k))$('dlgLearn').close()}
+  else if(e.target.closest('[data-back]'))renderLearn();
+  else if(e.target.id==='lnFree'){$('dlgLearn').close();renderCatalog();$('dlgTrain').showModal()}});
+renderTabs();
 function gesture(f){ // 4 giros seguidos de la misma cara con el cubo real
   if(f==='R'&&alertData){const a=alertData;startTrain(a.kind,a.id)}
   else if(f==='L'&&alertData)hideAlert();
@@ -732,127 +793,6 @@ function gesture(f){ // 4 giros seguidos de la misma cara con el cubo real
 $('alLearn').onclick=()=>{if(alertData)startTrain(alertData.kind,alertData.id)};
 $('alDismiss').onclick=hideAlert;$('trExit').onclick=exitTrain;
 $('oIns').onchange=e=>{cfg.insight=e.target.checked;saveCfg();if(!cfg.insight)hideAlert()};
-
-/* ===== Formación CFOP: lecciones cortas con demostración en el cubo ===== */
-let lseen={};try{lseen=JSON.parse(localStorage.getItem('lseen')||'{}')}catch(e){}
-const saveLS=()=>{try{localStorage.setItem('lseen',JSON.stringify(lseen))}catch(e){}};
-const FLIPV=v=>[-v[0],-v[1],v[2]];
-const dmo={raf:0,tm:0,c:null,st:null,i:0};
-function dmPaint(an){const cvs=$('lnCv');if(!cvs||!dmo.st)return;paintCube(cvs.getContext('2d'),cvs.width,dmo.st,an,dmo.c&&dmo.c.flip?FLIPV:null,DV)}
-function dmMark(){const a=$('lnAlg');if(!a||!dmo.c)return;[...a.children].forEach((sp,i)=>sp.className=dmo.c.cum[i]<=dmo.i&&dmo.i>0?'d':'')}
-function dmStop(){cancelAnimationFrame(dmo.raf);clearTimeout(dmo.tm)}
-function dmReset(){dmStop();dmo.i=0;if(dmo.c)dmo.st=clone(dmo.c.start);dmPaint(null);dmMark()}
-function dmPlay(){
-  dmReset();const c=dmo.c;if(!c)return;
-  const step=()=>{
-    if(dmo.i>=c.moves.length)return;
-    const m=c.moves[dmo.i],q=m.endsWith("'")?-1:m.endsWith('2')?2:1,n=FACES[m[0]],ax=n.findIndex(x=>x),sg=n[ax],th=-sg*q*Math.PI/2,t0=performance.now(),dur=430;
-    const f=now=>{const k=Math.min(1,(now-t0)/dur);dmPaint({ax,sg,th:th*k*k*(3-2*k)});
-      if(k<1)dmo.raf=requestAnimationFrame(f);else{mv(dmo.st,m);dmo.i++;dmPaint(null);dmMark();dmo.tm=setTimeout(step,160)}};
-    dmo.raf=requestAnimationFrame(f)};
-  step();
-}
-// d: {k,id} caso del catálogo · {alg,ic} fórmula suelta (desde el estado que ella misma resuelve) · {fwd} fórmula aplicada a un cubo resuelto
-function dmBuild(d){
-  if(d.fwd){const mv0=Insight.expand(d.alg),tk=d.alg.trim().split(/\s+/);return{moves:mv0,tokens:tk,cum:tk.map((_,i)=>i+1),start:solvedCube(),flip:false}}
-  const c=d.k?Insight.getCase(d.k,d.id):Insight.custom(d.alg,d.ic||'OLL');
-  return{moves:c.faceAlg,tokens:c.tokens,cum:c.cum,start:build(c.setup),flip:true,icon:c.icon}
-}
-const PLAN=[
-  {h:'Más de 50 s',goal:'Objetivo: bajar de 50 s sin pararte.',st:['Cruz planificada entera en la inspección.','F2L sin girar el cubo entero.','OLL y PLL en 2 pasos (16 fórmulas en total).']},
-  {h:'Entre 40 y 50 s',goal:'Objetivo: quitar pausas.',st:['Pausas por debajo del 15 % del tiempo (míralo en «ver última»).','Aprende los 21 PLL, de uno en uno, hasta que salgan solos.','Empieza a buscar la siguiente pareja mientras insertas la actual.']},
-  {h:'Entre 30 y 40 s',goal:'Objetivo: OLL de un solo paso y F2L fluido.',st:['Aprende los OLL de uno en uno; la app te avisa del ahorro tras cada resolución.','Reconoce el OLL mientras cierras la última pareja.','Cruz y primera pareja decididas antes de empezar.']},
-  {h:'Menos de 30 s',goal:'Objetivo: pulir.',st:['Mantén un buen ritmo en OLL y PLL (5–6 giros/s).','Repasa los casos lentos de tu catálogo (puntos naranjas).','Con todo lo anterior dominado, el siguiente paso serían COLL o ZBLL.']}
-];
-const LES=[
- {t:'Notación y postura',m:'3 min',idea:'Un algoritmo es una lista de giros. Se escribe con 6 letras, una por cada cara.',
-  pts:['<b>R L U D F B</b> = derecha, izquierda, arriba, abajo, frente y detrás.',
-       'Letra sola = un cuarto de vuelta como las agujas del reloj, <i>mirando esa cara de frente</i>. Con apóstrofo (<b>R\'</b>) = al revés. Con un 2 (<b>R2</b>) = media vuelta.',
-       '<b>r f</b> en minúscula = esa cara junto con la capa del medio. <b>M</b> = capa del medio. <b>x y z</b> = girar el cubo entero.',
-       'Para resolver: cruz abajo y verde de frente. En el entrenador de OLL y PLL: amarillo arriba y verde de frente.'],
-  groups:[{h:'Mira cómo se mueve (pulsa ▶ Ver)',d:[{alg:"R U R' U'",fwd:1,label:"R U R' U'"}]}]},
- {t:'Cruz: planifícala antes de girar',m:'5 min',idea:'La cruz es corta (casi siempre 8 giros o menos). Si la planificas entera en la inspección, empiezas a resolver sin pararte.',
-  pts:['Resuélvela <b>abajo</b>, para no tener que girar el cubo después.',
-       'Cada arista de la cruz queda con su color lateral igual al del centro de esa cara.',
-       'En los 15 s de inspección, recorre toda la cruz con la mente <b>antes</b> de tocar el cubo. Si aún no la tienes, sigue mirando.',
-       'En los últimos segundos localiza la <b>primera pareja</b> de F2L (una esquina blanca y su arista).',
-       'Mídelo: en «ver última» tienes el tiempo de tu cruz y la pausa antes del primer giro.']},
- {t:'F2L: donde se gana el tiempo',m:'10 min',idea:'F2L resuelve las dos primeras capas a la vez, con 4 parejas (una esquina y su arista). En 30–50 s suele ser más de la mitad del tiempo total.',
-  pts:['Una <b>pareja</b> es una esquina blanca y la arista que va en su mismo hueco (la esquina blanco-verde-rojo con la arista verde-rojo).',
-       'Idea básica: <b>júntalas arriba</b>, lejos del hueco, y <b>mételas juntas</b>. Meterlas por separado cuesta el doble de giros.',
-       'No gires el cubo entero: usa la cara U para llevar la pareja encima de su hueco.',
-       '<b>Mira la siguiente pareja mientras insertas la actual.</b> Esa es la diferencia entre 50 s y 30 s.',
-       'Practica despacio y sin pausas. El ritmo constante llega antes que los giros rápidos.',
-       'Aún no hay entrenador por casos de F2L en la app: usa «ver última» para ver cuánto te cuesta cada pareja.']},
- {t:'OLL en 2 pasos',m:'15 min',idea:'OLL pone toda la cara de arriba en amarillo. En 2 pasos solo necesitas 2 fórmulas para la cruz y 7 para las esquinas.',
-  pts:['<b>Paso 1 · cruz amarilla.</b> Mira solo las aristas: punto (ninguna), L (dos juntas) o línea (dos opuestas).',
-       'Línea: una fórmula. L: otra. Punto: las dos, una detrás de otra. Gira U hasta que tu cubo se vea como el dibujo.',
-       '<b>Paso 2 · esquinas.</b> Con la cruz hecha quedan 7 casos. Cuenta cuántas esquinas amarillas ves y hacia dónde miran las demás.',
-       'Empieza por <b>Sune</b> y <b>Anti-Sune</b>: son los más usados.'],
-  groups:[{h:'Paso 1 · aristas',d:[{alg:"F R U R' U' F'",ic:'OLL',label:'Línea'},{alg:"f R U R' U' f'",ic:'OLL',label:'L'},{k:'OLL',id:'2',label:'Punto'}]},
-          {h:'Paso 2 · esquinas',d:[{k:'OLL',id:'27',label:'Sune'},{k:'OLL',id:'26',label:'Anti-Sune'},{k:'OLL',id:'21',label:'H'},{k:'OLL',id:'22',label:'Pi'},{k:'OLL',id:'23',label:'U'},{k:'OLL',id:'24',label:'T'},{k:'OLL',id:'25',label:'L'}]}],
-  pack:'OLL2',packL:'Entrenar OLL en 2 pasos (9 casos)'},
- {t:'PLL en 2 pasos',m:'15 min',idea:'PLL coloca todas las piezas de la última capa. En 2 pasos: primero las esquinas y luego las aristas. Solo necesitas 7 fórmulas.',
-  pts:['Mira los lados de la capa de arriba. Un <b>faro</b> son dos esquinas del mismo color juntas.',
-       '<b>Paso 1 · esquinas.</b> A (cambia 3 esquinas), T (2 esquinas vecinas) o Y (2 esquinas en diagonal). Termina cuando, girando U, las esquinas casan con sus centros.',
-       '<b>Paso 2 · aristas.</b> Ua o Ub (3 aristas), H (2 pares opuestos) o Z (2 pares vecinos).',
-       'Al final puede faltar un giro de U para alinear la capa.',
-       'En los dibujos, las flechas marcan qué pieza va a dónde.'],
-  groups:[{h:'Paso 1 · esquinas',d:[{k:'PLL',id:'Aa',label:'A'},{k:'PLL',id:'T',label:'T'},{k:'PLL',id:'Y',label:'Y'}]},
-          {h:'Paso 2 · aristas',d:[{k:'PLL',id:'Ua',label:'Ua'},{k:'PLL',id:'Ub',label:'Ub'},{k:'PLL',id:'H',label:'H'},{k:'PLL',id:'Z',label:'Z'}]}],
-  pack:'PLL2',packL:'Entrenar PLL en 2 pasos (7 casos)'},
- {t:'Ritmo y mirar adelante',m:'5 min',idea:'Entre 30 y 50 s casi nunca te frena la velocidad de los dedos, sino las pausas.',
-  pts:['Una pausa es el tiempo parado antes del primer giro de cada fase. CubIQ la mide aparte en «ver última» (el anillo de pausas).',
-       'Busca que las pausas sean <b>menos del 15 %</b> del tiempo total.',
-       'Mientras haces el último giro de una pareja, busca ya la siguiente. Mientras cierras la última, reconoce el OLL.',
-       'Resuelve algo más despacio pero sin parar: la velocidad llega sola cuando desaparecen las pausas.',
-       'Después de cada resolución, abre «ver última», toca la fase con más pausa y repítela.']},
- {t:'Tu plan según tu tiempo',m:'3 min',idea:'Pautas generales y orientativas: qué trabajar según tu nivel.',plan:1}
-];
-function myLevel(){const v=solves.slice(-12).map(val).filter(x=>x!==Infinity);if(v.length<3)return{i:-1};const m=v.reduce((a,b)=>a+b,0)/v.length/1000;return{i:m>50?0:m>40?1:m>30?2:3,m}}
-function renderLearnList(){
-  const lv=myLevel(),done=LES.filter((_,i)=>lseen[i]).length;
-  $('lnT').textContent='Aprender CFOP · '+done+'/'+LES.length;$('lnList').hidden=false;$('lnView').hidden=true;
-  $('lnList').innerHTML=LES.map((l,i)=>'<button class="les'+(lseen[i]?' seen':'')+'" data-i="'+i+'"><span class="no">'+(lseen[i]?'✓':i+1)+'</span><span><b>'+l.t+'</b><small>'+l.m+' · '+l.idea.split('. ')[0].replace(/\.$/,'')+'</small></span>'+(l.plan&&lv.i>=0?'<span class="tag">'+PLAN[lv.i].h+'</span>':'')+'</button>').join('');
-}
-let curDemos=[];
-function openLesson(i){
-  dmStop();const l=LES[i];curDemos=[];
-  let h='<h3 style="margin:14px 0 4px;font-size:18px;text-transform:none;letter-spacing:0;color:var(--tx)">'+(i+1)+'. '+l.t+'</h3><p class="idea">'+l.idea+'</p>';
-  if(l.plan){
-    const lv=myLevel();
-    h+=lv.i>=0?'<p class="mu">Tu media de las últimas resoluciones es de '+lv.m.toFixed(1)+' s.</p>':'<p class="mu">Cuando tengas unas cuantas resoluciones, aquí se marcará tu nivel.</p>';
-    h+=PLAN.map((p,k)=>'<div class="plan'+(k===lv.i?' here':'')+'"><b>'+p.h+(k===lv.i?' <span class="you">· estás aquí</span>':'')+'</b><span class="mu">'+p.goal+'</span><ul>'+p.st.map(x=>'<li>'+x+'</li>').join('')+'</ul></div>').join('');
-    h+='<div class="row"><button class="btn" data-pk="OLL2">Entrenar OLL en 2 pasos</button><button class="btn" data-pk="PLL2">Entrenar PLL en 2 pasos</button></div>';
-  }else{
-    h+='<ul>'+l.pts.map(x=>'<li>'+x+'</li>').join('')+'</ul>';
-    if(l.groups){
-      h+='<div id="lnDemo"><canvas id="lnCv" width="480" height="480" aria-label="Demostración en el cubo"></canvas><div id="lnAlg" aria-live="off"></div><button class="btn pri" id="lnPlay">▶ Ver</button></div>';
-      for(const g of l.groups){h+='<h4>'+g.h+'</h4><div class="lnTiles" style="display:flex;flex-wrap:wrap;gap:8px;justify-content:center">'+g.d.map(d=>{const n=curDemos.push(d)-1;d.c=dmBuild(d);return '<button class="lt" data-n="'+n+'">'+(d.c.icon||'<svg viewBox="0 0 40 40"><path d="M8 20h24M24 12l8 8-8 8" fill="none" stroke="#e8ecf1" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>')+'<small>'+d.label+'</small></button>'}).join('')+'</div>'}
-    }
-    if(l.pack)h+='<div class="row" style="justify-content:center"><button class="btn pri" data-pk="'+l.pack+'">'+l.packL+'</button></div>';
-  }
-  h+='<div class="row"><button class="btn" id="lnSeen">'+(lseen[i]?'✓ Hecha (quitar)':'Marcar como hecha')+'</button></div>';
-  $('lnBody').innerHTML=h;$('lnList').hidden=true;$('lnView').hidden=false;$('lnView').dataset.i=i;$('lnT').textContent='Aprender CFOP';
-  $('dlgLearn').scrollTop=0;if(curDemos.length)pickDemo(0,false);
-}
-function pickDemo(n,play){
-  const d=curDemos[n];if(!d)return;dmStop();dmo.c=d.c;dmo.i=0;dmo.st=clone(d.c.start);
-  [...document.querySelectorAll('#lnBody .lt')].forEach(b=>b.classList.toggle('on',+b.dataset.n===n));
-  $('lnAlg').innerHTML=d.c.tokens.map(x=>'<span>'+x+'</span>').join(' ');dmPaint(null);if(play)dmPlay();
-}
-$('btnLearn').onclick=()=>{renderLearnList();$('dlgLearn').showModal()};
-$('lnX').onclick=()=>$('dlgLearn').close();
-$('dlgLearn').addEventListener('close',dmStop);
-$('dlgLearn').addEventListener('click',e=>{if(e.target===$('dlgLearn'))$('dlgLearn').close()});
-$('lnList').onclick=e=>{const b=e.target.closest('.les');if(b)openLesson(+b.dataset.i)};
-$('lnBack').onclick=()=>{dmStop();renderLearnList()};
-$('lnBody').onclick=e=>{
-  const t=e.target.closest('.lt');if(t)return pickDemo(+t.dataset.n,true);
-  if(e.target.id==='lnPlay')return dmPlay();
-  if(e.target.id==='lnSeen'){const i=+$('lnView').dataset.i;lseen[i]?delete lseen[i]:lseen[i]=1;saveLS();return openLesson(i)}
-  const pk=e.target.closest('[data-pk]');if(pk&&startPack(PK[pk.dataset.pk])){dmStop();$('dlgLearn').close()}
-};
 
 /* ===== Detalle de la resolución: repetición, fases y cómo mejorar ===== */
 const PH_COL={cross:'#9b7bf0',slot1:'#5b6bf0',slot2:'#4a82f0',slot3:'#3a9be8',slot4:'#34b0de',oll:'#f0a43c',pll:'#3ddc97'};
