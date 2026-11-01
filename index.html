@@ -227,6 +227,16 @@ dialog .vh{padding:0 8px 0 18px}dialog .vb{padding:4px 18px 18px}
 .btn[hidden]{display:none}#scr{cursor:pointer}
 #scr{margin-top:auto}#timer{margin-top:6px}
 .tile{-webkit-touch-callout:none;user-select:none;-webkit-user-select:none}
+
+.coach{border:1px solid var(--line);border-radius:18px;background:var(--card);padding:12px 14px;margin-top:6px;text-align:left}
+.coach.mu{display:flex;gap:10px;align-items:center;font-size:13px}.coach.mu svg{width:18px;height:18px;flex:none}
+.coach h3{margin:0 0 8px}.coach h3 small,h3 small{margin-left:auto;font-weight:500;letter-spacing:0;text-transform:none;font-size:12px}
+.cbars{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.cb{display:grid;justify-items:center;gap:2px}.cb .tr{width:100%;max-width:56px;height:56px;border-radius:10px;background:#161b22;display:flex;align-items:flex-end;overflow:hidden}
+.cb .tr i{display:block;width:100%;border-radius:6px 6px 0 0;background:#3a414b}.cb.w .tr i{background:var(--ac)}
+.cb b{font:600 14px Poppins,system-ui,sans-serif}.cb span{font-size:11px;color:var(--mu)}.cb.w span{color:var(--ac)}
+.coach p{margin:10px 0 0;font-size:14px;line-height:1.4}.coach p b{color:var(--tx)}
+.coach .btn{margin-top:10px;font-size:13px;padding:7px 12px}
 </style>
 </head>
 <body data-view="home">
@@ -327,7 +337,7 @@ dialog .vh{padding:0 8px 0 18px}dialog .vb{padding:4px 18px 18px}
       <div id="log">Aquí aparecerán los datos crudos del cubo.</div>
     </details>
     <h3>Acerca de</h3>
-    <p class="mu" style="margin:0">CubIQ · versión <span id="ver">1.5.5</span></p>
+    <p class="mu" style="margin:0">CubIQ · versión <span id="ver">1.6.0</span></p>
   </div>
 </section>
 
@@ -787,7 +797,7 @@ function showAlert(r){
 function hideAlert(){$('alert').hidden=true;alertData=null;clearTimeout(alertTimer)}
 
 /* ===== Datos de aprendizaje y entrenamiento ===== */
-let tsel=new Set(),tstats={},tses={n:0},tTab='F2L',lastKey='',iconCache={},at=null,tmode='drill',torder='rand',seqI=0,trFrom=null,tpeek=false;
+let trReview=false,trFail=false,tsel=new Set(),tstats={},tses={n:0},tTab='F2L',lastKey='',iconCache={},at=null,tmode='drill',torder='rand',seqI=0,trFrom=null,tpeek=false;
 let lstats={},lfav={},lrec=[]; // lstats[caso]={s: nivel 0-3, c: seguidas limpias, n: repeticiones}
 try{tstats=JSON.parse(localStorage.getItem('tstats')||'{}');lstats=JSON.parse(localStorage.getItem('lstats')||'{}');lfav=JSON.parse(localStorage.getItem('lfav')||'{}');lrec=JSON.parse(localStorage.getItem('lrec')||'[]')}catch(e){}
 const saveTS=()=>{try{localStorage.setItem('tstats',JSON.stringify(tstats))}catch(e){}};
@@ -816,11 +826,75 @@ function f2lImg(c,size=168){
 const iconOf=(c,size)=>c.icon||f2lImg(c,size);
 function iconFor(kind,id){const key=kind+' '+id;return iconCache[key]||(iconCache[key]=iconOf(Insight.getCase(kind,id)))}
 
+
+/* ===== Coach: diagnóstico, reconocer o ejecutar, repaso espaciado ===== */
+const IV=[1,3,7,21,60],DAY=864e5,GRP=['cross','f2l','oll','pll'],GRP_N={cross:'Cruz',f2l:'F2L',oll:'OLL',pll:'PLL'};
+const EXPECT={cross:.14,f2l:.50,oll:.17,pll:.19},TPS_OK={cross:3,f2l:3,oll:4,pll:4}; // reparto típico del tiempo y ritmo mínimo razonable
+const coachCache=new WeakMap();
+function solveInfo(sv){
+  if(coachCache.has(sv))return coachCache.get(sv);
+  let r=null;
+  try{
+    if(sv.mv&&sv.fl&&sv.p!==2){
+      const moves=sv.mv.split(',').map(x=>{const [m,t]=x.split(' ');return{m,t:+t}}),start=fromFacelets(sv.fl),P=Insight.phases(start,moves);
+      if(P){
+        const cs=Insight.casesOf(P),f2=Insight.f2lCases(P,start,moves),g={};GRP.forEach(k=>g[k]={rec:0,exec:0,turns:0,step:0});const cases=[];
+        for(const x of P.segs){
+          if(x.turns<=0)continue;const k=x.key.startsWith('slot')?'f2l':x.key;
+          g[k].rec+=x.rec;g[k].exec+=x.exec;g[k].turns+=x.turns;g[k].step+=x.step;
+          const hit=x.key==='oll'?(cs.oll&&{kind:'OLL',id:String(cs.oll.id)}):x.key==='pll'?(cs.pll&&{kind:'PLL',id:String(cs.pll.id)}):(f2[x.key]&&{kind:'F2L',id:String(f2[x.key].id)});
+          if(hit)cases.push({...hit,ms:x.step});
+        }
+        r={g,cases};
+      }
+    }
+  }catch(e){console.error(e)}
+  coachCache.set(sv,r);return r;
+}
+function coachData(){
+  const infos=solves.slice(-20).map(solveInfo).filter(Boolean);
+  if(infos.length<3)return null;
+  const tot={},rec={},exec={},turns={};let all=0;
+  GRP.forEach(k=>{tot[k]=rec[k]=exec[k]=turns[k]=0});
+  for(const i of infos)GRP.forEach(k=>{tot[k]+=i.g[k].step;rec[k]+=i.g[k].rec;exec[k]+=i.g[k].exec;turns[k]+=i.g[k].turns});
+  GRP.forEach(k=>all+=tot[k]);if(!all)return null;
+  const share={},ratio={};GRP.forEach(k=>{share[k]=tot[k]/all;ratio[k]=share[k]/EXPECT[k]});
+  const weak=GRP.slice().sort((a,b)=>ratio[b]-ratio[a])[0],balanced=ratio[weak]<1.15;
+  const recShare=tot[weak]?rec[weak]/tot[weak]:0,tps=exec[weak]?turns[weak]/(exec[weak]/1000):0;
+  const kind=recShare>=.4?'rec':tps&&tps<TPS_OK[weak]?'exe':'ok';
+  const acc={};for(const i of infos)for(const c of i.cases){const k=c.kind+' '+c.id,a=acc[k]||(acc[k]={kind:c.kind,id:c.id,sum:0,n:0});a.sum+=c.ms;a.n++}
+  const slow=Object.values(acc).map(a=>({kind:a.kind,id:a.id,ms:a.sum/a.n,n:a.n})).sort((a,b)=>b.ms-a.ms);
+  return {n:infos.length,share,weak,balanced,recShare,tps,kind,slow};
+}
+const dueCases=()=>Object.keys(lstats).filter(k=>lstats[k].s>=3&&lstats[k].due&&lstats[k].due<=Date.now()).sort((a,b)=>lstats[a].due-lstats[b].due).map(k=>{const i=k.indexOf(' ');return [k.slice(0,i),k.slice(i+1)]});
+function setMastered(k,iv){const L=lstats[k]||(lstats[k]={s:0,c:0,n:0});L.s=3;L.c=0;L.i=iv;L.due=Date.now()+IV[iv]*DAY}
+function coachHTML(C){
+  if(!C)return '<div class="coach mu">'+SV(P_SPARK)+'<span>Resuelve unas cuantas veces con tu cubo conectado y aquí verás tu diagnóstico personal.</span></div>';
+  const bars=GRP.map(k=>'<div class="cb'+(k===C.weak&&!C.balanced?' w':'')+'"><div class="tr"><i style="height:'+Math.max(6,Math.round(C.share[k]*100*1.6))+'%"></i></div><b>'+Math.round(C.share[k]*100)+'%</b><span>'+GRP_N[k]+'</span></div>').join('');
+  const w=GRP_N[C.weak],pct=Math.round(C.recShare*100);
+  const msg=C.balanced?'Tu resolución está equilibrada. Sigue repasando los casos más lentos.'
+    :C.kind==='rec'?'<b>'+w+'</b>: pasas el '+pct+' % del tiempo parado antes de mover. Te falta reconocer el caso de un vistazo.'
+    :C.kind==='exe'?'<b>'+w+'</b>: piensas poco pero giras despacio ('+C.tps.toFixed(1)+' giros/s). Repite los algoritmos hasta que salgan fluidos.'
+    :'<b>'+w+'</b> es donde más tiempo pierdes. Repite sus casos más lentos para ganar regularidad.';
+  const can=(C.weak==='oll'||C.weak==='pll'||C.weak==='f2l')&&!C.balanced;
+  const act=can?'<button class="btn" id="coachGo">'+SV(C.kind==='exe'?P_CAP:P_WATCH)+(C.kind==='exe'?'Practicar el caso más lento':'Entrenar mis casos de '+w)+'</button>':'';
+  return '<div class="coach"><h3>'+SV(P_SPARK)+'Tu diagnóstico <small>últimas '+C.n+'</small></h3><div class="cbars">'+bars+'</div><p>'+msg+'</p>'+act+'</div>';
+}
+function coachAction(C){
+  const main={oll:'OLL',pll:'PLL',f2l:'F2L'}[C.weak],cs=C.slow.filter(c=>mainOf(c.kind)===main);
+  if(C.kind==='exe'&&cs.length)return openCase(cs[0].kind,cs[0].id);
+  tsel=new Set((cs.length?cs.slice(0,8):[]).map(c=>c.kind+' '+c.id));
+  if(!tsel.size)Object.keys(Insight.GROUPS[main]).forEach(id=>tsel.add(main+' '+id));
+  tTab=main;torder='rand';nav('train');toast('Casos elegidos según tus resoluciones');
+}
+
 /* ===== Recomendaciones ===== */
 const PATH=['F2L','EOLL','OCLL','CPLL','EPLL','OLL','PLL'];
 function recommended(){
   const out=[],seen=new Set();let nd=0,np=0;
   const add=(kind,id,why)=>{const k=kind+' '+id;if(out.length>=4||seen.has(k)||stageOf(k)>=3||!(Insight.GROUPS[kind]&&Insight.GROUPS[kind][id]))return false;seen.add(k);out.push([kind,id,why]);return true};
+  const C=coachData();
+  if(C)for(const c of C.slow)if(nd<2&&add(c.kind,c.id,'Te cuesta '+(c.ms/1000).toFixed(1)+' s'))nd++;
   for(const r of lrec)if(nd<2&&add(r.kind,r.id,'Detectado en tus resoluciones'))nd++;
   for(const k of Object.keys(lstats)){const L=lstats[k];if(np<1&&L.s>0&&L.s<3){const i=k.indexOf(' ');if(add(k.slice(0,i),k.slice(i+1),'Sigue donde lo dejaste'))np++}}
   const had=out.length;
@@ -862,15 +936,17 @@ function stageImg(key){
 }
 
 function tileL(kind,id,why){const k=kind+' '+id;
-  return '<button class="tile" data-k="'+kind+'" data-i="'+id+'" aria-label="'+lbl(kind,id)+'"'+(why?' title="'+why+'"':'')+'>'+iconFor(kind,id)+'<small>'+(kind==='F2L'?'F2L '+id:id)+'</small>'+lvHTML(stageOf(k))+'</button>'}
+  return '<button class="tile" data-k="'+kind+'" data-i="'+id+'" aria-label="'+lbl(kind,id)+'"'+(why?' title="'+why+'"':'')+'>'+iconFor(kind,id)+'<small>'+(/^(F2L|OLL|PLL)$/.test(kind)?kind+' '+id:id)+'</small>'+lvHTML(stageOf(k))+'</button>'}
 function lessonHTML(L,open){
   return '<details class="les"'+(open?' open':'')+'><summary><img src="'+stageImg(L.img)+'" alt=""><span>'+L.goal+'</span>'+SV(P_CHEV)+'</summary><div class="rules">'
     +(open?'<img class="hero" src="'+stageImg(L.img)+'" alt="">':'')+L.rules.map((r,n)=>'<div class="rule"><i>'+(n+1)+'</i><span>'+r+'</span></div>').join('')+'</div></details>';
 }
 function renderLearn(){
   const box=$('lnBody'),sc=box.scrollTop,isCase=lTab==='F2L'||lTab==='OLL'||lTab==='PLL';
-  const rec=recommended();let h='';
-  if(rec.length)h+='<h3 style="margin-top:6px">'+SV(P_SPARK)+'Recomendado</h3><div class="rec">'+rec.map(([k,i,w])=>tileL(k,i,w)).join('')+'</div>';
+  const rec=recommended(),due=dueCases();let h='';
+  h+=coachHTML(coachData());
+  if(due.length)h+='<h3 style="margin-top:14px">'+SV('<path d="M3 12a9 9 0 1 0 3-6.7M3 4v5h5"/><path d="M12 8v4l3 2"/>')+'Toca repasar <small>'+due.length+'</small></h3><div class="rec">'+due.slice(0,4).map(([k,i])=>tileL(k,i,'Repaso de un caso dominado')).join('')+'</div>';
+  if(rec.length)h+='<h3 style="margin-top:14px">'+SV(P_SPARK)+'Recomendado</h3><div class="rec">'+rec.map(([k,i,w])=>tileL(k,i,w)).join('')+'</div>';
   h+='<div class="seg" id="lnTabs" style="margin-top:16px">'+LT.map(([k,l])=>'<button data-k="'+k+'" class="'+(k===lTab?'on':'')+'">'+l+'</button>').join('')+'</div>';
   h+=lessonHTML(LESSONS[LI[lTab]],!isCase);
   if(isCase){
@@ -883,12 +959,13 @@ function renderLearn(){
 let lpT=0,lpFired=false;
 $('lnBody').addEventListener('pointerdown',e=>{const t=e.target.closest('.tile');if(!t)return;lpFired=false;clearTimeout(lpT);
   lpT=setTimeout(()=>{lpFired=true;const k=t.dataset.k+' '+t.dataset.i,L=lstats[k]||(lstats[k]={s:0,c:0,n:0});
-    if(L.s>=3){L.s=0;L.c=0;toast(lbl(t.dataset.k,t.dataset.i)+': vuelve a nuevo')}else{L.s=3;L.c=0;toast(lbl(t.dataset.k,t.dataset.i)+': marcado como dominado')}
+    if(L.s>=3){L.s=0;L.c=0;toast(lbl(t.dataset.k,t.dataset.i)+': vuelve a nuevo')}else{setMastered(k,1);toast(lbl(t.dataset.k,t.dataset.i)+': marcado como dominado. Lo repasarás en 3 días')}
     saveL();if(navigator.vibrate)navigator.vibrate(25);renderLearn()},550)});
 for(const ev of ['pointerup','pointercancel','pointermove','pointerleave'])$('lnBody').addEventListener(ev,()=>clearTimeout(lpT));
 $('lnBody').addEventListener('contextmenu',e=>{if(e.target.closest('.tile'))e.preventDefault()});
 $('lnBody').onclick=e=>{
   if(lpFired){lpFired=false;return}
+  if(e.target.closest('#coachGo')){const C=coachData();if(C)coachAction(C);return}
   const t=e.target.closest('.tile'),sg=e.target.closest('#lnTabs button'),ch=e.target.closest('#lnSubs button');
   if(t)openCase(t.dataset.k,t.dataset.i);
   else if(sg){lTab=sg.dataset.k;if(SUBS[lTab])lSub=SUBS[lTab][0][0];$('lnBody').scrollTop=0;renderLearn()}
@@ -1005,7 +1082,7 @@ function renderTrain(){
   if(!train){$('cv').className='';draw();return}
   const k=train.key,b=tstats[k]&&tstats[k].best;
   $('trIcon').innerHTML=iconOf(train,168);$('trHold').innerHTML=HOLD_SVG;$('trTitle').textContent=caseTitle(train);
-  if(tmode==='learn'){const L=lstats[k]||{s:1,c:0};$('trStat').innerHTML=lvHTML(L.s)+' '+['','Guiado','Memoria','Dominado'][L.s]+' · '+L.c+'/3'}
+  if(tmode==='learn'){const L=lstats[k]||{s:1,c:0};$('trStat').innerHTML=trReview?lvHTML(3)+' Repaso · '+L.c+'/2':lvHTML(L.s)+' '+['','Guiado','Memoria','Dominado'][L.s]+' · '+L.c+'/3'}
   else $('trStat').textContent='#'+(tses.n+1)+(b?' · mejor '+fmt(b):'');
   $('trEye').innerHTML=cfg.showAlg?EYE:EYEOFF;$('trEye').setAttribute('aria-pressed',cfg.showAlg);
   $('trEye').title=cfg.showAlg?'Ocultar el algoritmo (hazlo de memoria)':'Mostrar el algoritmo';
@@ -1027,7 +1104,8 @@ function nextCase(){const k=pickCase();if(!k)return exitTrain();lastKey=k;tpeek=
 function startSession(mode,from){
   if(!isSolved(cube)){toast('Deja el cubo resuelto para empezar');return false}
   tmode=mode;trFrom=from||null;tses={n:0};hideAlert();lastKey='';seqI=0;
-  if(mode==='learn'){const k=[...tsel][0],L=lstats[k]||(lstats[k]={s:0,c:0,n:0});if(!L.s)L.s=1;L.c=0;cfg.showAlg=L.s<2;saveCfg();saveL()}
+  trReview=false;trFail=false;
+  if(mode==='learn'){const k=[...tsel][0],L=lstats[k]||(lstats[k]={s:0,c:0,n:0});trReview=L.s>=3;if(!L.s)L.s=1;L.c=0;cfg.showAlg=L.s<2;saveCfg();saveL()}
   nextCase();nav('home');return true;
 }
 const startLearn=(kind,id)=>{tsel=new Set([kind+' '+id]);return startSession('learn',{v:'case',kind,id})};
@@ -1044,8 +1122,13 @@ function finishTrain(t){
   if(tmode==='learn'){
     const L=lstats[k]||(lstats[k]={s:1,c:0,n:0}),clean=!(at&&at.err)&&!tpeek;
     L.n++;L.c=clean?L.c+1:0;
+    if(trReview){
+      if(!clean)trFail=true;
+      if(L.c>=2){const i=trFail?0:Math.min(4,(L.i||0)+1);L.i=i;L.due=Date.now()+IV[i]*DAY;L.c=0;saveL();celebrate();toast('Repaso hecho. El siguiente, en '+IV[i]+(IV[i]>1?' días':' día'));$('timer').textContent=fmt(t);return exitTrain()}
+      note=clean?L.c+'/2 sin fallos':'Con un fallo se repasa antes. Otra vez';saveL();nextCase();$('timer').textContent=fmt(t);$('live').textContent=lab+' · '+fmt(t)+' · '+note;return;
+    }
     if(L.c>=3){L.s=Math.min(3,L.s+1);L.c=0;cfg.showAlg=L.s<2;saveCfg();celebrate();
-      if(L.s>=3){saveL();toast('¡'+lab+' dominado!');$('timer').textContent=fmt(t);return exitTrain()}
+      if(L.s>=3){setMastered(k,0);saveL();toast('¡'+lab+' dominado! Lo repasarás mañana');$('timer').textContent=fmt(t);return exitTrain()}
       note='¡Nivel superado! Ahora, de memoria'}
     else note=clean?L.c+'/3 sin fallos':'Con un fallo no suma. Otra vez';
     saveL();
