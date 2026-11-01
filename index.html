@@ -226,6 +226,7 @@ dialog .vh{padding:0 8px 0 18px}dialog .vb{padding:4px 18px 18px}
 #trStat{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .btn[hidden]{display:none}#scr{cursor:pointer}
 #scr{margin-top:auto}#timer{margin-top:6px}
+.tile{-webkit-touch-callout:none;user-select:none;-webkit-user-select:none}
 </style>
 </head>
 <body data-view="home">
@@ -326,7 +327,7 @@ dialog .vh{padding:0 8px 0 18px}dialog .vb{padding:4px 18px 18px}
       <div id="log">Aquí aparecerán los datos crudos del cubo.</div>
     </details>
     <h3>Acerca de</h3>
-    <p class="mu" style="margin:0">CubIQ · versión <span id="ver">1.5.4</span></p>
+    <p class="mu" style="margin:0">CubIQ · versión <span id="ver">1.5.5</span></p>
   </div>
 </section>
 
@@ -879,7 +880,15 @@ function renderLearn(){
   }
   box.innerHTML=h;box.scrollTop=sc;
 }
+let lpT=0,lpFired=false;
+$('lnBody').addEventListener('pointerdown',e=>{const t=e.target.closest('.tile');if(!t)return;lpFired=false;clearTimeout(lpT);
+  lpT=setTimeout(()=>{lpFired=true;const k=t.dataset.k+' '+t.dataset.i,L=lstats[k]||(lstats[k]={s:0,c:0,n:0});
+    if(L.s>=3){L.s=0;L.c=0;toast(lbl(t.dataset.k,t.dataset.i)+': vuelve a nuevo')}else{L.s=3;L.c=0;toast(lbl(t.dataset.k,t.dataset.i)+': marcado como dominado')}
+    saveL();if(navigator.vibrate)navigator.vibrate(25);renderLearn()},550)});
+for(const ev of ['pointerup','pointercancel','pointermove','pointerleave'])$('lnBody').addEventListener(ev,()=>clearTimeout(lpT));
+$('lnBody').addEventListener('contextmenu',e=>{if(e.target.closest('.tile'))e.preventDefault()});
 $('lnBody').onclick=e=>{
+  if(lpFired){lpFired=false;return}
   const t=e.target.closest('.tile'),sg=e.target.closest('#lnTabs button'),ch=e.target.closest('#lnSubs button');
   if(t)openCase(t.dataset.k,t.dataset.i);
   else if(sg){lTab=sg.dataset.k;if(SUBS[lTab])lSub=SUBS[lTab][0][0];$('lnBody').scrollTop=0;renderLearn()}
