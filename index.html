@@ -237,12 +237,37 @@ dialog .vh{padding:0 8px 0 18px}dialog .vb{padding:4px 18px 18px}
 .cb b{font:600 14px Poppins,system-ui,sans-serif}.cb span{font-size:11px;color:var(--mu)}.cb.w span{color:var(--ac)}
 .coach p{margin:10px 0 0;font-size:14px;line-height:1.4}.coach p b{color:var(--tx)}
 .coach .btn{margin-top:10px;font-size:13px;padding:7px 12px}
+
+/* ---------- perfiles e invitado ---------- */
+#btnProf{width:36px;height:36px;padding:0;margin-right:2px}#btnProf svg{width:28px;height:28px}
+#guestPill{display:none;align-items:center;gap:6px;margin-left:8px;padding:2px 10px 2px 8px;border-radius:99px;font-size:12px;font-weight:600;color:#d9c4ff;border:1px solid #6b4fa8;background:#1a1426}
+#guestPill i{width:7px;height:7px;border-radius:50%;border:1.5px dashed #b78bff}
+body.guest{--ac:#b78bff}body.guest #guestPill{display:inline-flex}
+body.guest header{box-shadow:0 2px 0 0 transparent;border-bottom:2px solid transparent;border-image:linear-gradient(90deg,#b78bff,#ff6bd6 50%,#b78bff) 1}
+body.guest .btn.pri{background:#b78bff;border-color:#b78bff}
+.profcard{display:flex;align-items:center;gap:14px;width:100%;padding:12px 14px;border:1px solid var(--line);border-radius:18px;background:var(--card);margin:6px 0 4px;text-align:left}
+.profcard:hover{border-color:#3a414b}.profcard>div{flex:1;min-width:0;display:grid}.profcard b{font:600 16px Poppins,system-ui,sans-serif}.profcard small{color:var(--mu);font-size:13px}
+.profcard>svg:last-child{width:18px;height:18px;color:var(--mu);transform:rotate(-90deg)}
+.pf-hero{display:grid;justify-items:center;gap:6px;padding:18px 12px 16px;border:1px solid var(--line);border-radius:22px;background:var(--card);text-align:center;margin-top:6px}
+body.guest .pf-hero{border-style:dashed;border-color:#6b4fa8;background:#120e1b}
+.pf-hero b{font:600 22px Poppins,system-ui,sans-serif}.pf-hero p{margin:0;color:var(--mu);font-size:13px;max-width:30ch}
+.pf-stats{display:flex;gap:22px;margin-top:4px}.pf-stats div{display:grid}.pf-stats b{font:600 18px Poppins,system-ui,sans-serif;font-variant-numeric:tabular-nums}.pf-stats span{font-size:11px;color:var(--mu)}
+.pf-row{display:flex;align-items:center;gap:12px;width:100%;padding:8px 10px;border:1px solid var(--line);border-radius:16px;background:var(--card);margin-bottom:8px;text-align:left}
+.pf-row.on{border-color:var(--ac)}.pf-row .nm{flex:1;min-width:0;display:grid;cursor:pointer}.pf-row .nm b{font-size:15px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.pf-row .nm small{color:var(--mu);font-size:12px}
+.pf-row .ib{width:34px;height:34px}.pf-row .ib svg{width:17px;height:17px}.pf-row .tick{width:20px;height:20px;color:var(--ac);flex:none}
+.pf-row.guest{border-style:dashed;border-color:#6b4fa8;background:#120e1b}
+.pf-form{display:grid;gap:10px;justify-items:center;border:1px solid var(--line);border-radius:18px;padding:14px;margin-bottom:8px;background:var(--card)}
+.pf-form .top{display:flex;align-items:center;gap:10px;width:100%}.pf-form input[type=text]{flex:1;min-width:0;background:#0b0d10;border:1px solid var(--line);border-radius:12px;padding:10px 12px;color:var(--tx);font:inherit}
+.pf-form input[type=text]:focus{outline:2px solid var(--ac);border-color:transparent}
+.pf-act{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin-top:8px}
 </style>
 </head>
 <body data-view="home">
 <header>
   <img class="logo" src="logo-96.png" alt="" width="28" height="28"><span class="brand">Cub<span>IQ</span></span>
+  <span id="guestPill"><i></i>Invitado</span>
   <span class="sp"></span>
+  <button class="ib" id="btnProf" aria-label="Perfil" title="Perfil"></button>
   <button id="btnConn"><i></i><span id="status">Conectar</span></button>
   <nav id="tabs" aria-label="Principal">
     <button class="tab on" data-v="home" aria-label="Cronómetro" title="Cronómetro"><svg viewBox="0 0 24 24"><circle cx="12" cy="13.5" r="7.5"/><path d="M12 9.5v4l2.5 1.5M9.5 3h5M12 3v3"/></svg></button>
@@ -311,6 +336,7 @@ dialog .vh{padding:0 8px 0 18px}dialog .vb{padding:4px 18px 18px}
 <section id="vSet" class="view">
   <div class="vh"><h2>Ajustes</h2></div>
   <div class="vb">
+    <button class="profcard" id="spProf"></button>
     <label class="opt"><span><b>Inspección de 15 s</b><small>Cuenta atrás antes de resolver. Tras 15 s se aplica +2 y tras 17 s, DNF</small></span><input type="checkbox" role="switch" id="oInsp"></label>
     <label class="opt"><span><b>Inicio automático</b><small>Empieza al realizar un giro cuando el scramble está hecho y aparece ¡Start!</small></span><input type="checkbox" role="switch" id="oAuto"></label>
     <label class="opt"><span><b>Animación de éxito</b><small>Reproduce una animación cuando el cubo está resuelto o un caso de entrenamiento terminado</small></span><input type="checkbox" role="switch" id="oSucc"></label>
@@ -337,7 +363,7 @@ dialog .vh{padding:0 8px 0 18px}dialog .vb{padding:4px 18px 18px}
       <div id="log">Aquí aparecerán los datos crudos del cubo.</div>
     </details>
     <h3>Acerca de</h3>
-    <p class="mu" style="margin:0">CubIQ · versión <span id="ver">1.6.0</span></p>
+    <p class="mu" style="margin:0">CubIQ · versión <span id="ver">1.7.0</span></p>
   </div>
 </section>
 
@@ -408,6 +434,14 @@ dialog .vh{padding:0 8px 0 18px}dialog .vb{padding:4px 18px 18px}
     <p id="svNo" class="mu" hidden>Esta resolución se guardó sin movimientos, así que no hay repetición.</p>
     <div id="svScr" class="mu"></div>
   </div>
+</section>
+
+<section id="vProf" class="view">
+  <div class="vh">
+    <button class="ib back" id="pfBack" aria-label="Volver" title="Volver"><svg class="b1" viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg><svg class="b2" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></svg></button>
+    <h2>Perfiles</h2>
+  </div>
+  <div class="vb" id="pfBody"></div>
 </section>
 
 </div>
@@ -583,10 +617,16 @@ document.addEventListener('keydown',e=>{
   const k=e.key.toUpperCase();if('UDLRFB'.includes(k)&&k.length===1&&!e.ctrlKey&&!e.metaKey)onMove(k+(e.shiftKey?"'":''))});
 const pad=$('pad');for(const f of 'UDLRFB')for(const s of['',"'"]){const b=document.createElement('button');b.textContent=f+s;b.onclick=()=>onMove(f+s);pad.appendChild(b)}
 
+/* ===== Perfiles: almacenamiento por perfil (PERFILES) ===== */
+let profiles=[{id:'main',name:'Yo',seed:7}],profileId='main',guest=false,guestMem={};
+try{const pp=JSON.parse(localStorage.getItem('profiles')||'null');if(Array.isArray(pp)&&pp.length)profiles=pp;profileId=localStorage.getItem('profile')||'main';if(!profiles.some(p=>p.id===profileId))profileId=profiles[0].id}catch(e){}
+const pk=(k,id=profileId)=>id==='main'?k:'p_'+id+'_'+k;
+const PS={get:k=>guest?(k in guestMem?guestMem[k]:null):localStorage.getItem(pk(k)),set:(k,v)=>{if(guest)guestMem[k]=v;else localStorage.setItem(pk(k),v)}};
+const saveProfiles=()=>{try{localStorage.setItem('profiles',JSON.stringify(profiles));localStorage.setItem('profile',profileId)}catch(e){}};
 /* ===== Estadísticas ===== */
-let solves=[];try{solves=JSON.parse(localStorage.getItem('solves')||'[]')}catch(e){}
+let solves=[];try{solves=JSON.parse(PS.get('solves')||'[]')}catch(e){}
 const save=()=>{solves.forEach((s,i)=>{if(i<solves.length-200){delete s.mv;delete s.fl}}); // solo las 200 últimas guardan la repetición
-  try{localStorage.setItem('solves',JSON.stringify(solves))}catch(e){}};
+  try{PS.set('solves',JSON.stringify(solves))}catch(e){}};
 const val=s=>s.p===2?Infinity:s.t+(s.p===1?2000:0);
 function avg(a,n){if(a.length<n)return null;const w=a.slice(-n).sort((x,y)=>x-y),k=Math.ceil(n*0.05),m=w.slice(k,n-k);
   return m.includes(Infinity)?Infinity:m.reduce((x,y)=>x+y,0)/m.length}
@@ -759,7 +799,7 @@ $('btnGyro').onclick=()=>{if(gRaw){gq0=gRaw;onGyro(gRaw);toast('Orientación cen
 $('oGyro').onchange=e=>setGyro(e.target.checked);
 
 /* ===== Pantallas (sustituyen a los pop-ups) ===== */
-const TABS=['home','learn','train','stats','set'],VID={home:'vHome',learn:'vLearn',train:'vTrain',stats:'vStats',set:'vSet',case:'vCase',solve:'vSolve'};
+const TABS=['home','learn','train','stats','set'],VID={home:'vHome',learn:'vLearn',train:'vTrain',stats:'vStats',set:'vSet',case:'vCase',solve:'vSolve',prof:'vProf'};
 let vNow='home',vStack=[],rootTab='home';
 function show(v){
   if(vNow==='solve'&&v!=='solve'&&typeof rpPlay==='function')rpPlay(false);
@@ -772,6 +812,7 @@ function show(v){
   else if(v==='train')renderCatalog();
   else if(v==='stats'){renderStats();drawChart()}
   else if(v==='set')syncSet();
+  else if(v==='prof')renderProf();
 }
 const nav=v=>{vStack=[];show(v)},push=v=>{vStack.push(vNow);show(v)},back=()=>show(vStack.pop()||rootTab);
 $('tabs').onclick=e=>{const b=e.target.closest('.tab');if(b)nav(b.dataset.v)};
@@ -799,9 +840,9 @@ function hideAlert(){$('alert').hidden=true;alertData=null;clearTimeout(alertTim
 /* ===== Datos de aprendizaje y entrenamiento ===== */
 let trReview=false,trFail=false,tsel=new Set(),tstats={},tses={n:0},tTab='F2L',lastKey='',iconCache={},at=null,tmode='drill',torder='rand',seqI=0,trFrom=null,tpeek=false;
 let lstats={},lfav={},lrec=[]; // lstats[caso]={s: nivel 0-3, c: seguidas limpias, n: repeticiones}
-try{tstats=JSON.parse(localStorage.getItem('tstats')||'{}');lstats=JSON.parse(localStorage.getItem('lstats')||'{}');lfav=JSON.parse(localStorage.getItem('lfav')||'{}');lrec=JSON.parse(localStorage.getItem('lrec')||'[]')}catch(e){}
-const saveTS=()=>{try{localStorage.setItem('tstats',JSON.stringify(tstats))}catch(e){}};
-const saveL=()=>{try{localStorage.setItem('lstats',JSON.stringify(lstats));localStorage.setItem('lfav',JSON.stringify(lfav));localStorage.setItem('lrec',JSON.stringify(lrec))}catch(e){}};
+try{tstats=JSON.parse(PS.get('tstats')||'{}');lstats=JSON.parse(PS.get('lstats')||'{}');lfav=JSON.parse(PS.get('lfav')||'{}');lrec=JSON.parse(PS.get('lrec')||'[]')}catch(e){}
+const saveTS=()=>{try{PS.set('tstats',JSON.stringify(tstats))}catch(e){}};
+const saveL=()=>{try{PS.set('lstats',JSON.stringify(lstats));PS.set('lfav',JSON.stringify(lfav));PS.set('lrec',JSON.stringify(lrec))}catch(e){}};
 const stageOf=k=>lstats[k]?lstats[k].s:0,LVN=['Nuevo','Guiado','De memoria','Dominado'];
 const lvHTML=s=>'<span class="lv'+(s>=3?' max':'')+'" title="'+LVN[s]+'">'+[1,2,3].map(i=>'<i class="'+(i<=s?'on':'')+'"></i>').join('')+'</span>';
 const GN={F2L:'F2L',EOLL:'OLL aristas',OCLL:'OLL esquinas',OLL:'OLL',CPLL:'PLL esquinas',EPLL:'PLL aristas',PLL:'PLL'};
@@ -1174,6 +1215,85 @@ $('oIns').onchange=e=>{cfg.insight=e.target.checked;saveCfg();if(!cfg.insight)hi
 /* Botones de Ajustes > Cubo: tras usarlos se vuelve al cronómetro */
 for(const id of ['btnSkip','btnNew','btnReset','btnView'])$(id).addEventListener('click',()=>nav('home'));
 $('scr').addEventListener('click',()=>{if(!train&&phase!=='running')newScramble()}); // tocar el scramble = otro scramble
+
+/* ===== Perfiles e invitado ===== */
+function avatar(seed,size,ghost){
+  let x=((seed*2654435761+1013904223)>>>0)||1;const rnd=()=>{x^=x<<13;x>>>=0;x^=x>>>17;x^=x<<5;x>>>=0;return x/4294967296};
+  const cols=['#f2f2f2','#1faa59','#d93a2b','#2a6fdb','#ffd500','#ff8a1f'];let h='<svg viewBox="0 0 48 48" width="'+size+'" height="'+size+'" aria-hidden="true">';
+  for(let i=0;i<9;i++){const col=cols[Math.floor(rnd()*6)],px=4+(i%3)*14,py=4+Math.floor(i/3)*14;
+    h+=ghost?'<rect x="'+(px+.8)+'" y="'+(py+.8)+'" width="10.4" height="10.4" rx="3.4" fill="'+(i===4?'#b78bff22':'none')+'" stroke="#b78bff" stroke-width="1.3" stroke-dasharray="2.2 2.2" opacity="'+(i===4?1:.65)+'"/>'
+      :'<rect x="'+px+'" y="'+py+'" width="12" height="12" rx="3.6" fill="'+col+'"/>'}
+  return h+'</svg>';
+}
+const curProf=()=>profiles.find(p=>p.id===profileId)||profiles[0];
+function profStats(id){let n=0,best=Infinity;try{const a=JSON.parse(localStorage.getItem(pk('solves',id))||'[]');n=a.length;for(const s of a)if(val(s)<best)best=val(s)}catch(e){}return {n,best}}
+function sessStats(){let best=Infinity;for(const s of solves)if(val(s)<best)best=val(s);return {n:solves.length,best}}
+const statLine=({n,best})=>n?n+' resoluciones · mejor '+fmt(best):'Sin resoluciones todavía';
+function updateProfileUI(){
+  const p=curProf();document.body.classList.toggle('guest',guest);
+  $('btnProf').innerHTML=guest?avatar(3,28,true):avatar(p.seed,28);$('btnProf').title=guest?'Modo invitado':'Perfil: '+p.name;
+  $('spProf').innerHTML=(guest?avatar(3,44,true):avatar(p.seed,44))+'<div><b>'+(guest?'Modo invitado':esc(p.name))+'</b><small>'+(guest?'Nada se guarda en tu perfil':'Cambiar de perfil o entrar como invitado')+'</small></div>'+SV(P_CHEV);
+}
+const esc=t=>String(t).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+function loadData(){
+  trFrom=null;if(train)exitTrain();
+  solves=[];tstats={};lstats={};lfav={};lrec=[];
+  try{solves=JSON.parse(PS.get('solves')||'[]')}catch(e){}
+  try{tstats=JSON.parse(PS.get('tstats')||'{}');lstats=JSON.parse(PS.get('lstats')||'{}');lfav=JSON.parse(PS.get('lfav')||'{}');lrec=JSON.parse(PS.get('lrec')||'[]')}catch(e){}
+  hideAlert();tsel=new Set();updateProfileUI();renderStats();newScramble();$('timer').textContent='0.00';$('live').textContent='';
+  if(vNow==='learn')renderLearn();if(vNow==='train')renderCatalog();if(vNow==='prof')renderProf();
+}
+const busy=()=>{if(phase==='running'||phase==='inspect'){toast('Termina la resolución antes de cambiar de perfil');return true}return false};
+function switchProfile(id){if(busy())return;guest=false;profileId=id;saveProfiles();loadData();toast('Perfil: '+curProf().name)}
+function enterGuest(){if(busy())return;guest=true;guestMem={};loadData();toast('Modo invitado: no se guarda nada');}
+function leaveGuest(){if(busy())return;guest=false;guestMem={};loadData();toast('Sesión de invitado descartada')}
+function addProfile(name,seed,data){
+  const id=Date.now().toString(36);profiles.push({id,name:name.trim().slice(0,18)||'Perfil',seed});
+  if(data)for(const k of Object.keys(data))try{localStorage.setItem(pk(k,id),data[k])}catch(e){}
+  guest=false;profileId=id;saveProfiles();loadData();
+}
+let pfForm=null; // {seed,keep}
+function renderProf(){
+  const p=curProf(),box=$('pfBody');let h='';
+  if(guest){const s=sessStats();
+    h+='<div class="pf-hero">'+avatar(3,88,true)+'<b>Modo invitado</b><p>Enseña tu cubo sin miedo: nada de esta sesión toca tus estadísticas ni tu progreso.</p><div class="pf-stats"><div><b>'+s.n+'</b><span>resoluciones</span></div><div><b>'+(s.n?fmt(s.best):'–')+'</b><span>mejor</span></div></div></div>'
+      +'<div class="pf-act"><button class="btn pri" data-a="leave">'+SV('<path d="M15 4h4v16h-4M10 8l-4 4 4 4M6 12h10"/>')+'Salir y descartar</button>'
+      +(s.n?'<button class="btn" data-a="keep">'+SV('<path d="M5 4h11l3 3v13H5z"/><path d="M8 4v5h7V4M8 20v-6h8v6"/>')+'Guardar como perfil nuevo</button>':'')+'</div>';
+    if(pfForm&&pfForm.keep)h+=formHTML();
+  }else{
+    const s=profStats(p.id);
+    h+='<div class="pf-hero">'+avatar(p.seed,88)+'<b>'+esc(p.name)+'</b><div class="pf-stats"><div><b>'+s.n+'</b><span>resoluciones</span></div><div><b>'+(s.n?fmt(s.best):'–')+'</b><span>mejor</span></div><div><b>'+Object.keys(lstats).filter(k=>lstats[k].s>=3).length+'</b><span>casos dominados</span></div></div></div>';
+    h+='<h3>Perfiles</h3>'+profiles.map(q=>{const st=profStats(q.id),on=q.id===profileId;
+      return '<div class="pf-row'+(on?' on':'')+'" data-id="'+q.id+'">'+avatar(q.seed,40)+'<div class="nm" data-a="switch"><b>'+esc(q.name)+'</b><small>'+statLine(st)+'</small></div>'
+        +(on?SV('<path d="m5 12.5 4.5 4.5L19 7"/>','tick'):'')
+        +'<button class="ib" data-a="rename" aria-label="Cambiar nombre" title="Cambiar nombre">'+SV('<path d="M4 20h4L19 9l-4-4L4 16z"/>')+'</button>'
+        +(!on&&profiles.length>1?'<button class="ib" data-a="del" aria-label="Borrar perfil" title="Borrar perfil">'+SV('<path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3"/>')+'</button>':'')+'</div>'}).join('');
+    h+=pfForm&&!pfForm.keep?formHTML():'<button class="pf-row" data-a="new"><span style="width:40px;height:40px;display:grid;place-items:center;border:1.5px dashed #3a414b;border-radius:12px;color:var(--mu)">'+SV('<path d="M12 5v14M5 12h14"/>')+'</span><div class="nm"><b>Añadir perfil</b><small>Cada uno con sus tiempos y su progreso</small></div></button>';
+    h+='<h3>Invitado</h3><button class="pf-row guest" data-a="guest">'+avatar(3,40,true)+'<div class="nm"><b>Modo invitado</b><small>Enséñale tu cubo a alguien sin que cuente en tus estadísticas</small></div>'+SV('<path d="M9 5l7 7-7 7"/>','tick')+'</button>';
+  }
+  box.innerHTML=h;
+}
+function formHTML(){return '<div class="pf-form"><div class="top"><button class="ib" data-a="dice" aria-label="Otro avatar" title="Otro avatar" style="width:auto;height:auto">'+avatar(pfForm.seed,56)+'</button><input type="text" id="pfName" maxlength="18" placeholder="Nombre" autocomplete="off" value="'+esc(pfForm.name||'')+'"></div>'
+  +'<div class="mu">Toca el avatar para cambiarlo</div><div class="pf-act" style="margin:0"><button class="btn pri" data-a="create">Crear</button><button class="btn" data-a="cancel">Cancelar</button></div></div>'}
+$('pfBody').addEventListener('input',e=>{if(e.target.id==='pfName'&&pfForm)pfForm.name=e.target.value});
+$('pfBody').onclick=e=>{
+  const b=e.target.closest('[data-a]');if(!b)return;const a=b.dataset.a,row=b.closest('.pf-row'),id=row&&row.dataset.id;
+  if(a==='switch'&&id&&id!==profileId){switchProfile(id)}
+  else if(a==='rename'){const q=profiles.find(x=>x.id===id),n=prompt('Nombre del perfil',q.name);if(n&&n.trim()){q.name=n.trim().slice(0,18);saveProfiles();updateProfileUI();renderProf()}}
+  else if(a==='del'){const q=profiles.find(x=>x.id===id);if(confirm('¿Borrar el perfil «'+q.name+'» y todos sus datos?')){['solves','tstats','lstats','lfav','lrec'].forEach(k=>localStorage.removeItem(pk(k,id)));profiles=profiles.filter(x=>x.id!==id);saveProfiles();renderProf()}}
+  else if(a==='new'){pfForm={seed:Math.floor(Math.random()*1e6),name:''};renderProf();$('pfName').focus()}
+  else if(a==='keep'){pfForm={seed:Math.floor(Math.random()*1e6),name:'',keep:true};renderProf();$('pfName').focus()}
+  else if(a==='dice'){pfForm.seed=Math.floor(Math.random()*1e6);const n=$('pfName').value;pfForm.name=n;renderProf();$('pfName').value=n}
+  else if(a==='cancel'){pfForm=null;renderProf()}
+  else if(a==='create'){const f=pfForm,name=(f.name||'').trim();if(!name){toast('Ponle un nombre');return}
+    const data=f.keep?{...guestMem}:null;pfForm=null;addProfile(name,f.seed,data);toast('Perfil «'+curProf().name+'» creado')}
+  else if(a==='guest')enterGuest();
+  else if(a==='leave')leaveGuest();
+};
+$('btnProf').onclick=()=>{if(vNow!=='prof')push('prof')};
+$('spProf').onclick=()=>push('prof');
+$('pfBack').onclick=back;
+updateProfileUI();
 /* ===== Detalle de la resolución: repetición, fases y cómo mejorar ===== */
 const PH_COL={cross:'#9b7bf0',slot1:'#5b6bf0',slot2:'#4a82f0',slot3:'#3a9be8',slot4:'#34b0de',oll:'#f0a43c',pll:'#3ddc97'};
 let rp=null;
