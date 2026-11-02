@@ -21,9 +21,20 @@ const guessMac = (name) => {
   return m ? 'CF:30:16:00:' + m[1].slice(0, 2).toUpperCase() + ':' + m[1].slice(2).toUpperCase() : '';
 };
 
+// Marca a partir del nombre Bluetooth (solo para mostrarla en Ajustes).
+const brandOf = (name) => /^(GAN|MG|AiCube)/i.test(name || '') ? 'GAN' : /^WCU_MY|^MY/i.test(name || '') ? 'MoYu'
+  : /^QY|^XMD/i.test(name || '') ? 'QiYi' : /^(Gi|Mi Smart|Hi-)/i.test(name || '') ? 'Giiker' : /^Go/i.test(name || '') ? 'GoCube' : '';
+
 let conn = null;
+// Se puede tener varios cubos guardados, pero solo uno conectado a la vez.
+window.disconnectCube = async (app) => {
+  const c = conn; conn = null;
+  try { if (c) await (c.disconnect ? c.disconnect() : null); } catch (e) { console.error(e); }
+  app.setStatus('Conectar', false);
+};
 window.connectCube = async (app) => {
   if (!navigator.bluetooth) return app.toast('Web Bluetooth no disponible. Usa Chrome en Android u ordenador.');
+  if (conn) await window.disconnectCube(app); // evita recibir giros de dos cubos a la vez
   let used = null, lastName = '';
   const provider = async (device, isFallback) => {
     lastName = device?.name || lastName;
@@ -31,9 +42,11 @@ window.connectCube = async (app) => {
     if (saved?.mac && !isFallback) return (used = saved.mac); // MAC ya probada con este cubo
     let def = (isFallback && used) || guessMac(lastName);
     for (;;) {
+      const gan = brandOf(lastName) === 'GAN';
       const t = prompt(
         'MAC de tu cubo ' + (lastName ? '(' + lastName + ')' : '') + '\nFormato: AA:BB:CC:DD:EE:FF' +
         (def ? '\n\nSugerida a partir del nombre; si no conecta, introduce la correcta.' : '') +
+        (gan && !def ? '\n\nGAN: en Chrome para Android suele detectarse sola (pulsa Cancelar). En ordenador, si el navegador no puede leerla, introdúcela: la verás en la app Cube Station o con nRF Connect.' : '') +
         (isFallback ? '\nLa anterior no funcionó.' : '') + '\n(Cancelar = intentar detectarla sola)', def);
       if (t === null) return null;
       const mac = norm(t);
@@ -48,7 +61,7 @@ window.connectCube = async (app) => {
   try {
     conn = await connectSmartCube(provider);
     const name = conn.deviceName || lastName || 'Cubo';
-    if (used) app.registerDevice(name, used); // solo se guarda una MAC que ha funcionado
+    app.registerDevice(name, used || '', [brandOf(name), conn.protocol].filter(Boolean).join(' · ')); // la MAC solo se guarda si la has escrito y ha funcionado
     app.setStatus(name, true);
     app.toast('Conectado: ' + name + ' (' + (conn.protocol || '?') + ')');
     let first = true; // el primer estado real del cubo sustituye al virtual
@@ -66,7 +79,9 @@ window.connectCube = async (app) => {
     if (conn.capabilities?.facelets) conn.sendCommand({ type: 'REQUEST_FACELETS' });
     if (conn.capabilities?.battery) conn.sendCommand({ type: 'REQUEST_BATTERY' });
   } catch (err) {
-    app.toast('No se pudo conectar: ' + err.message);
+    conn = null;
+    const unsupported = /unsupported|not supported|unknown|no matching|protocol/i.test(err.message || '');
+    app.toast(unsupported ? 'Este cubo no se reconoce todavía. Copia el registro de Ajustes > Avanzado.' : 'No se pudo conectar: ' + err.message);
     app.log('ERROR ' + err.message);
     console.error(err);
   }
