@@ -337,12 +337,13 @@ export function caseIcon(state, kind, flip = false) {
   const { COL, solvedCube } = CM();
   const tf = (arr) => (flip ? arr.map((s) => ({ p: [-s.p[0], -s.p[1], s.p[2]], n: [-s.n[0], -s.n[1], s.n[2]], c: s.c })) : arr);
   const st = tf(state);
-  const lit = flip ? 'D' : 'U', k = 16, pad = 4, W = pad * 2 + k * 5, bar = k * 0.3, g = 1.5;
-  const light = !!window.__cubeLight; // estilo claro: casillas sin iluminar en blanco
-  const yel = '#ffd500', off = light ? '#fafbfc' : '#262c34', dontCare = light ? '#d3d9e1' : '#3b434e', topPLL = light ? '#fafbfc' : COL[lit];
+  const lit = flip ? 'D' : 'U', k = 16, pad = 4, W = pad * 2 + k * 5, bar = k * 0.28, g = 0.65;
+  const light = !!window.__cubeLight, white = window.__cubeLine === 'white'; // estilo claro: casillas sin iluminar en blanco; líneas negras o blancas
+  const lineC = white ? '#f4f6fa' : '#14171c';
+  const yel = '#ffd500', off = light ? (white ? '#e6eaf0' : '#fafbfc') : '#262c34', dontCare = light ? '#cfd5de' : '#3b434e', topPLL = light ? off : COL[lit];
   const isO = kind === 'OLL' || kind === 'EOLL', corner = (s) => s.p[0] !== 0 && s.p[2] !== 0;
   const col = (s) => (isO ? (s.c === lit ? yel : off) : COL[s.c]);
-  let r = `<rect x="${pad + k - 3}" y="${pad + k - 3}" width="${3 * k + 6}" height="${3 * k + 6}" rx="5" fill="#0b0d10"/>`;
+  let r = `<rect x="${pad + k - 1.1}" y="${pad + k - 1.1}" width="${3 * k + 2.2}" height="${3 * k + 2.2}" rx="3.4" fill="${lineC}"/>`;
   const rect = (x, y, w, h, c, rx = 2.5) => (r += `<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="${rx}" fill="${c}"/>`);
   for (const s of st) {
     if (s.p[1] !== 1) continue;
@@ -374,9 +375,9 @@ export function caseIcon(state, kind, flip = false) {
       const [x1, y1] = ctr(pos), [x2, y2] = ctr(h), d = Math.hypot(x2 - x1, y2 - y1) || 1, ux = (x2 - x1) / d, uy = (y2 - y1) / d;
       const ax = x1 + ux * 4, ay = y1 + uy * 4, bx = x2 - ux * 4, by = y2 - uy * 4;
       arrows += `<path d="M${ax.toFixed(1)} ${ay.toFixed(1)}L${bx.toFixed(1)} ${by.toFixed(1)}"/>`
-        + `<path fill="#0b0d10" d="M${bx.toFixed(1)} ${by.toFixed(1)}l${(-ux * 7 - uy * 4.2).toFixed(1)} ${(-uy * 7 + ux * 4.2).toFixed(1)}l${(uy * 8.4).toFixed(1)} ${(-ux * 8.4).toFixed(1)}Z"/>`;
+        + `<path fill="#14171c" d="M${bx.toFixed(1)} ${by.toFixed(1)}l${(-ux * 4.8 - uy * 2.9).toFixed(1)} ${(-uy * 4.8 + ux * 2.9).toFixed(1)}l${(uy * 5.8).toFixed(1)} ${(-ux * 5.8).toFixed(1)}Z"/>`;
     }
-    r += `<g stroke="#0b0d10" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" fill="none">${arrows}</g>`;
+    r += `<g stroke="#14171c" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" fill="none">${arrows}</g>`;
   }
   return `<svg viewBox="0 0 ${W} ${W}" width="56" height="56" aria-hidden="true">${r}</svg>`;
 }
