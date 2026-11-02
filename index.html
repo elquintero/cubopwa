@@ -34,6 +34,9 @@ header{flex:none;display:flex;align-items:center;gap:6px;height:calc(52px + env(
 .brand{font:700 20px/1 Poppins,ui-rounded,system-ui,sans-serif;letter-spacing:-.02em}
 html,body{touch-action:pan-x pan-y} /* sin zoom con pellizco */
 .brand span{color:#ff8a1f}
+.hi{display:inline-grid;place-items:center;width:17px;height:17px;border:1.4px solid currentColor;border-radius:50%;color:var(--mu);font:italic 700 11px/1 Georgia,serif;vertical-align:middle;margin-left:6px;opacity:.85;flex:none;padding:0}
+.hi:hover{color:var(--ac);opacity:1}body.nohelp .hi{display:none!important}
+#hpop{position:fixed;z-index:60;max-width:min(290px,calc(100vw - 24px));background:var(--pop);color:var(--tx);border:1px solid var(--line);border-radius:12px;padding:10px 13px;font-size:13px;line-height:1.4;box-shadow:0 8px 28px rgba(0,0,0,.28);text-align:left}
 #batt{display:none;align-items:center;gap:4px;font-size:12px;font-weight:600;color:var(--mu);margin-right:6px;white-space:nowrap}
 #batt.on{display:inline-flex}#batt svg{width:20px;height:12px}#batt.low{color:#ff5a4d}
 .atajos .at{display:flex;gap:12px;padding:10px 0;border-bottom:1px solid var(--line);text-align:left}.atajos .at:last-child{border-bottom:0}
@@ -192,7 +195,7 @@ input[type=range]::-moz-range-thumb{width:16px;height:16px;border-radius:50%;bac
 .ph.on{border-color:var(--tx)}.ph .g svg{width:40px;height:40px;display:block}.ph .lb{color:var(--mu);font-size:11px;font-weight:600}
 .ph b{font:600 19px Poppins,system-ui,sans-serif;font-variant-numeric:tabular-nums}
 .ph.has::after{content:"";position:absolute;top:7px;right:7px;width:8px;height:8px;border-radius:50%;background:var(--ac);box-shadow:0 0 0 3px rgba(90,169,255,.18)}
-.bar2{display:flex;width:100%;height:6px;border-radius:3px;overflow:hidden;background:var(--bg2)}.bar2 i{display:block;height:100%}.bar2 .r{background:#f0a43c}.bar2 .e{background:var(--ac)}
+.bar2{display:flex;width:100%;height:6px;border-radius:3px;overflow:hidden;background:var(--bg2)}.bar2 i{display:block;height:100%}.bar2 .r{background:#8c95a3}.bar2 .e{background:var(--ac)}
 .ph small{color:var(--mu);font-size:11px;font-variant-numeric:tabular-nums}
 .legend{display:flex;gap:14px;justify-content:center;color:var(--mu);font-size:11px;margin:0 0 8px}.legend i{display:inline-block;width:8px;height:8px;border-radius:2px;margin-right:5px}
 #svCase{display:flex;align-items:center;gap:12px;border:1px solid color-mix(in srgb,var(--ac) 45%,transparent);background:var(--selbg);border-radius:16px;padding:10px 12px;margin:2px 0 10px;text-align:left}
@@ -377,6 +380,7 @@ input[type=range]::-webkit-slider-thumb{background:var(--tx);border:2px solid va
     <label class="opt"><span><b>Inicio automático</b><small>Empieza al realizar un giro cuando el scramble está hecho y aparece ¡Start!</small></span><input type="checkbox" role="switch" id="oAuto"></label>
     <label class="opt"><span><b>Animación de éxito</b><small>Reproduce una animación cuando el cubo está resuelto o un caso de entrenamiento terminado</small></span><input type="checkbox" role="switch" id="oSucc"></label>
     <label class="opt"><span><b>Análisis y consejos</b><small>Recibe alertas instantáneas sobre cómo podrías haber ahorrado tiempo</small></span><input type="checkbox" role="switch" id="oIns"></label>
+    <label class="opt"><span><b>Ayudas «i»</b><small>Muestra pequeños iconos que explican cada pantalla</small></span><input type="checkbox" role="switch" id="oHelp"></label>
     <label class="opt"><span><b>Giroscopio</b><small>El cubo virtual se mueve como el real, en tiempo real (si tu cubo lo permite)</small></span><input type="checkbox" role="switch" id="oGyro"></label>
     <div class="mu" style="display:flex;gap:12px;align-items:center;flex-wrap:wrap;padding:10px 0 0"><span id="gyroSt">Sin datos todavía</span><button class="btn" id="btnCal"><svg class="i" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 3v3M12 18v3M3 12h3M18 12h3"/></svg>Calibrar ejes</button></div>
     <div hidden>
@@ -413,7 +417,7 @@ input[type=range]::-webkit-slider-thumb{background:var(--tx);border:2px solid va
       <div id="log">Aquí aparecerán los datos crudos del cubo.</div>
     </details>
     <h3>Acerca de</h3>
-    <p class="mu" style="margin:0">CubIQ · versión <span id="ver">1.18.0</span></p>
+    <p class="mu" style="margin:0">CubIQ · versión <span id="ver">1.19.0</span></p>
   </div>
   <div class="vb" id="setTheme" hidden>
     <h3 style="margin-top:6px">Tema</h3>
@@ -491,7 +495,7 @@ input[type=range]::-webkit-slider-thumb{background:var(--tx);border:2px solid va
       </div>
       <div id="svPhases"></div>
       <div id="svCase" hidden></div>
-      <div class="legend"><span><i style="background:#f0a43c"></i>pausa</span><span><i style="background:var(--ac)"></i>giros</span><span><i style="background:var(--ac);border-radius:50%;width:6px;height:6px"></i>caso detectado</span></div>
+      <div class="legend"><span><i style="background:#8c95a3"></i>pausa</span><span><i style="background:var(--ac)"></i>giros</span><span><i style="background:var(--ac);border-radius:50%;width:6px;height:6px"></i>caso detectado</span><button class="hi" data-h="Repetición de tu resolución: ▶ la reproduce y la barra te mueve por ella. Cada fase muestra su tiempo. «Pausa» es el tiempo parado antes de girar, «giros» el tiempo moviendo, y el punto marca el caso detectado." aria-label="Ayuda">i</button></div>
       <div id="svTips"></div>
     </div>
     <p id="svNo" class="mu" hidden>Esta resolución se guardó sin movimientos, así que no hay repetición.</p>
@@ -733,7 +737,7 @@ $('btnExport').onclick=()=>{const a=document.createElement('a');a.href=URL.creat
 /* ===== Ajustes, dispositivos y animación ===== */
 let cfg={auto:true,success:true,insp:false,gyro:false,insight:true,showAlg:true},devices=[],curDev=null;
 try{Object.assign(cfg,JSON.parse(localStorage.getItem('cfg')||'{}'));devices=JSON.parse(localStorage.getItem('devices')||'[]')}catch(e){}
-const saveCfg=()=>{try{localStorage.setItem('cfg',JSON.stringify(cfg))}catch(e){}},saveDev=()=>{try{localStorage.setItem('devices',JSON.stringify(devices))}catch(e){}};
+const saveCfg=()=>{try{localStorage.setItem('cfg',JSON.stringify(cfg))}catch(e){}},applyHelp=()=>document.body.classList.toggle('nohelp',cfg.help===false),saveDev=()=>{try{localStorage.setItem('devices',JSON.stringify(devices))}catch(e){}};
 function renderDevs(){
   const box=$('devs');box.innerHTML='';
   if(!devices.length){box.innerHTML='<p class="mu">Aún no hay cubos guardados. Conecta uno y aparecerá aquí.</p>';return}
@@ -879,6 +883,7 @@ $('oGyro').onchange=e=>setGyro(e.target.checked);
 const TABS=['home','learn','train','stats','set'],VID={home:'vHome',learn:'vLearn',train:'vTrain',stats:'vStats',set:'vSet',case:'vCase',solve:'vSolve',prof:'vProf',quiz:'vQuiz'};
 let vNow='home',vStack=[],rootTab='home';
 function show(v){
+  if(typeof hHide==='function')hHide();
   if(vNow==='solve'&&v!=='solve'&&typeof rpPlay==='function')rpPlay(false);
   if(vNow==='case'&&v!=='case')cpPlay(false);
   vNow=v;document.body.dataset.view=v;if(TABS.includes(v))rootTab=v;
@@ -895,6 +900,22 @@ function show(v){
 const nav=v=>{vStack=[];show(v)},push=v=>{vStack.push(vNow);show(v)},back=()=>show(vStack.pop()||rootTab);
 $('tabs').onclick=e=>{const b=e.target.closest('.tab');if(b)nav(b.dataset.v)};
 $('csBack').onclick=back;
+/* Ayudas «i» */
+applyHelp();
+const hpop=document.createElement('div');hpop.id='hpop';hpop.hidden=true;document.body.appendChild(hpop);let hBtn=null;
+const hHide=()=>{hpop.hidden=true;hBtn=null};
+document.addEventListener('click',e=>{
+  const b=e.target.closest('.hi');
+  if(!b){if(!hpop.hidden&&!e.target.closest('#hpop'))hHide();return}
+  e.preventDefault();e.stopPropagation();
+  if(hBtn===b){hHide();return}
+  hBtn=b;hpop.textContent=b.dataset.h;hpop.hidden=false;
+  const r=b.getBoundingClientRect(),w=hpop.offsetWidth,h=hpop.offsetHeight;
+  hpop.style.left=Math.max(12,Math.min(innerWidth-w-12,r.left+r.width/2-w/2))+'px';
+  hpop.style.top=(r.bottom+8+h<innerHeight?r.bottom+8:Math.max(8,r.top-8-h))+'px';
+},true);
+document.addEventListener('scroll',hHide,true);
+$('oHelp').onchange=e=>{cfg.help=e.target.checked;saveCfg();applyHelp();hHide()};
 /* Botón «atrás» de Android: vuelve a la pantalla anterior, luego a Cronómetro, y sale con doble pulsación */
 let hArmed=false,lastBack=0;
 const hArm=()=>{if(hArmed)return;try{history.pushState({cq:1},'');hArmed=true}catch(e){}};
@@ -902,6 +923,7 @@ try{history.replaceState({cq:0},'')}catch(e){}
 document.addEventListener('pointerdown',hArm,true); // se arma con el primer toque: Chrome ignora las entradas de historial sin interacción
 window.addEventListener('popstate',()=>{
   hArmed=false;
+  if(!hpop.hidden){hHide();hArm();return}
   const dlg=document.querySelector('dialog[open]');
   if(dlg){dlg.close();hArm();return}
   if(vStack.length){back();hArm();return}
@@ -912,7 +934,7 @@ window.addEventListener('popstate',()=>{
 /* Solo vertical en móvil (la app instalada ya lo fija desde el manifest) */
 if(matchMedia('(pointer:coarse)').matches)document.addEventListener('pointerdown',()=>{try{screen.orientation.lock('portrait').catch(()=>{})}catch(e){}},{once:true});
 document.addEventListener('keydown',e=>{if(e.key==='Escape'&&vStack.length&&!document.querySelector('dialog[open]'))back()});
-function syncSet(){if(!$('setTheme').hidden&&typeof renderPrev==='function')renderPrev();$('oIns').checked=cfg.insight;$('oGyro').checked=cfg.gyro;$('oInsp').checked=cfg.insp;$('oAuto').checked=cfg.auto;$('oSucc').checked=cfg.success;renderDevs()}
+function syncSet(){if(!$('setTheme').hidden&&typeof renderPrev==='function')renderPrev();$('oIns').checked=cfg.insight;$('oGyro').checked=cfg.gyro;$('oHelp').checked=cfg.help!==false;$('oInsp').checked=cfg.insp;$('oAuto').checked=cfg.auto;$('oSucc').checked=cfg.success;renderDevs()}
 
 /* ===== Aviso instantáneo ===== */
 let alertTimer=0,alertData=null;
@@ -1048,6 +1070,7 @@ function impactList(){
   }
   return out.sort((a,b)=>b.gain-a.gain);
 }
+const HI=t=>'<button class="hi" data-h="'+t+'" aria-label="Ayuda">i</button>';
 const fmtS=ms=>{const s=ms/1000;return s>=1?s.toFixed(1):s.toFixed(2)};
 const dueCases=()=>Object.keys(lstats).filter(k=>lstats[k].s>=3&&lstats[k].due&&lstats[k].due<=Date.now()).sort((a,b)=>lstats[a].due-lstats[b].due).map(k=>{const i=k.indexOf(' ');return [k.slice(0,i),k.slice(i+1)]});
 function setMastered(k,iv){const L=lstats[k]||(lstats[k]={s:0,c:0,n:0});L.s=3;L.c=0;L.i=iv;L.due=Date.now()+IV[iv]*DAY}
@@ -1061,7 +1084,7 @@ function coachHTML(C){
     :'<b>'+w+'</b> es donde más tiempo pierdes. Repite sus casos más lentos para ganar regularidad.';
   const can=(C.weak==='oll'||C.weak==='pll'||C.weak==='f2l')&&!C.balanced;
   const act=can?'<button class="btn" id="coachGo">'+(C.kind==='exe'?SV(P_CAP)+'Practicar el caso más lento':C.kind==='rec'?SV(P_EYE)+'Reconocer casos de '+w+' sin cubo':SV(P_WATCH)+'Entrenar mis casos de '+w)+'</button>':'';
-  return '<div class="coach"><h3>'+SV(P_SPARK)+'Tu diagnóstico <small>últimas '+C.n+'</small></h3><div class="cbars">'+bars+'</div><p>'+msg+'</p>'+act+'</div>';
+  return '<div class="coach"><h3>'+SV(P_SPARK)+'Tu diagnóstico <small>últimas '+C.n+'</small>'+HI('Reparte el tiempo de tus últimas resoluciones por fases y señala dónde pierdes más: si es por parar a pensar (reconocer el caso) o por girar despacio (ejecutarlo).')+'</h3><div class="cbars">'+bars+'</div><p>'+msg+'</p>'+act+'</div>';
 }
 function coachAction(C){
   const main={oll:'OLL',pll:'PLL',f2l:'F2L'}[C.weak],cs=C.slow.filter(c=>mainOf(c.kind)===main);
@@ -1565,7 +1588,7 @@ $('themeSeg').onclick=e=>{const b=e.target.closest('button');if(!b)return;cfg.th
 mqLight.addEventListener('change',()=>{if(cfg.theme==='auto')applyTheme()});
 applyTheme();
 /* ===== Detalle de la resolución: repetición, fases y cómo mejorar ===== */
-const PH_COL={cross:'#9b7bf0',slot1:'#5b6bf0',slot2:'#4a82f0',slot3:'#3a9be8',slot4:'#34b0de',oll:'#f0a43c',pll:'#3ddc97'};
+const PH_COL={cross:'#9b7bf0',slot1:'#5b6bf0',slot2:'#4a82f0',slot3:'#3a9be8',slot4:'#34b0de',oll:'#e867b8',pll:'#3ddc97'};
 let rp=null;
 const sec=ms=>(ms/1000).toFixed(2);
 function phLabel(seg,cases){return seg.key==='cross'?'Cruz':seg.key.startsWith('slot')?'F2L '+seg.key.slice(4):seg.key==='oll'?'OLL'+(cases.oll?' '+cases.oll.id:''):'PLL'+(cases.pll?' '+cases.pll.id:'')}
@@ -1612,7 +1635,7 @@ function renderTips(P,cases,start,moves){
   const box=$('svTips');box.innerHTML='';if(!P){return}
   const S=Insight.summarize(P),pc=Math.round(S.recShare*100),wp=S.worstPause,sl=S.slowest;
   const sm=(x)=>'<span class="g">'+phGlyph(x,P,cases)+'</span>',lb=(x)=>phLabel(x,cases);
-  let h='<div class="tip"><h4>Pausas</h4>'+ring(pc,pc<=15?'#3ddc97':'#f0a43c')+(wp?sm(wp)+'<small>'+lb(wp)+' · '+sec(wp.rec)+' s</small>':'')+'</div>';
+  let h='<div class="tip"><h4>Pausas</h4>'+ring(pc,pc<=15?'#3ddc97':'#8c95a3')+(wp?sm(wp)+'<small>'+lb(wp)+' · '+sec(wp.rec)+' s</small>':'')+'</div>';
   h+='<div class="tip"><h4>Ritmo</h4>'+(sl?sm(sl)+'<b>'+sl.tps.toFixed(1)+'/s</b><small>'+lb(sl)+'</small>':'<b class="ok">✓</b>')+'</div>';
   let r=null;try{r=Insight.analyze(start,moves);if(r)noteRec(r)}catch(e){}
   h+='<div class="tip"><h4>Algoritmo</h4>'+(r?Insight.getCase(r.kind,r.id).icon+'<b>−'+r.save.toFixed(1)+' s</b><button class="btn pri" data-k="'+r.kind+'" data-i="'+r.id+'" title="Ver y aprender '+r.label+'">'+SV(P_CAP)+'</button>':'<b class="ok">✓</b><small>sin mejoras</small>')+'</div>';
