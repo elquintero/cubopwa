@@ -417,7 +417,7 @@ input[type=range]::-webkit-slider-thumb{background:var(--tx);border:2px solid va
       <div id="log">Aquí aparecerán los datos crudos del cubo.</div>
     </details>
     <h3>Acerca de</h3>
-    <p class="mu" style="margin:0">CubIQ · versión <span id="ver">1.19.0</span></p>
+    <p class="mu" style="margin:0">CubIQ · versión <span id="ver">1.19.1</span></p>
   </div>
   <div class="vb" id="setTheme" hidden>
     <h3 style="margin-top:6px">Tema</h3>
@@ -579,12 +579,12 @@ const clone=c=>c.map(s=>({p:[...s.p],n:[...s.n],c:s.c}));
 const rotV=(v,ax,t)=>{const c=Math.cos(t),s=Math.sin(t),[x,y,z]=v;return ax===0?[x,y*c-z*s,y*s+z*c]:ax===1?[x*c+z*s,y,-x*s+z*c]:[x*c-y*s,x*s+y*c,z]};
 let LINEC='#0b0d10';
 function paintCube(g,W,state,an,Gf,vw,cf){
-  const S=W/6,Q=[],GG=v=>Gf?Gf(v):v;g.clearRect(0,0,W,W);
+  const S=W/6,Q=[],GG=v=>Gf?Gf(v):v,small=W<300,lh=small?0.465:0.5,lc=small&&/^#[0-9a-f]{6}$/i.test(LINEC)?LINEC+'8c':LINEC;g.clearRect(0,0,W,W);
   for(const s of state){
     const n=s.n,inL=an&&s.p[an.ax]===an.sg,rot=v=>inL?rotV(v,an.ax,an.th):v;
-    const nv=vw(GG(rot(n)));if(nv[2]<=0.001&&!an)continue;
+    const nv=vw(GG(rot(n)));if(nv[2]<=0.001&&!(an&&inL))continue;
     const u=n[1]||n[2]?[1,0,0]:[0,1,0],vv=n[2]?[0,1,0]:[0,0,1],c=s.p.map((x,i)=>x+n[i]*0.5);
-    const polys=[[0.5,LINEC],[0.43,cf?cf(s):COL[s.c]]].map(([h,col])=>[col,[[-1,-1],[1,-1],[1,1],[-1,1]].map(([i,j])=>vw(GG(rot(c.map((x,t)=>x+h*(i*u[t]+j*vv[t]))))))]);
+    const polys=[[lh,lc],[0.43,cf?cf(s):COL[s.c]]].map(([h,col])=>[col,[[-1,-1],[1,-1],[1,1],[-1,1]].map(([i,j])=>vw(GG(rot(c.map((x,t)=>x+h*(i*u[t]+j*vv[t]))))))]);
     Q.push({z:vw(GG(rot(c)))[2],polys});
   }
   Q.sort((a,b)=>a.z-b.z);
@@ -1078,10 +1078,10 @@ function coachHTML(C){
   if(!C)return '<div class="coach mu">'+SV(P_SPARK)+'<span>'+(coachPending()?'Analizando tus resoluciones…':'Resuelve unas cuantas veces con tu cubo conectado y aquí verás tu diagnóstico personal.')+'</span></div>';
   const bars=GRP.map(k=>'<div class="cb'+(k===C.weak&&!C.balanced?' w':'')+'"><div class="tr"><i style="height:'+Math.max(6,Math.round(C.share[k]*100*1.6))+'%"></i></div><b>'+Math.round(C.share[k]*100)+'%</b><span>'+GRP_N[k]+'</span></div>').join('');
   const w=GRP_N[C.weak],pct=Math.round(C.recShare*100);
-  const msg=C.balanced?'Tu resolución está equilibrada. Sigue repasando los casos más lentos.'
-    :C.kind==='rec'?'<b>'+w+'</b>: pasas el '+pct+' % del tiempo parado antes de mover. Te falta reconocer el caso de un vistazo.'
-    :C.kind==='exe'?'<b>'+w+'</b>: piensas poco pero giras despacio ('+C.tps.toFixed(1)+' giros/s). Repite los algoritmos hasta que salgan fluidos.'
-    :'<b>'+w+'</b> es donde más tiempo pierdes. Repite sus casos más lentos para ganar regularidad.';
+  const msg=C.balanced?'Tu resolución va equilibrada, ¡buen trabajo! Sigue repasando tus casos más lentos para seguir mejorando.'
+    :C.kind==='rec'?'<b>'+w+'</b>: dedicas el '+pct+' % del tiempo a mirar antes de mover. Con un poco de práctica de reconocimiento lo verás de un vistazo y ganarás mucho tiempo.'
+    :C.kind==='exe'?'<b>'+w+'</b>: ya reconoces el caso rápido; ahora toca ganar velocidad de giro ('+C.tps.toFixed(1)+' giros/s). Unas repeticiones más y los algoritmos saldrán fluidos.'
+    :'<b>'+w+'</b> es donde más tiempo se te va. Repite sus casos más lentos y verás cómo mejora tu regularidad.';
   const can=(C.weak==='oll'||C.weak==='pll'||C.weak==='f2l')&&!C.balanced;
   const act=can?'<button class="btn" id="coachGo">'+(C.kind==='exe'?SV(P_CAP)+'Practicar el caso más lento':C.kind==='rec'?SV(P_EYE)+'Reconocer casos de '+w+' sin cubo':SV(P_WATCH)+'Entrenar mis casos de '+w)+'</button>':'';
   return '<div class="coach"><h3>'+SV(P_SPARK)+'Tu diagnóstico <small>últimas '+C.n+'</small>'+HI('Reparte el tiempo de tus últimas resoluciones por fases y señala dónde pierdes más: si es por parar a pensar (reconocer el caso) o por girar despacio (ejecutarlo).')+'</h3><div class="cbars">'+bars+'</div><p>'+msg+'</p>'+act+'</div>';
@@ -1224,7 +1224,7 @@ function cpFrame(){
   const cvs=$('csCv'),m=cp.moves,k=cpIdx(cp.T),st=clone(cp.start);
   for(let j=0;j<=k;j++)mv(st,m[j].m);
   let an=null;const nx=m[k+1];
-  if(nx&&nx.t-cp.T<cp.win){const q=nx.m.endsWith("'")?-1:nx.m.endsWith('2')?2:1,n=FACES[nx.m[0]],ax=n.findIndex(v=>v),sg=n[ax],e=1-(nx.t-cp.T)/cp.win;an={ax,sg,th:-sg*q*Math.PI/2*e*e*(3-2*e)}}
+  if(cp.play&&nx&&nx.t-cp.T<cp.win){const q=nx.m.endsWith("'")?-1:nx.m.endsWith('2')?2:1,n=FACES[nx.m[0]],ax=n.findIndex(v=>v),sg=n[ax],e=1-(nx.t-cp.T)/cp.win;an={ax,sg,th:-sg*q*Math.PI/2*e*e*(3-2*e)}}
   paintCube(cvs.getContext('2d'),cvs.width,st,an,GFL,DV);
   $('csSeek').value=cp.dur?Math.round(cp.T/cp.dur*1000):0;$('csTime').textContent=(k+1)+' / '+m.length;
   csMark(k+1);
@@ -1646,7 +1646,7 @@ function rpFrame(T){
   const c=$('svCv'),m=rp.moves,k=rpIdx(T),st=clone(rp.start);
   for(let j=0;j<=k;j++)mv(st,m[j].m);
   let an=null;const nx=m[k+1];
-  if(nx&&nx.t-T<180){const q=nx.m.endsWith("'")?-1:nx.m.endsWith('2')?2:1,n=FACES[nx.m[0]],ax=n.findIndex(v=>v),sg=n[ax],e=1-(nx.t-T)/180;an={ax,sg,th:-sg*q*Math.PI/2*e*e*(3-2*e)}}
+  if(rp.play&&nx&&nx.t-T<180){const q=nx.m.endsWith("'")?-1:nx.m.endsWith('2')?2:1,n=FACES[nx.m[0]],ax=n.findIndex(v=>v),sg=n[ax],e=1-(nx.t-T)/180;an={ax,sg,th:-sg*q*Math.PI/2*e*e*(3-2*e)}}
   paintCube(c.getContext('2d'),c.width,st,an,null,DV);
   $('svSeek').value=rp.dur?Math.round(T/rp.dur*1000):0;$('svTime').textContent=sec(T)+' / '+sec(rp.dur);
   rp.segs.forEach((x,n)=>{const a=x.a<0?0:m[x.a].t,b=m[x.b].t,el=$('svPhases').children[n];if(el)el.classList.toggle('on',T>=a&&T<=b&&!(T===a&&n>0))});
