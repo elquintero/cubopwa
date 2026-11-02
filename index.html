@@ -1475,7 +1475,7 @@ function applyTheme(){
 function applyCubeStyle(){
   const cs=cfg.cubeStyle||'auto',light=cs==='light'||(cs==='auto'&&document.documentElement.dataset.theme==='light');
   const ln=cfg.cubeLines==='white'?'white':'dark',changed=!!window.__cubeLight!==light||window.__cubeLine!==ln;
-  window.__cubeLight=light;window.__cubeLine=ln;LINEC=ln==='white'?'#D3D9E2':'#0b0d10';GREY=light?(ln==='white'?'#e6eaf0':'#f3f5f8'):'#39414b';
+  window.__cubeLight=light;window.__cubeLine=ln;LINEC=ln==='white'?'#B7C2C8':'#0b0d10';GREY=light?(ln==='white'?'#e6eaf0':'#f3f5f8'):'#39414b';
   document.querySelectorAll('#lineSeg button').forEach(b=>b.classList.toggle('on',b.dataset.t===ln));
   document.querySelectorAll('#cubeSeg button').forEach(b=>b.classList.toggle('on',b.dataset.t===cs));
   if(changed&&window.Insight){refreshCubeIcons();draw();renderPrev()}
