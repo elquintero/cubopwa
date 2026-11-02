@@ -307,7 +307,7 @@ input[type=range]::-webkit-slider-thumb{background:var(--tx);border:2px solid va
   <nav id="tabs" aria-label="Principal">
     <button class="tab on" data-v="home" aria-label="Cronómetro" title="Cronómetro"><svg viewBox="0 0 24 24"><circle cx="14.5" cy="14" r="6.5"/><path d="M12.5 3.5h4M14.5 3.5v4M14.5 14l2.6-2.6M3 11h3.5M2 14.5h4M4 18h2.5"/></svg></button>
     <button class="tab" data-v="learn" id="btnTrain" aria-label="Aprender" title="Aprender"><svg viewBox="0 0 24 24"><path d="M2.5 9 12 4.5 21.5 9 12 13.5Z"/><path d="M6.5 11.5V16c0 1.5 2.5 3 5.5 3s5.5-1.5 5.5-3v-4.5M21.5 9v6"/></svg></button>
-    <button class="tab" data-v="train" id="btnPractice" aria-label="Entrenar" title="Entrenar casos"><svg viewBox="0 0 24 24"><path d="M12 2.5l8.5 4.7v9.6L12 21.5l-8.5-4.7V7.2zM12 12v9.5M3.5 7.2 12 12l8.5-4.8"/><path stroke-width="1.1" d="M14.83 4.07 6.33 8.77M17.67 5.63 9.17 10.33M9.17 4.07l8.5 4.7M6.33 5.63l8.5 4.7M6.33 8.77v9.6M9.17 10.33v9.6M14.83 10.33v9.6M17.67 8.77v9.6M3.5 10.4l8.5 4.77M3.5 13.6l8.5 4.73M12 15.17l8.5-4.77M12 18.33l8.5-4.73"/></svg></button>
+    <button class="tab" data-v="train" id="btnPractice" aria-label="Entrenar" title="Entrenar casos"><svg viewBox="0 0 24 24"><path d="M12 2.5l8.5 4.7v9.6L12 21.5l-8.5-4.7V7.2zM12 12v9.5M3.5 7.2 12 12l8.5-4.8M7.75 4.85l8.5 4.75M16.25 4.85l-8.5 4.75M3.5 12l8.5 4.75M20.5 12l-8.5 4.75M7.75 9.6v9.55M16.25 9.6v9.55"/></svg></button>
     <button class="tab" data-v="stats" id="btnStats" aria-label="Estadísticas" title="Estadísticas"><svg viewBox="0 0 24 24"><path d="M3.5 14.5H7V20H3.5zM10 11.5h3.5V20H10zM16.5 9H20v11h-3.5zM3.5 10 7.7 6.8 11 9l9.3-5.8M15.6 3.2h4.7v4.7"/></svg></button>
     <button class="tab" data-v="set" id="btnSet" aria-label="Ajustes" title="Ajustes"><svg viewBox="0 0 24 24"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg></button>
   </nav>
@@ -386,6 +386,10 @@ input[type=range]::-webkit-slider-thumb{background:var(--tx);border:2px solid va
       <button class="btn" id="btnLast"><svg class="i" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M10 8.6v6.8l5.6-3.4z"/></svg>Ver última resolución</button>
       <button class="btn" id="btnGyro" hidden><svg class="i" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 3v3M12 18v3M3 12h3M18 12h3"/></svg>Centrar giroscopio</button>
     </div>
+    <h3>Copia de seguridad</h3>
+    <div class="mu" style="font-size:13px;padding:0 0 10px">Guarda en un archivo los datos del perfil actual (resoluciones, progreso y repeticiones). Al importar se crea un perfil nuevo, sin borrar los que ya tienes.</div>
+    <div class="row"><button class="btn" id="btnBk"><svg class="i" viewBox="0 0 24 24"><path d="M12 4v11M7.5 10.5 12 15l4.5-4.5M5 19h14"/></svg>Crear copia</button><button class="btn" id="btnImp"><svg class="i" viewBox="0 0 24 24"><path d="M12 15V4M7.5 8.5 12 4l4.5 4.5M5 19h14"/></svg>Importar copia</button></div>
+    <input type="file" id="fileImp" accept=".json,application/json" hidden>
     <h3>Dispositivos conectados</h3>
     <div id="devs"></div>
     <div class="row"><button class="btn" id="btnNewDev"><svg class="i" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>Conectar otro cubo</button></div>
@@ -396,6 +400,7 @@ input[type=range]::-webkit-slider-thumb{background:var(--tx);border:2px solid va
       <div class="at"><b>Tocar el scramble</b><span>Genera otro scramble.</span></div>
       <div class="at"><b>Tocar el cronómetro</b><span>Empieza o para sin cubo conectado (también con la barra espaciadora).</span></div>
       <div class="at"><b>Tocar el estado de conexión</b><span>Con un cubo conectado, permite desconectarlo.</span></div>
+      <div class="at"><b>Botón atrás de Android</b><span>Vuelve a la pantalla anterior, luego al Cronómetro y desde ahí sale de la app.</span></div>
       <div class="at"><b>Tocar el avatar</b><span>Cambia de perfil o entra en modo invitado.</span></div>
       <div class="at"><b>Pulsación larga en un caso (Aprender)</b><span>Lo marca como dominado. Otra pulsación larga lo devuelve a nuevo.</span></div>
       <div class="at"><b>4 giros seguidos con el cubo real</b><span>R ×4: aprender el caso recomendado cuando aparece un aviso. L ×4: descartar el aviso. U ×4: centrar la orientación del giroscopio. Solo fuera de una resolución.</span></div>
@@ -408,7 +413,7 @@ input[type=range]::-webkit-slider-thumb{background:var(--tx);border:2px solid va
       <div id="log">Aquí aparecerán los datos crudos del cubo.</div>
     </details>
     <h3>Acerca de</h3>
-    <p class="mu" style="margin:0">CubIQ · versión <span id="ver">1.17.0</span></p>
+    <p class="mu" style="margin:0">CubIQ · versión <span id="ver">1.18.0</span></p>
   </div>
   <div class="vb" id="setTheme" hidden>
     <h3 style="margin-top:6px">Tema</h3>
@@ -901,8 +906,8 @@ window.addEventListener('popstate',()=>{
   if(dlg){dlg.close();hArm();return}
   if(vStack.length){back();hArm();return}
   if(vNow!=='home'){nav('home');hArm();return}
-  if(Date.now()-lastBack<2000){history.back();return} // segunda pulsación: sale de la app
-  lastBack=Date.now();toast('Pulsa otra vez atrás para salir');hArm();
+  if(app.busy()){toast('Termina la resolución antes de salir');hArm();return}
+  history.back(); // ya estás en el Cronómetro: sale de la app
 });
 /* Solo vertical en móvil (la app instalada ya lo fija desde el manifest) */
 if(matchMedia('(pointer:coarse)').matches)document.addEventListener('pointerdown',()=>{try{screen.orientation.lock('portrait').catch(()=>{})}catch(e){}},{once:true});
@@ -1392,6 +1397,29 @@ function addProfile(name,seed,data){
   if(data)for(const k of Object.keys(data))try{localStorage.setItem(pk(k,id),data[k])}catch(e){}
   guest=false;profileId=id;saveProfiles();loadData();
 }
+const BK_KEYS=['solves','tstats','lstats','lfav','lrec','rstats'];
+$('btnBk').onclick=()=>{
+  if(guest){toast('En modo invitado no hay datos que guardar');return}
+  const data={};for(const k of BK_KEYS){const v=PS.get(k);if(v!=null)data[k]=v}
+  const pr=curProf(),blob=new Blob([JSON.stringify({app:'CubIQ',v:1,name:pr.name,seed:pr.seed,date:new Date().toISOString(),data})],{type:'application/json'});
+  const a=document.createElement('a'),d=new Date().toISOString().slice(0,10);
+  a.href=URL.createObjectURL(blob);a.download='cubiq-'+pr.name.replace(/[^\w-]+/g,'_')+'-'+d+'.json';
+  document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),4000);
+  toast('Copia creada: '+pr.name);
+};
+$('btnImp').onclick=()=>{if(!busy())$('fileImp').click()};
+$('fileImp').onchange=async e=>{
+  const f=e.target.files[0];e.target.value='';if(!f)return;
+  try{
+    const j=JSON.parse(await f.text());
+    if(j.app!=='CubIQ'||!j.data||typeof j.data!=='object')throw 0;
+    const data={};
+    for(const k of BK_KEYS)if(typeof j.data[k]==='string'){JSON.parse(j.data[k]);data[k]=j.data[k]}
+    if(!Object.keys(data).length)throw 0;
+    addProfile((String(j.name||'Perfil').slice(0,9)+' (copia)'),+j.seed||0,data);
+    toast('Copia importada como perfil nuevo');
+  }catch(err){toast('Ese archivo no es una copia válida de CubIQ')}
+};
 let pfForm=null; // {seed,keep}
 function renderProf(){
   const p=curProf(),box=$('pfBody');let h='';
