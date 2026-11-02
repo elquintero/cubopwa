@@ -66,21 +66,29 @@ window.connectCube = async (app) => {
     app.toast('Conectado: ' + name + ' (' + (conn.protocol || '?') + ')');
     let first = true; // el primer estado real del cubo sustituye al virtual
     conn.events$.subscribe((e) => {
-      if (e.type === 'MOVE') { app.log('MOVE ' + e.move); app.onMove(e.move); }
+      if (e.type === 'MOVE') { app.log('MOVE ' + JSON.stringify(e).slice(0, 160)); app.onMove(e.move); }
       else if (e.type === 'FACELETS') {
         // Diagnóstico: se registra cada estado para poder comparar el orden de pegatinas con URFDLB.
         app.log('FACELETS ' + e.facelets);
         // Solo el primer estado sustituye al cubo virtual. Los siguientes se ignoran: el cubo virtual
         // avanza con los giros (MOVE). Así, si la librería entrega las pegatinas en otro orden,
         // el cubo de la pantalla no se desordena tras cada giro.
-        if (first) { app.setFacelets(e.facelets, true); first = false; }
+        if (first) {
+          first = false;
+          const SOLVED = 'UUUUUUUUURRRRRRRRRFFFFFFFFFDDDDDDDDDLLLLLLLLLBBBBBBBBB';
+          if (e.facelets === SOLVED) app.setFacelets(e.facelets, true);
+          else if (confirm('El cubo informa de un estado DESORDENADO.\n\n¿Está resuelto en realidad? (los GAN guardan su propio estado y a veces se descuadra)\n\nAceptar = tratarlo como resuelto\nCancelar = usar el estado que informa el cubo')) {
+            app.resync(); // cubo virtual resuelto
+            try { conn.sendCommand({ type: 'REQUEST_RESET' }); } catch (err) { app.log('Reset no disponible: ' + err.message); }
+          } else app.setFacelets(e.facelets, true);
+        }
       }
       else if (e.type === 'GYRO') {
         if (!window.__gyroLogged) { window.__gyroLogged = true; app.log('GYRO ' + JSON.stringify(e).slice(0, 140)); }
         app.gyro(e.quaternion || e.quat || e);
       }
       else if (e.type === 'DISCONNECT') app.setStatus('Desconectado', false);
-      else if (e.type === 'BATTERY') app.log('Batería ' + e.batteryLevel + '%');
+      else if (e.type === 'BATTERY') { /* no se registra: llena el log y tapa los giros */ }
     });
     app.gyroWatch();
     if (conn.capabilities?.facelets) conn.sendCommand({ type: 'REQUEST_FACELETS' });
