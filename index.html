@@ -408,7 +408,7 @@ input[type=range]::-webkit-slider-thumb{background:var(--tx);border:2px solid va
       <div id="log">Aquí aparecerán los datos crudos del cubo.</div>
     </details>
     <h3>Acerca de</h3>
-    <p class="mu" style="margin:0">CubIQ · versión <span id="ver">1.14.0</span></p>
+    <p class="mu" style="margin:0">CubIQ · versión <span id="ver">1.16.0</span></p>
   </div>
   <div class="vb" id="setTheme" hidden>
     <h3 style="margin-top:6px">Tema</h3>
@@ -435,6 +435,7 @@ input[type=range]::-webkit-slider-thumb{background:var(--tx);border:2px solid va
       <div class="cs-info"><b id="csName"></b><div class="cs-lv" id="csLv"></div><div class="mu" id="csMeta"></div></div>
     </div>
     <div class="alg-box"><div class="alg" id="csAlg"></div><button class="ib" id="csEye" aria-label="Mostrar u ocultar el algoritmo"></button></div>
+    <p class="mu" style="margin:8px 2px 0;font-size:13px">Pulsa ▶ para ver cómo se hace y practícalo en tu cubo. Cuando te lo sepas, oculta el algoritmo con el ojo.</p>
     <div class="pl">
       <div class="seg" id="csTabs"><button data-t="setup">1 · Caso</button><button data-t="solve" class="on">2 · Solución</button></div>
       <canvas id="csCv" width="520" height="520" aria-label="Animación del caso"></canvas>
@@ -889,6 +890,22 @@ function show(v){
 const nav=v=>{vStack=[];show(v)},push=v=>{vStack.push(vNow);show(v)},back=()=>show(vStack.pop()||rootTab);
 $('tabs').onclick=e=>{const b=e.target.closest('.tab');if(b)nav(b.dataset.v)};
 $('csBack').onclick=back;
+/* Botón «atrás» de Android: vuelve a la pantalla anterior, luego a Cronómetro, y sale con doble pulsación */
+let hArmed=false,lastBack=0;
+const hArm=()=>{if(hArmed)return;try{history.pushState({cq:1},'');hArmed=true}catch(e){}};
+try{history.replaceState({cq:0},'')}catch(e){}
+document.addEventListener('pointerdown',hArm,true); // se arma con el primer toque: Chrome ignora las entradas de historial sin interacción
+window.addEventListener('popstate',()=>{
+  hArmed=false;
+  const dlg=document.querySelector('dialog[open]');
+  if(dlg){dlg.close();hArm();return}
+  if(vStack.length){back();hArm();return}
+  if(vNow!=='home'){nav('home');hArm();return}
+  if(Date.now()-lastBack<2000){history.back();return} // segunda pulsación: sale de la app
+  lastBack=Date.now();toast('Pulsa otra vez atrás para salir');hArm();
+});
+/* Solo vertical en móvil (la app instalada ya lo fija desde el manifest) */
+if(matchMedia('(pointer:coarse)').matches)document.addEventListener('pointerdown',()=>{try{screen.orientation.lock('portrait').catch(()=>{})}catch(e){}},{once:true});
 document.addEventListener('keydown',e=>{if(e.key==='Escape'&&vStack.length&&!document.querySelector('dialog[open]'))back()});
 function syncSet(){if(!$('setTheme').hidden&&typeof renderPrev==='function')renderPrev();$('oIns').checked=cfg.insight;$('oGyro').checked=cfg.gyro;$('oInsp').checked=cfg.insp;$('oAuto').checked=cfg.auto;$('oSucc').checked=cfg.success;renderDevs()}
 
@@ -1146,7 +1163,6 @@ function openCase(kind,id){
   cs={kind,id,alt:lfav[kind+' '+id]||0,tab:'solve',spans:[],ends:[]};
   if(vNow!=='case')push('case');
   csLoad();
-  if(!matchMedia('(prefers-reduced-motion: reduce)').matches)setTimeout(()=>{if(cs&&vNow==='case')cpPlay(true)},350);
 }
 function csLoad(){
   const c=cs.c=Insight.getCase(cs.kind,cs.id,cs.alt),k=c.key,s=stageOf(k),st=tstats[k],L=lstats[k];
