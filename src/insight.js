@@ -338,7 +338,8 @@ export function caseIcon(state, kind, flip = false) {
   const tf = (arr) => (flip ? arr.map((s) => ({ p: [-s.p[0], -s.p[1], s.p[2]], n: [-s.n[0], -s.n[1], s.n[2]], c: s.c })) : arr);
   const st = tf(state);
   const lit = flip ? 'D' : 'U', k = 16, pad = 4, W = pad * 2 + k * 5, bar = k * 0.3, g = 1.5;
-  const yel = '#ffd500', off = '#262c34';
+  const light = !!window.__cubeLight; // estilo claro: casillas sin iluminar en blanco
+  const yel = '#ffd500', off = light ? '#fafbfc' : '#262c34', dontCare = light ? '#d3d9e1' : '#3b434e', topPLL = light ? '#fafbfc' : COL[lit];
   const isO = kind === 'OLL' || kind === 'EOLL', corner = (s) => s.p[0] !== 0 && s.p[2] !== 0;
   const col = (s) => (isO ? (s.c === lit ? yel : off) : COL[s.c]);
   let r = `<rect x="${pad + k - 3}" y="${pad + k - 3}" width="${3 * k + 6}" height="${3 * k + 6}" rx="5" fill="#0b0d10"/>`;
@@ -346,7 +347,7 @@ export function caseIcon(state, kind, flip = false) {
   for (const s of st) {
     if (s.p[1] !== 1) continue;
     const [x, , z] = s.p, n = s.n.join(), cx = pad + (x + 2) * k, cz = pad + (z + 2) * k;
-    if (n === '0,1,0') rect(cx + g, cz + g, k - 2 * g, k - 2 * g, kind === 'EOLL' && corner(s) ? '#3b434e' : isO ? col(s) : COL[lit]);
+    if (n === '0,1,0') rect(cx + g, cz + g, k - 2 * g, k - 2 * g, kind === 'EOLL' && corner(s) ? dontCare : isO ? col(s) : topPLL);
     else if (isO && (s.c !== lit || (kind === 'EOLL' && corner(s)))) continue;
     else if (n === '0,0,1') rect(cx + g, pad + 5 * k - bar, k - 2 * g, bar, col(s), 1.5);
     else if (n === '0,0,-1') rect(cx + g, pad, k - 2 * g, bar, col(s), 1.5);
