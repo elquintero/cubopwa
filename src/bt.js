@@ -28,7 +28,7 @@ const brandOf = (name) => /^(GAN|MG|AiCube)/i.test(name || '') ? 'GAN' : /^WCU_M
 let conn = null;
 // Se puede tener varios cubos guardados, pero solo uno conectado a la vez.
 window.disconnectCube = async (app) => {
-  const c = conn; conn = null;
+  const c = conn; conn = null; clearInterval(window.__battT);
   try { if (c) await (c.disconnect ? c.disconnect() : null); } catch (e) { console.error(e); }
   app.setStatus('Conectar', false);
 };
@@ -60,6 +60,7 @@ window.connectCube = async (app) => {
   provider.customMacAddressProvider = provider;
   try {
     conn = await connectSmartCube(provider);
+    const mine = conn; // para distinguir una desconexión inesperada de la que pides tú
     const name = conn.deviceName || lastName || 'Cubo';
     app.registerDevice(name, used || '', [brandOf(name), conn.protocol].filter(Boolean).join(' · ')); // la MAC solo se guarda si la has escrito y ha funcionado
     app.setStatus(name, true);
@@ -72,12 +73,24 @@ window.connectCube = async (app) => {
         if (!window.__gyroLogged) { window.__gyroLogged = true; app.log('GYRO ' + JSON.stringify(e).slice(0, 140)); }
         app.gyro(e.quaternion || e.quat || e);
       }
-      else if (e.type === 'DISCONNECT') app.setStatus('Desconectado', false);
-      else if (e.type === 'BATTERY') app.log('Batería ' + e.batteryLevel + '%');
+      else if (e.type === 'DISCONNECT') {
+        const lost = mine === conn; // si conn ya no es este cubo, la desconexión la pediste tú
+        if (lost) { conn = null; clearInterval(window.__battT); }
+        app.setStatus('Desconectado', false);
+        if (lost) {
+          app.log('DISCONNECT inesperado · ' + (app.busy() ? 'durante una resolución' : 'en reposo') + ' · ' + new Date().toLocaleTimeString());
+          app.toast('Se perdió la conexión con el cubo. Toca «Conectar» para volver.');
+        }
+      }
+      else if (e.type === 'BATTERY') { app.log('Batería ' + e.batteryLevel + '%'); app.setBattery(e.batteryLevel); }
     });
     app.gyroWatch();
     if (conn.capabilities?.facelets) conn.sendCommand({ type: 'REQUEST_FACELETS' });
-    if (conn.capabilities?.battery) conn.sendCommand({ type: 'REQUEST_BATTERY' });
+    if (conn.capabilities?.battery) {
+      const ask = () => { try { if (conn && !app.busy()) conn.sendCommand({ type: 'REQUEST_BATTERY' }); } catch (e) {} }; // nunca durante una resolución
+      ask();
+      clearInterval(window.__battT); window.__battT = setInterval(() => conn ? ask() : clearInterval(window.__battT), 60000); // se refresca cada minuto
+    }
   } catch (err) {
     conn = null;
     const unsupported = /unsupported|not supported|unknown|no matching|protocol/i.test(err.message || '');

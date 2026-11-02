@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <meta name="theme-color" content="#0b0d10">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -13,11 +13,11 @@
 <title>CubIQ</title>
 <script>/*THEME*/try{var _c=JSON.parse(localStorage.getItem("cfg")||"{}"),_t=_c.theme||"dark";document.documentElement.dataset.theme=(_t==="light"||(_t==="auto"&&matchMedia("(prefers-color-scheme: light)").matches))?"light":"dark"}catch(e){}</script>
 <style>
-:root{--bg:#0b0d10;--tx:#e8ecf1;--mu:#6b7380;--line:#1c2128;--ac:#5aa9ff;--ok:#3ddc97;--bad:#ff6b6b;--card:#0f1318;--tab:56px;--px:max(18px,calc((100vw - 640px)/2));
-  --inset:#0b0d10;--bg2:#1c2128;--track:#262d36;--bd2:#3a414b;--pop:#12161b;--selbg:#14202e;--onac:#06101c;--warn:#ffd54a;--orange:#ff9a3d;--okbg:#10231b;--badbg:#27140f;
+:root{--bg:#0b0d10;--tx:#e8ecf1;--mu:#6b7380;--line:#1c2128;--ac:#ff8a1f;--ok:#3ddc97;--bad:#ff6b6b;--card:#0f1318;--tab:56px;--px:max(18px,calc((100vw - 640px)/2));
+  --inset:#0b0d10;--bg2:#1c2128;--track:#262d36;--bd2:#3a414b;--pop:#12161b;--selbg:#2b1a0b;--onac:#1c1003;--warn:#ffd54a;--orange:#ff9a3d;--okbg:#10231b;--badbg:#27140f;
   --gbg:#120e1b;--gpill:#1a1426;--gtx:#d9c4ff;--gbd:#6b4fa8;color-scheme:dark}
-:root[data-theme=light]{--bg:#f3f5f8;--tx:#12161c;--mu:#5b6573;--line:#dde2e9;--ac:#1d6fe6;--ok:#12915a;--bad:#d6382f;--card:#ffffff;
-  --inset:#e8ecf2;--bg2:#e6eaf0;--track:#d3d9e2;--bd2:#b4bdca;--pop:#ffffff;--selbg:#e3eefe;--onac:#ffffff;--warn:#a86b00;--orange:#c75a00;--okbg:#e2f6ec;--badbg:#fde8e5;
+:root[data-theme=light]{--bg:#f3f5f8;--tx:#12161c;--mu:#5b6573;--line:#dde2e9;--ac:#e8830c;--ok:#12915a;--bad:#d6382f;--card:#ffffff;
+  --inset:#e8ecf2;--bg2:#e6eaf0;--track:#d3d9e2;--bd2:#b4bdca;--pop:#ffffff;--selbg:#fdebd6;--onac:#ffffff;--warn:#a86b00;--orange:#c75a00;--okbg:#e2f6ec;--badbg:#fde8e5;
   --gbg:#f3ecff;--gpill:#efe5ff;--gtx:#5b3aa5;--gbd:#b99be6;color-scheme:light}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;scrollbar-width:none}
 *::-webkit-scrollbar{display:none}
@@ -32,7 +32,12 @@ header{flex:none;display:flex;align-items:center;gap:6px;height:calc(52px + env(
 .sp{flex:1}
 .logo{border-radius:7px;margin-right:6px}
 .brand{font:700 20px/1 Poppins,ui-rounded,system-ui,sans-serif;letter-spacing:-.02em}
-.brand span{background:linear-gradient(100deg,#ff9f1c,#ff3d81 40%,#a64dff 70%,#4d7cff);-webkit-background-clip:text;background-clip:text;color:transparent}
+html,body{touch-action:pan-x pan-y} /* sin zoom con pellizco */
+.brand span{color:#ff8a1f}
+#batt{display:none;align-items:center;gap:4px;font-size:12px;font-weight:600;color:var(--mu);margin-right:6px;white-space:nowrap}
+#batt.on{display:inline-flex}#batt svg{width:20px;height:12px}#batt.low{color:#ff5a4d}
+.atajos .at{display:flex;gap:12px;padding:10px 0;border-bottom:1px solid var(--line);text-align:left}.atajos .at:last-child{border-bottom:0}
+.atajos .at b{flex:none;width:42%;font-size:13px}.atajos .at span{flex:1;color:var(--mu);font-size:13px}
 #btnConn{display:flex;align-items:center;gap:8px;color:var(--mu);font-size:13px;white-space:nowrap;min-width:0;margin-right:4px}
 #btnConn span{max-width:104px;overflow:hidden;text-overflow:ellipsis}
 #btnConn i{width:8px;height:8px;border-radius:50%;background:var(--bd2)}
@@ -73,9 +78,9 @@ header{flex:none;display:flex;align-items:center;gap:6px;height:calc(52px + env(
 #scr{flex:none;font:500 clamp(22px,6vw,30px)/1.5 ui-monospace,Menlo,Consolas,monospace;letter-spacing:.04em;min-height:3em;max-width:560px;display:flex;flex-wrap:wrap;justify-content:center;align-content:center;gap:0 .3em}
 #scr span{margin:0;padding-bottom:1px}
 #scr .d{color:var(--ok)}#scr .c{border-bottom:2px solid var(--tx)}#scr .p{color:var(--warn);border-bottom:2px solid var(--warn)}
-#scr .e{color:var(--orange);border-bottom:2px solid var(--orange)}#scr .n{color:var(--tx)}#scr .f{color:var(--mu)}
+#scr .e{color:var(--bad);border-bottom:2px solid var(--bad)}#scr .n{color:var(--tx)}#scr .f{color:var(--mu)}
 #scr[data-cap]:not([data-cap=""])::before{content:attr(data-cap);flex:0 0 100%;font:600 11px system-ui,sans-serif;letter-spacing:.08em;text-transform:uppercase;color:var(--mu);margin-bottom:2px}
-#hint{flex:none;min-height:20px;font-size:14px}#hint.p{color:var(--warn)}#hint.e{color:var(--orange)}
+#hint{flex:none;min-height:20px;font-size:14px}#hint.p{color:var(--warn)}#hint.e{color:var(--bad)}
 #timer{flex:none;height:clamp(76px,20vw,116px);display:flex;align-items:center;justify-content:center;font-family:Poppins,ui-rounded,'SF Pro Rounded',system-ui,sans-serif;font-size:clamp(64px,19vw,108px);font-weight:600;line-height:1;font-variant-numeric:tabular-nums;letter-spacing:-.02em;cursor:pointer;user-select:none}
 #timer.ready{font-size:clamp(30px,8.5vw,44px);font-weight:700;letter-spacing:0;color:transparent;-webkit-text-fill-color:transparent;background:linear-gradient(100deg,#ff9f1c,#ff3d81,#a64dff,#4d7cff,#ff9f1c) 0 0/300% 100% repeat-x;-webkit-background-clip:text;background-clip:text;animation:shine 5s linear infinite}
 @keyframes shine{to{background-position:150% 0}}#timer.insp{color:var(--warn)}
@@ -98,11 +103,11 @@ body.learn #timer{opacity:.5;font-size:clamp(44px,12vw,64px)}body.learn #timer.r
 .tr-top{display:flex;align-items:center;gap:8px}.tr-info{flex:1;min-width:0;display:grid}.tr-info b{font:600 16px Poppins,system-ui}
 #trIcon svg,#trIcon img{width:58px;height:58px;display:block;border-radius:8px}#trHold svg{width:58px;height:58px;display:block}
 #trainbar.setup #trHold svg{filter:drop-shadow(0 0 8px rgba(255,213,0,.55))}
-#trSay{margin:0;font-size:14px;line-height:1.35}#trSay.e{color:var(--orange)}
+#trSay{margin:0;font-size:14px;line-height:1.35}#trSay.e{color:var(--bad)}
 .algrow{display:flex;gap:8px;align-items:baseline;flex-wrap:wrap}.algrow .cap{color:var(--mu);font-size:12px}
 #trAlg,.alg{font:600 16px/1.7 ui-monospace,Menlo,Consolas,monospace;letter-spacing:.04em;word-break:break-word}#trAlg[hidden]{display:none}
 #trAlg span,.alg span{margin:0 .1em;padding-bottom:1px}#trAlg .d,.alg .d{color:var(--ok)}#trAlg .c,.alg .c{border-bottom:2px solid var(--tx)}
-#trAlg .e{color:var(--orange);border-bottom:2px solid var(--orange)}#trAlg .n,.alg .n{color:var(--tx)}
+#trAlg .e{color:var(--bad);border-bottom:2px solid var(--bad)}#trAlg .n,.alg .n{color:var(--tx)}
 .lv{display:inline-flex;gap:4px;align-items:center}.lv i{width:7px;height:7px;border-radius:50%;background:var(--track)}.lv i.on{background:var(--ac)}.lv.max i.on{background:var(--ok)}
 /* ---------- componentes ---------- */
 .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border:1px solid var(--line);border-radius:12px;padding:9px 14px;color:var(--tx)}.btn:hover{border-color:var(--mu)}
@@ -116,7 +121,7 @@ h3 svg{width:14px;height:14px}
 .opt small{display:block;color:var(--mu);margin-top:2px;font-size:13px}
 input[role=switch]{appearance:none;-webkit-appearance:none;width:44px;height:26px;border-radius:13px;background:var(--track);position:relative;flex:none;cursor:pointer;transition:background .2s}
 input[role=switch]::after{content:"";position:absolute;top:3px;left:3px;width:20px;height:20px;border-radius:50%;background:var(--tx);transition:transform .2s}
-input[role=switch]:checked{background:var(--ok)}input[role=switch]:checked::after{transform:translateX(18px);background:var(--onac)}
+input[role=switch]:checked{background:var(--ac)}input[role=switch]:checked::after{transform:translateX(18px);background:#fff}
 input[role=switch]:focus-visible{outline:2px solid var(--ac);outline-offset:2px}
 .dev{border:1px solid var(--line);border-radius:12px;padding:12px;margin-bottom:10px;display:grid;gap:8px;text-align:left}.dev.on{border-color:var(--ok)}
 .dt{display:flex;align-items:center;gap:8px}.badge{border:1px solid var(--line);border-radius:99px;padding:1px 9px;font-size:12px;color:var(--ac)}
@@ -141,7 +146,7 @@ details{margin-top:14px}summary{cursor:pointer;color:var(--mu);font-size:13px}
 .tile svg,.tile img{width:100%;max-width:56px;height:auto;display:block;border-radius:8px}
 .tile small{color:var(--mu);font-size:11px;font-weight:600;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .tile>i{position:absolute;top:6px;right:6px;width:8px;height:8px;border-radius:50%;background:var(--bd2)}
-.tile>i.good{background:var(--ok)}.tile>i.mid{background:var(--warn)}.tile>i.slow{background:var(--orange)}
+.tile>i.good{background:var(--ok)}.tile>i.mid{background:var(--warn)}.tile>i.slow{background:var(--bad)}
 .tile .lv{height:7px}
 .rec{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
 .keyrow{display:flex;gap:14px;color:var(--mu);font-size:11px;margin:10px 0 0;flex-wrap:wrap}.keyrow i{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:5px}
@@ -297,6 +302,7 @@ input[type=range]::-webkit-slider-thumb{background:var(--tx);border:2px solid va
   <span id="guestPill"><i></i>Invitado</span>
   <span class="sp"></span>
   <button class="ib" id="btnProf" aria-label="Perfil" title="Perfil"></button>
+  <span id="batt" title="Batería del cubo"><svg viewBox="0 0 24 12" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="1" y="1" width="19" height="10" rx="2.5"/><path d="M22.5 4v4" stroke-linecap="round"/><rect id="battFill" x="2.8" y="2.8" width="0" height="6.4" rx="1" fill="currentColor" stroke="none"/></svg><span id="battTx"></span></span>
   <button id="btnConn"><i></i><span id="status">Conectar</span></button>
   <nav id="tabs" aria-label="Principal">
     <button class="tab on" data-v="home" aria-label="Cronómetro" title="Cronómetro"><svg viewBox="0 0 24 24"><circle cx="12" cy="13.5" r="7.5"/><path d="M12 9.5v4l2.5 1.5M9.5 3h5M12 3v3"/></svg></button>
@@ -339,7 +345,7 @@ input[type=range]::-webkit-slider-thumb{background:var(--tx);border:2px solid va
   <div class="vh"><h2>Entrenar</h2><span class="cnt" id="tcCount"></span></div>
   <div class="vt"><div class="seg" id="tcTabs"></div><div class="chips" id="tcSubs"></div></div>
   <div class="vb"><div class="grid" id="tcGrid"></div>
-    <div class="keyrow"><span><i style="background:#3a414b"></i>nuevo</span><span><i style="background:#ff9a3d"></i>lento</span><span><i style="background:#ffd54a"></i>medio</span><span><i style="background:var(--ok)"></i>rápido</span></div></div>
+    <div class="keyrow"><span><i style="background:#3a414b"></i>nuevo</span><span><i style="background:var(--bad)"></i>lento</span><span><i style="background:#ffd54a"></i>medio</span><span><i style="background:var(--ok)"></i>rápido</span></div></div>
   <div class="vf">
     <button class="ib" id="tcOrder"></button>
     <button class="ib" id="tcMine" aria-label="Mis casos aprendidos" title="Elegir los casos que ya has empezado a aprender"><svg viewBox="0 0 24 24"><path d="M3 7.5 12 3l9 4.5-9 4.5Z"/><path d="M7 10.5v5c0 1.4 2.2 2.8 5 2.8s5-1.4 5-2.8v-5"/></svg></button>
@@ -382,7 +388,18 @@ input[type=range]::-webkit-slider-thumb{background:var(--tx);border:2px solid va
     </div>
     <h3>Dispositivos conectados</h3>
     <div id="devs"></div>
-    <div class="row"><button class="btn" id="btnReset"><svg class="i" viewBox="0 0 24 24"><path d="M12 3 20 7.5v9L12 21l-8-4.5v-9z"/><path d="m8.5 12.3 2.5 2.5 4.6-5"/></svg>Marcar cubo resuelto</button><button class="btn" id="btnNewDev"><svg class="i" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>Conectar otro cubo</button></div>
+    <div class="row"><button class="btn" id="btnNewDev"><svg class="i" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>Conectar otro cubo</button></div>
+    <details class="atajos" id="atajos">
+      <summary>Atajos</summary>
+      <div class="at"><b>Pulsación larga en el cubo</b><span>Marca el cubo como resuelto y genera un scramble nuevo.</span></div>
+      <div class="at"><b>Arrastrar el cubo</b><span>Gira la vista 3D del cubo.</span></div>
+      <div class="at"><b>Tocar el scramble</b><span>Genera otro scramble.</span></div>
+      <div class="at"><b>Tocar el cronómetro</b><span>Empieza o para sin cubo conectado (también con la barra espaciadora).</span></div>
+      <div class="at"><b>Tocar el estado de conexión</b><span>Con un cubo conectado, permite desconectarlo.</span></div>
+      <div class="at"><b>Tocar el avatar</b><span>Cambia de perfil o entra en modo invitado.</span></div>
+      <div class="at"><b>Pulsación larga en un caso (Aprender)</b><span>Lo marca como dominado. Otra pulsación larga lo devuelve a nuevo.</span></div>
+      <div class="at"><b>4 giros seguidos con el cubo real</b><span>R ×4: aprender el caso recomendado cuando aparece un aviso. L ×4: descartar el aviso. U ×4: centrar la orientación del giroscopio. Solo fuera de una resolución.</span></div>
+    </details>
     <details>
       <summary>Avanzado: simulador y registro Bluetooth</summary>
       <p class="mu">Sin cubo: teclado (U D L R F B, Shift = inverso) o estos botones.</p>
@@ -391,7 +408,7 @@ input[type=range]::-webkit-slider-thumb{background:var(--tx);border:2px solid va
       <div id="log">Aquí aparecerán los datos crudos del cubo.</div>
     </details>
     <h3>Acerca de</h3>
-    <p class="mu" style="margin:0">CubIQ · versión <span id="ver">1.12.0</span></p>
+    <p class="mu" style="margin:0">CubIQ · versión <span id="ver">1.14.0</span></p>
   </div>
   <div class="vb" id="setTheme" hidden>
     <h3 style="margin-top:6px">Tema</h3>
@@ -584,8 +601,12 @@ function setFacelets(str,first){ // refleja el estado real que reporta el cubo (
 }
 function checkPhase(){if(phase==='scramble')trackSync();else{if(train&&at&&(phase==='ready'||phase==='running'))algSync();if(phase==='running'&&isSolved(cube))finish()}}
 let drag=null;
-cv.addEventListener('pointerdown',e=>{drag=[e.clientX,e.clientY];cv.setPointerCapture(e.pointerId)});
-cv.addEventListener('pointermove',e=>{if(!drag)return;A+=(e.clientX-drag[0])*0.01;Bt=Math.max(-1.4,Math.min(1.4,Bt+(e.clientY-drag[1])*0.01));drag=[e.clientX,e.clientY];draw()});
+let cvLp=0,cvP0=null;
+cv.addEventListener('pointerdown',e=>{drag=[e.clientX,e.clientY];cvP0=[e.clientX,e.clientY];cv.setPointerCapture(e.pointerId);
+  clearTimeout(cvLp);cvLp=setTimeout(()=>{cvLp=0;drag=null;if(navigator.vibrate)navigator.vibrate(30);markSolved()},650)});
+cv.addEventListener('contextmenu',e=>e.preventDefault());
+for(const ev of ['pointerup','pointercancel'])cv.addEventListener(ev,()=>{clearTimeout(cvLp);cvLp=0});
+cv.addEventListener('pointermove',e=>{if(!drag)return;if(cvLp&&cvP0&&Math.hypot(e.clientX-cvP0[0],e.clientY-cvP0[1])>10){clearTimeout(cvLp);cvLp=0}A+=(e.clientX-drag[0])*0.01;Bt=Math.max(-1.4,Math.min(1.4,Bt+(e.clientY-drag[1])*0.01));drag=[e.clientX,e.clientY];draw()});
 cv.addEventListener('pointerup',()=>drag=null);
 document.getElementById('btnView').onclick=()=>{flip=!flip;draw()};
 
@@ -606,7 +627,7 @@ const OPP={U:'D',D:'U',L:'R',R:'L',F:'B',B:'F'},qOf=m=>m.endsWith("'")?3:m.endsW
 function setScramble(list){scr=list;const c=clone(cube);pre=[sig(c)];scr.forEach(m=>{mv(c,m);pre.push(sig(c))});prog=0;wrong=[];setPhase('scramble');renderScr()}
 function newScramble(){setScramble(train?train.setup:genScramble())}
 const dsp=m=>train&&train.frame?train.frame[m[0]]+m.slice(1):m; // en entrenamiento, los giros se muestran según cómo sujetas el cubo
-function renderScr(){ // verde = bien · amarillo = medio giro · naranja = error
+function renderScr(){ // verde = bien · amarillo = medio giro · rojo = error
   const el=$('scr'),h=$('hint');el.innerHTML='';
   $('cv').className=phase==='scramble'&&scr.length?(wrong.length?'bad':prog>0&&prog<scr.length?'ok':''):'';
   $('scr').dataset.cap=train&&phase==='scramble'?'Giros para crear el caso':'';
@@ -659,7 +680,7 @@ function manual(){ // espacio / toque: sin cubo o para saltar pasos
 }
 $('timer').onclick=manual;$('btnSkip').onclick=()=>phase==='scramble'&&setPhase('ready');
 $('btnNew').onclick=()=>{if(phase!=='running')newScramble()};
-$('btnReset').onclick=()=>{showCube(solvedCube());newScramble();toast('Cubo marcado como resuelto')};
+function markSolved(){if(phase==='running')return;showCube(solvedCube());newScramble();toast('Cubo marcado como resuelto')}
 $('btnApply').onclick=()=>{if(phase==='scramble')scr.forEach(m=>onMove(m))};
 document.addEventListener('keydown',e=>{
   if(document.querySelector('dialog[open]')||vNow!=='home')return;
@@ -1179,7 +1200,7 @@ $('csAlgs').onclick=e=>{const b=e.target.closest('.algopt');if(!b)return;cs.alt=
 $('csPractice').onclick=()=>startLearn(cs.kind,cs.id);
 $('csDrill').onclick=()=>startTrain(cs.kind,cs.id);
 
-/* ===== Seguimiento del algoritmo en el cubo real: verde = bien, naranja = error ===== */
+/* ===== Seguimiento del algoritmo en el cubo real: verde = bien, rojo = error ===== */
 function initAlg(){
   if(!train){at=null;return}
   const c=clone(cube),pr=[sig(c)];train.faceAlg.forEach(m=>{mv(c,m);pr.push(sig(c))});
@@ -1475,7 +1496,7 @@ function applyTheme(){
 function applyCubeStyle(){
   const cs=cfg.cubeStyle||'auto',light=cs==='light'||(cs==='auto'&&document.documentElement.dataset.theme==='light');
   const ln=cfg.cubeLines==='white'?'white':'dark',changed=!!window.__cubeLight!==light||window.__cubeLine!==ln;
-  window.__cubeLight=light;window.__cubeLine=ln;LINEC=ln==='white'?'#f4f6fa':'#0b0d10';GREY=light?(ln==='white'?'#e6eaf0':'#f3f5f8'):'#39414b';
+  window.__cubeLight=light;window.__cubeLine=ln;LINEC=ln==='white'?'#ffffff':'#0b0d10';COL.U=ln==='white'?'#d9dee6':'#f2f2f2';GREY=light?(ln==='white'?'#d3d9e2':'#f3f5f8'):(ln==='white'?'#4a525e':'#39414b');
   document.querySelectorAll('#lineSeg button').forEach(b=>b.classList.toggle('on',b.dataset.t===ln));
   document.querySelectorAll('#cubeSeg button').forEach(b=>b.classList.toggle('on',b.dataset.t===cs));
   if(changed&&window.Insight){refreshCubeIcons();draw();renderPrev()}
@@ -1496,7 +1517,6 @@ $('setTabs').onclick=e=>{const b=e.target.closest('button');if(!b)return;
   document.querySelectorAll('#setTabs button').forEach(x=>x.classList.toggle('on',x===b));
   $('setGen').hidden=b.dataset.t!=='gen';$('setTheme').hidden=b.dataset.t!=='theme';if(b.dataset.t==='theme')renderPrev()};
 $('cubeSeg').onclick=e=>{const b=e.target.closest('button');if(!b)return;cfg.cubeStyle=b.dataset.t;saveCfg();applyCubeStyle()};
-$('btnReset').addEventListener('click',()=>toast('Cubo marcado como resuelto'));
 $('themeSeg').onclick=e=>{const b=e.target.closest('button');if(!b)return;cfg.theme=b.dataset.t;saveCfg();applyTheme()};
 mqLight.addEventListener('change',()=>{if(cfg.theme==='auto')applyTheme()});
 applyTheme();
@@ -1623,10 +1643,11 @@ async function rawConnect(){
     toast('Conectado a '+(dev.name||'cubo'));
   }catch(e){toast('No se pudo conectar: '+e.message)}
 }
-window.app={onMove:m=>onMove(m),toast,log,gyro:onGyro,gyroWatch,setStatus:(t,on)=>{$('status').textContent=t;$('status').className=on?'on':'';if(!on)curDev=null;renderDevs()},getDevice:n=>devices.find(d=>d.id===n),registerDevice:(n,mac,proto)=>{let d=devices.find(x=>x.id===n);if(!d)devices.push(d={id:n,mac:mac||'',alias:''});if(mac)d.mac=mac;if(proto)d.proto=proto;curDev=n;saveDev();renderDevs()},setFacelets,resync:()=>{showCube(solvedCube());newScramble()}};
+window.app={busy:()=>phase==='running'||phase==='inspect',setBattery:l=>{const b=$('batt');if(l==null||isNaN(l)){b.classList.remove('on');return}l=Math.max(0,Math.min(100,Math.round(l)));b.classList.add('on');b.classList.toggle('low',l<=15);$('battTx').textContent=l+'%';$('battFill').setAttribute('width',(15.4*l/100).toFixed(1));b.title='Batería del cubo: '+l+'%'},onMove:m=>onMove(m),toast,log,gyro:onGyro,gyroWatch,setStatus:(t,on)=>{$('status').textContent=t;$('status').className=on?'on':'';if(!on){curDev=null;window.app.setBattery(null)}renderDevs()},getDevice:n=>devices.find(d=>d.id===n),registerDevice:(n,mac,proto)=>{let d=devices.find(x=>x.id===n);if(!d)devices.push(d={id:n,mac:mac||'',alias:''});if(mac)d.mac=mac;if(proto)d.proto=proto;curDev=n;saveDev();renderDevs()},setFacelets,resync:()=>{showCube(solvedCube());newScramble()}};
 $('btnConn').onclick=()=>{if($('status').className==='on'&&window.disconnectCube){if(confirm('¿Desconectar '+$('status').textContent+'?'))window.disconnectCube(window.app);return}window.connectCube?window.connectCube(window.app):rawConnect()};
 
 /* ===== Arranque ===== */
+for(const ev of ['gesturestart','gesturechange','gestureend'])document.addEventListener(ev,e=>e.preventDefault()); // iOS: sin zoom con pellizco
 if('serviceWorker' in navigator&&location.protocol.startsWith('http'))navigator.serviceWorker.register('sw.js').catch(()=>{});
 $('btnGyro').hidden=!cfg.gyro;
 draw();renderStats();newScramble();$('svPlay').innerHTML=PLAY;$('csPlay').innerHTML=PLAY;
