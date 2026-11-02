@@ -260,6 +260,18 @@ body.guest .pf-hero{border-style:dashed;border-color:#6b4fa8;background:#120e1b}
 .pf-form .top{display:flex;align-items:center;gap:10px;width:100%}.pf-form input[type=text]{flex:1;min-width:0;background:#0b0d10;border:1px solid var(--line);border-radius:12px;padding:10px 12px;color:var(--tx);font:inherit}
 .pf-form input[type=text]:focus{outline:2px solid var(--ac);border-color:transparent}
 .pf-act{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin-top:8px}
+
+.vf:empty{display:none}
+.imp{margin:-2px 0 10px;font-size:13px;color:var(--mu)}.imp b{color:var(--tx)}
+.profcard>svg:first-child{width:24px;height:24px;color:var(--ac);flex:none}
+.qz-intro{display:grid;gap:8px;justify-items:center;text-align:center;padding:26px 8px;color:var(--mu);font-size:14px}.qz-intro svg{width:34px;height:34px;color:var(--ac)}.qz-intro b{font:600 20px Poppins,system-ui,sans-serif;color:var(--tx)}.qz-intro p{margin:0;max-width:34ch}
+.qz-prog{display:flex;gap:5px;justify-content:center;margin:6px 0 14px}.qz-prog i{width:22px;height:4px;border-radius:2px;background:#262d36}.qz-prog i.d{background:var(--ac)}.qz-prog i.c{background:var(--tx)}
+.qz-card{display:grid;place-items:center;padding:14px;border:1px solid var(--line);border-radius:22px;background:var(--card);margin:0 auto 14px;width:min(100%,280px)}
+.qz-card svg,.qz-card img{width:min(210px,56vw);height:min(210px,56vw);display:block;border-radius:14px}
+.qz-opts{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.qz-o{padding:16px 8px;border:1px solid var(--line);border-radius:16px;background:var(--card);font:600 17px Poppins,system-ui,sans-serif}.qz-o:hover{border-color:#3a414b}
+.qz-o.ok{border-color:var(--ok);background:#10231b;color:var(--ok)}.qz-o.bad{border-color:var(--bad);background:#27140f;color:var(--bad)}.qz-o:disabled{cursor:default}
+.qz-fb{margin-top:14px;text-align:center;min-height:56px;font-size:15px;display:grid;gap:4px}.qz-fb.ok{color:var(--ok)}.qz-fb.bad{color:var(--bad)}.qz-fb code{font:600 14px ui-monospace,Menlo,monospace;color:var(--tx);letter-spacing:.03em}
 </style>
 </head>
 <body data-view="home">
@@ -363,7 +375,7 @@ body.guest .pf-hero{border-style:dashed;border-color:#6b4fa8;background:#120e1b}
       <div id="log">Aquí aparecerán los datos crudos del cubo.</div>
     </details>
     <h3>Acerca de</h3>
-    <p class="mu" style="margin:0">CubIQ · versión <span id="ver">1.7.0</span></p>
+    <p class="mu" style="margin:0">CubIQ · versión <span id="ver">1.8.0</span></p>
   </div>
 </section>
 
@@ -442,6 +454,15 @@ body.guest .pf-hero{border-style:dashed;border-color:#6b4fa8;background:#120e1b}
     <h2>Perfiles</h2>
   </div>
   <div class="vb" id="pfBody"></div>
+</section>
+
+<section id="vQuiz" class="view">
+  <div class="vh">
+    <button class="ib back" id="qzBack" aria-label="Volver" title="Volver"><svg class="b1" viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg><svg class="b2" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></svg></button>
+    <h2>Reconocimiento</h2><span class="cnt" id="qzCnt"></span>
+  </div>
+  <div class="vb" id="qzBody"></div>
+  <div class="vf" id="qzFoot"></div>
 </section>
 
 </div>
@@ -632,7 +653,7 @@ function avg(a,n){if(a.length<n)return null;const w=a.slice(-n).sort((x,y)=>x-y)
   return m.includes(Infinity)?Infinity:m.reduce((x,y)=>x+y,0)/m.length}
 const best=(a,n)=>{let b=null;for(let i=n;i<=a.length;i++){const r=avg(a.slice(0,i),n);if(r!==null&&(b===null||r<b))b=r}return b};
 const H_PLAY='<svg class="i" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M10 8.6v6.8l5.6-3.4z"/></svg>',H_DEL='<svg class="i" viewBox="0 0 24 24"><path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3"/></svg>';
-function renderStats(){
+function renderStats(){setTimeout(()=>{if(typeof scheduleCoach==='function')scheduleCoach()},400);
   const v=solves.map(val),rows=[['single',v.length?v[v.length-1]:null,v.length?Math.min(...v):null]];
   for(const n of[5,12,50,100])rows.push(['ao'+n,avg(v,n),best(v,n)]);
   const f=x=>x===null?'-':fmt(x);
@@ -799,7 +820,7 @@ $('btnGyro').onclick=()=>{if(gRaw){gq0=gRaw;onGyro(gRaw);toast('Orientación cen
 $('oGyro').onchange=e=>setGyro(e.target.checked);
 
 /* ===== Pantallas (sustituyen a los pop-ups) ===== */
-const TABS=['home','learn','train','stats','set'],VID={home:'vHome',learn:'vLearn',train:'vTrain',stats:'vStats',set:'vSet',case:'vCase',solve:'vSolve',prof:'vProf'};
+const TABS=['home','learn','train','stats','set'],VID={home:'vHome',learn:'vLearn',train:'vTrain',stats:'vStats',set:'vSet',case:'vCase',solve:'vSolve',prof:'vProf',quiz:'vQuiz'};
 let vNow='home',vStack=[],rootTab='home';
 function show(v){
   if(vNow==='solve'&&v!=='solve'&&typeof rpPlay==='function')rpPlay(false);
@@ -813,6 +834,7 @@ function show(v){
   else if(v==='stats'){renderStats();drawChart()}
   else if(v==='set')syncSet();
   else if(v==='prof')renderProf();
+  else if(v==='quiz')renderQuiz();
 }
 const nav=v=>{vStack=[];show(v)},push=v=>{vStack.push(vNow);show(v)},back=()=>show(vStack.pop()||rootTab);
 $('tabs').onclick=e=>{const b=e.target.closest('.tab');if(b)nav(b.dataset.v)};
@@ -871,9 +893,10 @@ function iconFor(kind,id){const key=kind+' '+id;return iconCache[key]||(iconCach
 /* ===== Coach: diagnóstico, reconocer o ejecutar, repaso espaciado ===== */
 const IV=[1,3,7,21,60],DAY=864e5,GRP=['cross','f2l','oll','pll'],GRP_N={cross:'Cruz',f2l:'F2L',oll:'OLL',pll:'PLL'};
 const EXPECT={cross:.14,f2l:.50,oll:.17,pll:.19},TPS_OK={cross:3,f2l:3,oll:4,pll:4}; // reparto típico del tiempo y ritmo mínimo razonable
-const coachCache=new WeakMap();
+
+// El análisis de cada resolución se guarda en la propia resolución (sv.ci): se calcula una vez y en segundo plano.
 function solveInfo(sv){
-  if(coachCache.has(sv))return coachCache.get(sv);
+  if(sv.ci!==undefined)return sv.ci||null;
   let r=null;
   try{
     if(sv.mv&&sv.fl&&sv.p!==2){
@@ -890,27 +913,74 @@ function solveInfo(sv){
       }
     }
   }catch(e){console.error(e)}
-  coachCache.set(sv,r);return r;
+  sv.ci=r||0;return r;
+}
+let cTimer=0,coachMemo=null;
+const coachPending=()=>solves.slice(-20).some(s=>s.ci===undefined&&s.mv&&s.fl&&s.p!==2);
+function scheduleCoach(){ // una resolución por tarea, para no bloquear la pantalla
+  if(cTimer||guest&&false)return;
+  const todo=solves.slice(-20).find(s=>s.ci===undefined&&s.mv&&s.fl&&s.p!==2);
+  if(!todo)return;
+  cTimer=setTimeout(()=>{cTimer=0;solveInfo(todo);if(coachPending())scheduleCoach();else{save();if(vNow==='learn')renderLearn()}},40);
 }
 function coachData(){
-  const infos=solves.slice(-20).map(solveInfo).filter(Boolean);
-  if(infos.length<3)return null;
-  const tot={},rec={},exec={},turns={};let all=0;
-  GRP.forEach(k=>{tot[k]=rec[k]=exec[k]=turns[k]=0});
-  for(const i of infos)GRP.forEach(k=>{tot[k]+=i.g[k].step;rec[k]+=i.g[k].rec;exec[k]+=i.g[k].exec;turns[k]+=i.g[k].turns});
-  GRP.forEach(k=>all+=tot[k]);if(!all)return null;
-  const share={},ratio={};GRP.forEach(k=>{share[k]=tot[k]/all;ratio[k]=share[k]/EXPECT[k]});
-  const weak=GRP.slice().sort((a,b)=>ratio[b]-ratio[a])[0],balanced=ratio[weak]<1.15;
-  const recShare=tot[weak]?rec[weak]/tot[weak]:0,tps=exec[weak]?turns[weak]/(exec[weak]/1000):0;
-  const kind=recShare>=.4?'rec':tps&&tps<TPS_OK[weak]?'exe':'ok';
-  const acc={};for(const i of infos)for(const c of i.cases){const k=c.kind+' '+c.id,a=acc[k]||(acc[k]={kind:c.kind,id:c.id,sum:0,n:0});a.sum+=c.ms;a.n++}
-  const slow=Object.values(acc).map(a=>({kind:a.kind,id:a.id,ms:a.sum/a.n,n:a.n})).sort((a,b)=>b.ms-a.ms);
-  return {n:infos.length,share,weak,balanced,recShare,tps,kind,slow};
+  const arr=solves.slice(-20),key=profileId+guest+':'+arr.length+':'+arr.filter(s=>s.ci!==undefined).length+':'+(arr.length?arr[arr.length-1].d:0);
+  if(coachMemo&&coachMemo.key===key)return coachMemo.val;
+  const infos=arr.map(s=>s.ci).filter(Boolean);let val=null;
+  if(infos.length>=3){
+    const tot={},rec={},exec={},turns={};let all=0;
+    GRP.forEach(k=>{tot[k]=rec[k]=exec[k]=turns[k]=0});
+    for(const i of infos)GRP.forEach(k=>{tot[k]+=i.g[k].step;rec[k]+=i.g[k].rec;exec[k]+=i.g[k].exec;turns[k]+=i.g[k].turns});
+    GRP.forEach(k=>all+=tot[k]);
+    if(all){
+      const share={},ratio={};GRP.forEach(k=>{share[k]=tot[k]/all;ratio[k]=share[k]/EXPECT[k]});
+      const weak=GRP.slice().sort((a,b)=>ratio[b]-ratio[a])[0],balanced=ratio[weak]<1.15;
+      const recShare=tot[weak]?rec[weak]/tot[weak]:0,tps=exec[weak]?turns[weak]/(exec[weak]/1000):0;
+      const kind=recShare>=.4?'rec':tps&&tps<TPS_OK[weak]?'exe':'ok';
+      const acc={};for(const i of infos)for(const c of i.cases){const k=c.kind+' '+c.id,a=acc[k]||(acc[k]={kind:c.kind,id:c.id,sum:0,n:0});a.sum+=c.ms;a.n++}
+      const slow=Object.values(acc).map(a=>({kind:a.kind,id:a.id,ms:a.sum/a.n,n:a.n})).sort((a,b)=>b.ms-a.ms);
+      val={n:infos.length,share,weak,balanced,recShare,tps,kind,slow};
+    }
+  }
+  coachMemo={key,val};return val;
 }
+/* ===== Probabilidad de cada caso (exacta, calculada con el simulador) ===== */
+let PROB=null;
+function probs(){
+  if(PROB)return PROB;
+  PROB={OLL:{},PLL:{},F2L:{}};
+  const oriKey=st=>st.filter(s=>s.p[1]===-1&&s.c==='D').map(s=>s.p+'|'+s.n).sort().join(';');
+  for(const id of Object.keys(Insight.GROUPS.OLL)){
+    const c=Insight.getCase('OLL',id),st=solvedCube();c.setup.forEach(m=>mv(st,m));const ks=new Set();
+    for(let r=0;r<4;r++){ks.add(oriKey(st));mv(st,'D')}
+    PROB.OLL[id]=ks.size/216; // 216 estados de orientación de la última capa
+  }
+  for(const id of Object.keys(Insight.GROUPS.PLL)){
+    const c=Insight.getCase('PLL',id),ks=new Set();
+    for(let pre=0;pre<4;pre++)for(let post=0;post<4;post++){const st=solvedCube();for(let i=0;i<pre;i++)mv(st,'D');c.setup.forEach(m=>mv(st,m));for(let i=0;i<post;i++)mv(st,'D');ks.add(sig(st))}
+    PROB.PLL[id]=ks.size/288; // 288 estados de permutación con la última capa orientada
+  }
+  for(const id of Object.keys(Insight.GROUPS.F2L))PROB.F2L[id]=4/41; // 4 parejas por resolución entre 41 casos
+  return PROB;
+}
+const DEF_MS={F2L:2500,OLL:3200,PLL:3500},TGT_MS={F2L:1300,OLL:1400,PLL:1600};
+function impactList(){
+  const C=coachData(),P=probs(),seen={},prior={};
+  if(C)C.slow.forEach(c=>{seen[c.kind+' '+c.id]=c});
+  for(const kind of ['F2L','OLL','PLL']){const a=C?C.slow.filter(c=>c.kind===kind):[];prior[kind]=a.length?a.reduce((x,y)=>x+y.ms,0)/a.length:DEF_MS[kind]}
+  const out=[];
+  for(const kind of ['F2L','OLL','PLL'])for(const id of Object.keys(Insight.GROUPS[kind])){
+    const k=kind+' '+id;if(stageOf(k)>=3)continue;
+    const o=seen[k],n=o?o.n:0,cur=((o?o.ms*n:0)+2*prior[kind])/(n+2),gain=P[kind][id]*Math.max(0,cur-TGT_MS[kind]);
+    out.push({kind,id,gain,cur});
+  }
+  return out.sort((a,b)=>b.gain-a.gain);
+}
+const fmtS=ms=>{const s=ms/1000;return s>=1?s.toFixed(1):s.toFixed(2)};
 const dueCases=()=>Object.keys(lstats).filter(k=>lstats[k].s>=3&&lstats[k].due&&lstats[k].due<=Date.now()).sort((a,b)=>lstats[a].due-lstats[b].due).map(k=>{const i=k.indexOf(' ');return [k.slice(0,i),k.slice(i+1)]});
 function setMastered(k,iv){const L=lstats[k]||(lstats[k]={s:0,c:0,n:0});L.s=3;L.c=0;L.i=iv;L.due=Date.now()+IV[iv]*DAY}
 function coachHTML(C){
-  if(!C)return '<div class="coach mu">'+SV(P_SPARK)+'<span>Resuelve unas cuantas veces con tu cubo conectado y aquí verás tu diagnóstico personal.</span></div>';
+  if(!C)return '<div class="coach mu">'+SV(P_SPARK)+'<span>'+(coachPending()?'Analizando tus resoluciones…':'Resuelve unas cuantas veces con tu cubo conectado y aquí verás tu diagnóstico personal.')+'</span></div>';
   const bars=GRP.map(k=>'<div class="cb'+(k===C.weak&&!C.balanced?' w':'')+'"><div class="tr"><i style="height:'+Math.max(6,Math.round(C.share[k]*100*1.6))+'%"></i></div><b>'+Math.round(C.share[k]*100)+'%</b><span>'+GRP_N[k]+'</span></div>').join('');
   const w=GRP_N[C.weak],pct=Math.round(C.recShare*100);
   const msg=C.balanced?'Tu resolución está equilibrada. Sigue repasando los casos más lentos.'
@@ -918,29 +988,31 @@ function coachHTML(C){
     :C.kind==='exe'?'<b>'+w+'</b>: piensas poco pero giras despacio ('+C.tps.toFixed(1)+' giros/s). Repite los algoritmos hasta que salgan fluidos.'
     :'<b>'+w+'</b> es donde más tiempo pierdes. Repite sus casos más lentos para ganar regularidad.';
   const can=(C.weak==='oll'||C.weak==='pll'||C.weak==='f2l')&&!C.balanced;
-  const act=can?'<button class="btn" id="coachGo">'+SV(C.kind==='exe'?P_CAP:P_WATCH)+(C.kind==='exe'?'Practicar el caso más lento':'Entrenar mis casos de '+w)+'</button>':'';
+  const act=can?'<button class="btn" id="coachGo">'+(C.kind==='exe'?SV(P_CAP)+'Practicar el caso más lento':C.kind==='rec'?SV(P_EYE)+'Reconocer casos de '+w+' sin cubo':SV(P_WATCH)+'Entrenar mis casos de '+w)+'</button>':'';
   return '<div class="coach"><h3>'+SV(P_SPARK)+'Tu diagnóstico <small>últimas '+C.n+'</small></h3><div class="cbars">'+bars+'</div><p>'+msg+'</p>'+act+'</div>';
 }
 function coachAction(C){
   const main={oll:'OLL',pll:'PLL',f2l:'F2L'}[C.weak],cs=C.slow.filter(c=>mainOf(c.kind)===main);
+  if(C.kind==='rec')return openQuizMenu(main);
   if(C.kind==='exe'&&cs.length)return openCase(cs[0].kind,cs[0].id);
-  tsel=new Set((cs.length?cs.slice(0,8):[]).map(c=>c.kind+' '+c.id));
+  tsel=new Set(cs.slice(0,8).map(c=>c.kind+' '+c.id));
   if(!tsel.size)Object.keys(Insight.GROUPS[main]).forEach(id=>tsel.add(main+' '+id));
   tTab=main;torder='rand';nav('train');toast('Casos elegidos según tus resoluciones');
 }
-
-/* ===== Recomendaciones ===== */
+/* ===== Recomendaciones: prioridad por impacto ===== */
 const PATH=['F2L','EOLL','OCLL','CPLL','EPLL','OLL','PLL'];
-function recommended(){
-  const out=[],seen=new Set();let nd=0,np=0;
+function recPath(){ // sin datos de tus resoluciones: el camino clásico de aprendizaje
+  const out=[],seen=new Set();let np=0;
   const add=(kind,id,why)=>{const k=kind+' '+id;if(out.length>=4||seen.has(k)||stageOf(k)>=3||!(Insight.GROUPS[kind]&&Insight.GROUPS[kind][id]))return false;seen.add(k);out.push([kind,id,why]);return true};
-  const C=coachData();
-  if(C)for(const c of C.slow)if(nd<2&&add(c.kind,c.id,'Te cuesta '+(c.ms/1000).toFixed(1)+' s'))nd++;
-  for(const r of lrec)if(nd<2&&add(r.kind,r.id,'Detectado en tus resoluciones'))nd++;
   for(const k of Object.keys(lstats)){const L=lstats[k];if(np<1&&L.s>0&&L.s<3){const i=k.indexOf(' ');if(add(k.slice(0,i),k.slice(i+1),'Sigue donde lo dejaste'))np++}}
   const had=out.length;
   for(const kind of PATH)for(const id of Object.keys(Insight.GROUPS[kind]))if(out.length<=had)add(kind,id,'Siguiente en el camino');
   return out;
+}
+function recommended(){
+  if(!coachData())return {list:recPath(),saving:0};
+  const top=impactList().slice(0,4);
+  return {list:top.map(x=>[x.kind,x.id,'Ahorra ≈ '+fmtS(x.gain)+' s por resolución']),saving:top.reduce((a,x)=>a+x.gain,0)};
 }
 
 /* ===== Pantalla Aprender ===== */
@@ -984,10 +1056,11 @@ function lessonHTML(L,open){
 }
 function renderLearn(){
   const box=$('lnBody'),sc=box.scrollTop,isCase=lTab==='F2L'||lTab==='OLL'||lTab==='PLL';
-  const rec=recommended(),due=dueCases();let h='';
+  const R=recommended(),rec=R.list,due=dueCases();let h='';
   h+=coachHTML(coachData());
+  h+='<button class="profcard" id="qzOpen" style="margin-top:10px">'+SV(P_EYE)+'<div><b>Prueba de reconocimiento</b><small>Mira el patrón y elige el caso. Sin cubo, donde quieras</small></div>'+SV(P_CHEV)+'</button>';
   if(due.length)h+='<h3 style="margin-top:14px">'+SV('<path d="M3 12a9 9 0 1 0 3-6.7M3 4v5h5"/><path d="M12 8v4l3 2"/>')+'Toca repasar <small>'+due.length+'</small></h3><div class="rec">'+due.slice(0,4).map(([k,i])=>tileL(k,i,'Repaso de un caso dominado')).join('')+'</div>';
-  if(rec.length)h+='<h3 style="margin-top:14px">'+SV(P_SPARK)+'Recomendado</h3><div class="rec">'+rec.map(([k,i,w])=>tileL(k,i,w)).join('')+'</div>';
+  if(rec.length)h+='<h3 style="margin-top:14px">'+SV(P_SPARK)+(R.saving?'Mayor impacto':'Recomendado')+'</h3>'+(R.saving?'<p class="imp">Dominar estos '+rec.length+' te ahorra ≈ <b>'+fmtS(R.saving)+' s</b> por resolución</p>':'')+'<div class="rec">'+rec.map(([k,i,w])=>tileL(k,i,w)).join('')+'</div>';
   h+='<div class="seg" id="lnTabs" style="margin-top:16px">'+LT.map(([k,l])=>'<button data-k="'+k+'" class="'+(k===lTab?'on':'')+'">'+l+'</button>').join('')+'</div>';
   h+=lessonHTML(LESSONS[LI[lTab]],!isCase);
   if(isCase){
@@ -1007,6 +1080,7 @@ $('lnBody').addEventListener('contextmenu',e=>{if(e.target.closest('.tile'))e.pr
 $('lnBody').onclick=e=>{
   if(lpFired){lpFired=false;return}
   if(e.target.closest('#coachGo')){const C=coachData();if(C)coachAction(C);return}
+  if(e.target.closest('#qzOpen')){const C=coachData();openQuizMenu(C&&{oll:'OLL',pll:'PLL',f2l:'F2L'}[C.weak]);return}
   const t=e.target.closest('.tile'),sg=e.target.closest('#lnTabs button'),ch=e.target.closest('#lnSubs button');
   if(t)openCase(t.dataset.k,t.dataset.i);
   else if(sg){lTab=sg.dataset.k;if(SUBS[lTab])lSub=SUBS[lTab][0][0];$('lnBody').scrollTop=0;renderLearn()}
@@ -1237,9 +1311,9 @@ function updateProfileUI(){
 const esc=t=>String(t).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 function loadData(){
   trFrom=null;if(train)exitTrain();
-  solves=[];tstats={};lstats={};lfav={};lrec=[];
+  solves=[];tstats={};lstats={};lfav={};lrec=[];rstats={};coachMemo=null;
   try{solves=JSON.parse(PS.get('solves')||'[]')}catch(e){}
-  try{tstats=JSON.parse(PS.get('tstats')||'{}');lstats=JSON.parse(PS.get('lstats')||'{}');lfav=JSON.parse(PS.get('lfav')||'{}');lrec=JSON.parse(PS.get('lrec')||'[]')}catch(e){}
+  try{tstats=JSON.parse(PS.get('tstats')||'{}');lstats=JSON.parse(PS.get('lstats')||'{}');lfav=JSON.parse(PS.get('lfav')||'{}');lrec=JSON.parse(PS.get('lrec')||'[]');rstats=JSON.parse(PS.get('rstats')||'{}')}catch(e){}
   hideAlert();tsel=new Set();updateProfileUI();renderStats();newScramble();$('timer').textContent='0.00';$('live').textContent='';
   if(vNow==='learn')renderLearn();if(vNow==='train')renderCatalog();if(vNow==='prof')renderProf();
 }
@@ -1280,7 +1354,7 @@ $('pfBody').onclick=e=>{
   const b=e.target.closest('[data-a]');if(!b)return;const a=b.dataset.a,row=b.closest('.pf-row'),id=row&&row.dataset.id;
   if(a==='switch'&&id&&id!==profileId){switchProfile(id)}
   else if(a==='rename'){const q=profiles.find(x=>x.id===id),n=prompt('Nombre del perfil',q.name);if(n&&n.trim()){q.name=n.trim().slice(0,18);saveProfiles();updateProfileUI();renderProf()}}
-  else if(a==='del'){const q=profiles.find(x=>x.id===id);if(confirm('¿Borrar el perfil «'+q.name+'» y todos sus datos?')){['solves','tstats','lstats','lfav','lrec'].forEach(k=>localStorage.removeItem(pk(k,id)));profiles=profiles.filter(x=>x.id!==id);saveProfiles();renderProf()}}
+  else if(a==='del'){const q=profiles.find(x=>x.id===id);if(confirm('¿Borrar el perfil «'+q.name+'» y todos sus datos?')){['solves','tstats','lstats','lfav','lrec','rstats'].forEach(k=>localStorage.removeItem(pk(k,id)));profiles=profiles.filter(x=>x.id!==id);saveProfiles();renderProf()}}
   else if(a==='new'){pfForm={seed:Math.floor(Math.random()*1e6),name:''};renderProf();$('pfName').focus()}
   else if(a==='keep'){pfForm={seed:Math.floor(Math.random()*1e6),name:'',keep:true};renderProf();$('pfName').focus()}
   else if(a==='dice'){pfForm.seed=Math.floor(Math.random()*1e6);const n=$('pfName').value;pfForm.name=n;renderProf();$('pfName').value=n}
@@ -1294,6 +1368,68 @@ $('btnProf').onclick=()=>{if(vNow!=='prof')push('prof')};
 $('spProf').onclick=()=>push('prof');
 $('pfBack').onclick=back;
 updateProfileUI();
+
+/* ===== Prueba de reconocimiento (sin cubo) ===== */
+let rstats={},qz=null,qzGrp='OLL',qzTimer=0;
+const QN=10,rsave=()=>{try{PS.set('rstats',JSON.stringify(rstats))}catch(e){}};
+function qzPool(g){
+  const ids=Object.keys(Insight.GROUPS[g]),pool=ids.filter(id=>stageOf(g+' '+id)>=1||(rstats[g+' '+id]&&rstats[g+' '+id].n));
+  for(const id of ids){if(pool.length>=8)break;if(!pool.includes(id))pool.push(id)}
+  return pool;
+}
+function openQuizMenu(g){qz=null;if(g)qzGrp=g;if(vNow!=='quiz')push('quiz');else renderQuiz()}
+function startQuiz(){qz={g:qzGrp,pool:qzPool(qzGrp),i:0,ok:0,ms:[],bad:[],cur:null,done:false,asked:new Set()};nextQ();renderQuiz()}
+function nextQ(){
+  clearTimeout(qzTimer);
+  if(qz.i>=QN){qz.done=true;qz.cur=null;return}
+  if(qz.asked.size>=qz.pool.length)qz.asked.clear();
+  const w=qz.pool.map(id=>{if(qz.asked.has(id))return 0;const r=rstats[qz.g+' '+id];return r&&r.n?1+3*(1-r.ok/r.n)+(r.ms/r.n>3000?1:0):2});
+  let r=Math.random()*w.reduce((a,b)=>a+b,0),pick=qz.pool[0];
+  for(let i=0;i<w.length;i++){r-=w[i];if(r<=0&&w[i]>0){pick=qz.pool[i];break}}
+  qz.asked.add(pick);
+  const others=qz.pool.filter(x=>x!==pick).sort(()=>Math.random()-.5).slice(0,3),opts=[pick,...others].sort(()=>Math.random()-.5);
+  qz.cur={id:pick,opts,t0:performance.now(),ans:null,ms:0};qz.i++;
+}
+function qzAnswer(id){
+  const c=qz&&qz.cur;if(!c||c.ans!==null)return;
+  c.ms=performance.now()-c.t0;c.ans=id;const ok=id===c.id,k=qz.g+' '+c.id,r=rstats[k]||(rstats[k]={n:0,ok:0,ms:0});
+  r.n++;r.ms+=c.ms;if(ok)r.ok++;rsave();
+  qz.ms.push(c.ms);if(ok)qz.ok++;else qz.bad.push(c.id);
+  renderQuiz();if(ok)qzTimer=setTimeout(()=>{if(qz&&qz.cur===c){nextQ();renderQuiz()}},800);
+}
+function renderQuiz(){
+  const body=$('qzBody'),foot=$('qzFoot');let h='',f='';
+  $('qzCnt').textContent=qz&&!qz.done&&qz.cur?qz.i+' / '+QN:'';
+  if(!qz){
+    h='<div class="seg" id="qzSeg" style="margin-top:8px">'+['F2L','OLL','PLL'].map(g=>'<button data-g="'+g+'" class="'+(g===qzGrp?'on':'')+'">'+g+'</button>').join('')+'</div>'
+     +'<div class="qz-intro">'+SV(P_EYE)+'<b>'+QN+' preguntas</b><p>Verás el patrón de un caso y tendrás que elegir cuál es. Cuanto antes lo reconozcas de un vistazo, menos tiempo pierdes parado en la resolución.</p><p>Se usan tus casos en aprendizaje y se repiten más los que fallas o tardas en reconocer.</p></div>';
+    f='<button class="btn pri grow" data-a="start">'+SV('<path d="M8 5v14l11-7z"/>')+'Empezar</button>';
+  }else if(qz.done){
+    const avg=qz.ms.length?qz.ms.reduce((a,b)=>a+b,0)/qz.ms.length:0,uniq=[...new Set(qz.bad)];
+    h='<div class="pf-hero"><b>'+qz.ok+' / '+QN+'</b><p>'+(qz.ok>=9?'¡Reconoces casi todo de un vistazo!':qz.ok>=7?'Muy bien. Afina los que has fallado.':'Hay casos que aún se confunden. Repásalos y repite.')+'</p><div class="pf-stats"><div><b>'+fmtS(avg)+' s</b><span>tiempo medio</span></div><div><b>'+Math.round(qz.ok/QN*100)+' %</b><span>aciertos</span></div></div></div>'
+      +(uniq.length?'<h3>Para repasar</h3><div class="grid">'+uniq.map(id=>tileL(qz.g,id)).join('')+'</div>':'');
+    f='<button class="btn grow" data-a="menu">'+SV('<path d="M4 6h16M4 12h16M4 18h16"/>')+'Cambiar grupo</button><button class="btn pri grow" data-a="start">'+SV('<path d="M3 12a9 9 0 1 0 3-6.7M3 4v5h5"/>')+'Otra ronda</button>';
+  }else{
+    const c=qz.cur,cs=Insight.getCase(qz.g,c.id),ans=c.ans!==null;
+    h='<div class="qz-prog">'+Array.from({length:QN},(_,i)=>'<i class="'+(i<qz.ms.length?'d':i===qz.ms.length?'c':'')+'"></i>').join('')+'</div>'
+      +'<div class="qz-card">'+iconOf(cs,240)+'</div><div class="qz-opts">'
+      +c.opts.map(id=>{let cl='';if(ans){if(id===c.id)cl=' ok';else if(id===c.ans)cl=' bad'}return '<button class="qz-o'+cl+'" data-id="'+id+'"'+(ans?' disabled':'')+'>'+lbl(qz.g,id)+'</button>'}).join('')+'</div>'
+      +(ans?'<div class="qz-fb '+(c.ans===c.id?'ok':'bad')+'">'+(c.ans===c.id?'Correcto · '+fmtS(c.ms)+' s':'Era '+lbl(qz.g,c.id))+'<code>'+cs.alg+'</code></div>':'<div class="qz-fb mu">¿Qué caso es?</div>');
+    f=ans?'<button class="ib" data-a="view" aria-label="Ver el caso" title="Ver el caso">'+SV(P_EYE)+'</button><button class="btn pri grow" data-a="next">Siguiente</button>':'';
+  }
+  body.innerHTML=h;foot.innerHTML=f;
+}
+$('qzBody').onclick=e=>{
+  const o=e.target.closest('.qz-o'),sg=e.target.closest('#qzSeg button'),t=e.target.closest('.tile');
+  if(o)qzAnswer(o.dataset.id);else if(sg){qzGrp=sg.dataset.g;renderQuiz()}else if(t)openCase(t.dataset.k,t.dataset.i);
+};
+$('qzFoot').onclick=e=>{
+  const b=e.target.closest('[data-a]');if(!b)return;const a=b.dataset.a;
+  if(a==='start')startQuiz();else if(a==='menu')openQuizMenu();
+  else if(a==='next'){nextQ();renderQuiz()}
+  else if(a==='view'){clearTimeout(qzTimer);openCase(qz.g,qz.cur.id)}
+};
+$('qzBack').onclick=()=>{clearTimeout(qzTimer);back()};
 /* ===== Detalle de la resolución: repetición, fases y cómo mejorar ===== */
 const PH_COL={cross:'#9b7bf0',slot1:'#5b6bf0',slot2:'#4a82f0',slot3:'#3a9be8',slot4:'#34b0de',oll:'#f0a43c',pll:'#3ddc97'};
 let rp=null;

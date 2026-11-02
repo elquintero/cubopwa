@@ -61,7 +61,14 @@ const AX = { R: ['x', 1], L: ['x', -1], U: ['y', 1], D: ['y', -1], F: ['z', 1], 
 const norm4 = (q) => ((q % 4) + 4) % 4;
 const emit = (out, f, q) => { q = norm4(q); if (q) out.push(f + ['', '', '2', "'"][q]); };
 
+const _exC = new WeakMap(); // caché: mismo algoritmo y misma orientación -> mismos giros (no se modifican)
 export function expand(alg, o0 = ID, ends = null) {
+  if (ends) return expandRaw(alg, o0, ends);
+  let m = _exC.get(o0); if (!m) _exC.set(o0, (m = new Map()));
+  let r = m.get(alg); if (!r) m.set(alg, (r = expandRaw(alg, o0, null)));
+  return r;
+}
+function expandRaw(alg, o0 = ID, ends = null) {
   let o = { ...o0 };
   const out = [];
   const rot = (a, q) => { for (let i = 0; i < norm4(q); i++) o = ROTMAP[a](o); };
