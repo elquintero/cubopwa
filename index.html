@@ -417,7 +417,7 @@ input[type=range]::-webkit-slider-thumb{background:var(--tx);border:2px solid va
       <div id="log">Aquí aparecerán los datos crudos del cubo.</div>
     </details>
     <h3>Acerca de</h3>
-    <p class="mu" style="margin:0">CubIQ · versión <span id="ver">1.19.2</span></p>
+    <p class="mu" style="margin:0">CubIQ · versión <span id="ver">1.19.3</span></p>
   </div>
   <div class="vb" id="setTheme" hidden>
     <h3 style="margin-top:6px">Tema</h3>
@@ -579,7 +579,8 @@ const clone=c=>c.map(s=>({p:[...s.p],n:[...s.n],c:s.c}));
 const rotV=(v,ax,t)=>{const c=Math.cos(t),s=Math.sin(t),[x,y,z]=v;return ax===0?[x,y*c-z*s,y*s+z*c]:ax===1?[x*c+z*s,y,-x*s+z*c]:[x*c-y*s,x*s+y*c,z]};
 let LINEC='#0b0d10';
 function paintCube(g,W,state,an,Gf,vw,cf){
-  const S=W/6,Q=[],GG=v=>Gf?Gf(v):v,small=W<300,lh=small?0.465:0.5,lc=small&&/^#[0-9a-f]{6}$/i.test(LINEC)?LINEC+'8c':LINEC;g.clearRect(0,0,W,W);
+  const S=W/6,Q=[],GG=v=>Gf?Gf(v):v,small=W<300,lh=small?0.465:0.5,lc=small?(window.__cubeLight?'#dde2e9':/^#[0-9a-f]{6}$/i.test(LINEC)?LINEC+'8c':LINEC):LINEC; // iconos pequeños: en tema claro, marco gris suave en vez de negro
+ g.clearRect(0,0,W,W);
   for(const s of state){
     const n=s.n,inL=an&&s.p[an.ax]===an.sg,rot=v=>inL?rotV(v,an.ax,an.th):v;
     const nv=vw(GG(rot(n)));if(nv[2]<=0.001&&!(an&&inL))continue;
