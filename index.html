@@ -591,7 +591,8 @@ const mv=(cube,m)=>{
   const times=sg>0?3*q:q;
   for(const s of cube)if(s.p[ax]===sg)for(let i=0;i<times;i++){s.p=ROT[ax](s.p);s.n=ROT[ax](s.n)}
 };
-const sig=c=>c.map(s=>s.p+'|'+s.n+'|'+s.c).sort().join();
+// El orden de las 54 pegatinas es estable: no hace falta ordenar en cada movimiento.
+const sig=c=>{let out='';for(let i=0;i<c.length;i++){const s=c[i];out+=s.p[0]+','+s.p[1]+','+s.p[2]+'|'+s.n[0]+','+s.n[1]+','+s.n[2]+'|'+s.c+';'}return out};
 const isSolved=c=>c.every(s=>s.c===NAME[s.n]);
 const build=ms=>{const c=solvedCube();ms.forEach(m=>mv(c,m));return c};
 const genScramble=(n=20)=>{const out=[],ax={U:0,D:0,L:1,R:1,F:2,B:2};let last=-1;
@@ -685,19 +686,27 @@ const OPP={U:'D',D:'U',L:'R',R:'L',F:'B',B:'F'},qOf=m=>m.endsWith("'")?3:m.endsW
 function setScramble(list){scr=list;const c=clone(cube);pre=[sig(c)];scr.forEach(m=>{mv(c,m);pre.push(sig(c))});prog=0;wrong=[];setPhase('scramble');renderScr()}
 function newScramble(){setScramble(train?train.setup:genScramble())}
 const dsp=m=>train&&train.frame?train.frame[m[0]]+m.slice(1):m; // en entrenamiento, los giros se muestran según cómo sujetas el cubo
-function renderScr(){ // verde = bien · amarillo = medio giro · rojo = error
-  const el=$('scr'),h=$('hint');el.innerHTML='';
+let scrRenderList=null,scrNodes=[];
+function renderScr(){ // actualiza clases sobre nodos existentes; no reconstruye el DOM en cada giro Bluetooth
+  const el=$('scr'),h=$('hint');
   $('cv').className=phase==='scramble'&&scr.length?(wrong.length?'bad':prog>0&&prog<scr.length?'ok':''):'';
-  $('scr').dataset.cap=train&&phase==='scramble'?'Giros para crear el caso':'';
-  if(train&&phase!=='scramble'){h.className='';h.textContent='';sayTrain();return} // en entrenamiento solo se ve el algoritmo
+  el.dataset.cap=train&&phase==='scramble'?'Giros para crear el caso':'';
+  if(train&&phase!=='scramble'){h.className='';h.textContent='';sayTrain();return}
+  if(scrRenderList!==scr||scrNodes.length!==scr.length){
+    const frag=document.createDocumentFragment();scrNodes=[];
+    scr.forEach(()=>{const sp=document.createElement('span');scrNodes.push(sp);frag.append(sp,document.createTextNode(' '))});
+    el.replaceChildren(frag);scrRenderList=scr;
+  }
   const e=scr[prog],half=wrong.length===1&&e&&wrong[0][0]===e[0]&&qOf(e)===2;
-  scr.forEach((m,i)=>{const sp=document.createElement('span');
-    sp.className=phase==='scramble'?(i<prog?'d':i>prog?'n':!wrong.length?'c':half?'p':'e'):phase==='ready'?'d':'f';
-    sp.textContent=dsp(m);el.appendChild(sp);el.appendChild(document.createTextNode(' '))});
+  for(let i=0;i<scr.length;i++){
+    const sp=scrNodes[i],m=scr[i],cls=phase==='scramble'?(i<prog?'d':i>prog?'n':!wrong.length?'c':half?'p':'e'):phase==='ready'?'d':'f';
+    if(sp.textContent!==dsp(m))sp.textContent=dsp(m);
+    if(sp.className!==cls)sp.className=cls;
+  }
   if(phase==='scramble'&&wrong.length){h.className=half?'p':'e';
     h.textContent=half?'Medio giro hecho: repite el mismo movimiento':'Error. Deshaz: '+wrong.slice().reverse().map(([f,q])=>dsp(qs(f,(4-q)%4))).join(' ')}
   else{h.className='';h.textContent=''}
-  if(train)sayTrain(); // el aviso se calcula al final, cuando ya se sabe qué giro hay que deshacer
+  if(train)sayTrain();
 }
 function trackSync(){const j=pre.indexOf(sig(cube));if(j>=0){prog=j;wrong=[]}renderScr();if(phase==='scramble'&&prog===scr.length)setPhase('ready')}
 function trackMove(m){
@@ -719,8 +728,10 @@ function onMove(m){
   gest.push(m);if(gest.length>4)gest.shift();
   if(gest.length===4&&gest.every(x=>x===m)&&'RLU'.includes(m[0])&&phase!=='running'){gest=[];gesture(m[0])}
 }
-function itick(){if(phase!=='inspect')return;const r=15-(performance.now()-ti)/1000;$('timer').textContent=r>0?Math.ceil(r):r>-2?'+2':'DNF';requestAnimationFrame(itick)}
-function tick(){if(phase!=='running')return;$('timer').textContent=fmt(performance.now()-t0);requestAnimationFrame(tick)}
+// El reloj se calcula siempre con performance.now(), pero el DOM solo se actualiza 20 veces/s.
+// Así conserva precisión sin forzar 60 escrituras por segundo en el hilo principal.
+function itick(){if(phase!=='inspect')return;const r=15-(performance.now()-ti)/1000;$('timer').textContent=r>0?Math.ceil(r):r>-2?'+2':'DNF';setTimeout(itick,33)}
+function tick(){if(phase!=='running')return;$('timer').textContent=fmt(performance.now()-t0);setTimeout(tick,33)}
 function finish(){
   const t=Math.round(performance.now()-t0);
   if(train)return finishTrain(t);
@@ -858,8 +869,13 @@ try{gM=JSON.parse(localStorage.getItem('gyroCal')||'null')}catch(e){}
 const G=v=>{if(train)v=[-v[0],-v[1],v[2]];return cfg.gyro&&gq?qrot(gq,v):v}; // en entrenamiento el cubo se ve con amarillo arriba (giro z2)
 function gloop(){
   gRaf=0;if(!cfg.gyro||!gt)return;
-  if(!gq)gq=gt;else{const s=(gq.w*gt.w+gq.x*gt.x+gq.y*gt.y+gq.z*gt.z)<0?-1:1,k=0.4;
-    gq=qnorm({w:gq.w+(s*gt.w-gq.w)*k,x:gq.x+(s*gt.x-gq.x)*k,y:gq.y+(s*gt.y-gq.y)*k,z:gq.z+(s*gt.z-gq.z)*k})}
+  if(!gq)gq=gt;
+  else{
+    const dot=gq.w*gt.w+gq.x*gt.x+gq.y*gt.y+gq.z*gt.z,s=dot<0?-1:1;
+    // Si ya está alineado, termina el RAF: antes quedaba dibujando a 60 FPS incluso quieto.
+    if(Math.abs(dot)>0.9997){gq=gt;draw();return}
+    const k=0.4;gq=qnorm({w:gq.w+(s*gt.w-gq.w)*k,x:gq.x+(s*gt.x-gq.x)*k,y:gq.y+(s*gt.y-gq.y)*k,z:gq.z+(s*gt.z-gq.z)*k});
+  }
   draw();gRaf=requestAnimationFrame(gloop);
 }
 function onGyro(q){
