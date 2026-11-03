@@ -75,7 +75,7 @@ body.tab-nav .view.on{animation:none}
 .train-hero h3{margin:0 0 6px;font:600 19px Poppins,system-ui,sans-serif}
 .train-hero p{margin:0;color:var(--mu);font-size:13px}
 .train-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:12px 0}
-.train-actions .btn{min-height:44px}
+.train-actions .btn{min-height:44px}.train-actions.one{grid-template-columns:1fr}.pc-note{margin:8px 2px 0;font-size:12px;color:var(--mu)}
 .train-recent{display:grid;gap:7px;margin:8px 0 14px}
 .train-recent button{display:flex;align-items:center;gap:10px;text-align:left;border:1px solid var(--line);background:var(--card);border-radius:12px;padding:10px 12px}
 .train-recent button .tr-main{flex:1;min-width:0}
@@ -1249,8 +1249,16 @@ function coachAction(C){
   if(C.kind==='rec')return openQuizMenu(main);
   if(C.kind==='exe'&&cs.length)return openCase(cs[0].kind,cs[0].id);
   tsel=new Set(cs.slice(0,8).map(c=>c.kind+' '+c.id));
-  if(!tsel.size)Object.keys(Insight.GROUPS[main]).forEach(id=>tsel.add(main+' '+id));
-  tTab=main;torder='rand';nav('train');toast('Casos elegidos según tus resoluciones');
+  // con pocos casos medidos, se completa con los que ya has empezado a aprender y luego con los primeros del grupo
+  for(const k of Object.keys(lstats))if(tsel.size<6&&lstats[k].s>=1&&mainOf(k.split(' ')[0])===main)tsel.add(k);
+  for(const id of Object.keys(Insight.GROUPS[main]))if(tsel.size<6)tsel.add(main+' '+id);
+  trainNow(main);
+}
+// Empieza ya la sesión con los casos elegidos. Si el cubo no está resuelto, abre el selector con esos casos ya marcados.
+function trainNow(tab){
+  tTab=tab;torder='rand';
+  if(startSession('drill',{v:'train'}))return;
+  nav('train');trainLanding=false;renderCatalog();
 }
 /* ===== Recomendaciones: prioridad por impacto ===== */
 const PATH=['F2L','EOLL','OCLL','CPLL','EPLL','OLL','PLL'];
@@ -1519,10 +1527,11 @@ function trainingCoachHTML(C,due,learned){
     'Dedica una sesión corta a '+target+' y mejora la regularidad de tus ejecuciones.')
     :(due?('Tienes '+due+' casos pendientes de repaso. Una sesión breve ayudará a fijarlos en la memoria.'):
       (next?'Empieza por '+lbl(next[0],next[1])+'. Trabaja pocos casos y repítelos hasta reconocerlos sin esfuerzo.':'Elige una fase y completa una sesión corta para empezar a construir tu progreso.'));
-  const cta=C?(C.kind==='rec'?'Practicar reconocimiento':C.kind==='exe'?'Ver caso recomendado':'Entrenar '+target):due?'Repasar casos pendientes':'Comenzar sesión guiada';
+  const cta=C?(C.kind==='rec'?'Practicar reconocimiento':C.kind==='exe'?'Ver caso recomendado':'Entrenar mis casos de '+target):due?'Repasar casos pendientes':'Comenzar sesión guiada';
+  const note=C?(C.kind==='rec'?'Prueba de 10 preguntas, sin cubo.':C.kind==='exe'?'Abre la ficha de tu caso más lento de '+target+'.':'Empieza ya: tus casos más lentos de '+target+', al azar y con tiempo. Deja el cubo resuelto.'):due?'Empieza ya: repasa tus casos pendientes. Deja el cubo resuelto.':'Empieza ya con F2L básico. Deja el cubo resuelto.';
   return '<section class="personal-coach"><div class="pc-head"><span class="pc-mark">'+SV(P_SPARK)+'</span><div><small>COACH CUBIQ · PLAN PERSONAL</small><h3>'+title+'</h3></div><span class="pc-tag">'+(C?'ACTUALIZADO':'LISTO')+'</span></div>'+
     '<p>'+detail+'</p><div class="pc-steps"><div><b>01</b><span><strong>Enfoque</strong><small>'+target+' · 8–12 min</small></span></div><div><b>02</b><span><strong>Objetivo</strong><small>'+(due?'Consolidar '+Math.min(due,8)+' casos':'Mejorar reconocimiento y fluidez')+'</small></span></div><div><b>03</b><span><strong>Progreso</strong><small>'+learned+' casos iniciados · '+due+' por repasar</small></span></div></div>'+
-    '<button class="btn pc-cta" id="trainCoachGo">'+cta+' <span>→</span></button></section>';
+    '<button class="btn pc-cta" id="trainCoachGo">'+cta+' <span>→</span></button><p class="pc-note">'+note+'</p></section>';
 }
 function renderCatalog(){
   const overview=$('trainOverview'),catalog=$('trainCatalog'),backBtn=$('tcBack'),title=$('tcTitle');
@@ -1538,13 +1547,12 @@ function renderCatalog(){
     let h='<div class="train-hero"><h3>Entrena con intención</h3><p>Sesiones enfocadas, evolución medible y control de tus casos más difíciles.</p></div>';
     h+='<div class="train-dashboard"><div class="train-metric"><small>Resoluciones</small><strong>'+solved+'</strong><em>prácticas registradas</em></div><div class="train-metric"><small>Casos practicados</small><strong>'+practiced+'</strong><em>con actividad</em></div><div class="train-metric"><small>Mejor tiempo</small><strong>'+best+'</strong><em>récord personal</em></div><div class="train-metric"><small>Por repasar</small><strong>'+due+'</strong><em>casos pendientes</em></div></div>';
     h+=trainingCoachHTML(C,due,learned);
-    h+='<div class="train-actions"><button class="btn pri" id="trainStart">'+SV(P_CAP)+' Empezar a entrenar</button><button class="btn" id="trainChoose">Elegir casos</button></div>';
+    h+='<div class="train-actions one"><button class="btn" id="trainChoose">Elegir los casos yo mismo</button></div>';
     h+='<div class="train-section-title"><h3>Últimos entrenamientos</h3><span class="cnt">'+(recent.length?recent.length:'')+'</span></div>';
     if(recent.length){h+='<div class="train-recent">'+recent.map(([k,v])=>{const i=k.indexOf(' '),kind=k.slice(0,i),id=k.slice(i+1),when=fmtDate(v.last);return '<button data-training-case="'+esc(k)+'"><span class="tr-main"><b>'+esc(lbl(kind,id))+'</b><small>'+when+' · '+v.n+' repeticiones · mejor '+fmt(v.best)+'</small></span><strong>'+fmt(v.last)+'</strong></button>'}).join('')+'</div>';}
     else h+='<div class="train-empty">Todavía no hay entrenamientos registrados. Empieza con unos casos de F2L y aquí aparecerán tus últimas prácticas y resultados.</div>';
     h+='<div class="train-section-title"><h3>Tu progreso</h3></div><div class="train-empty">'+learned+' casos empezados · '+due+' '+(due===1?'caso pendiente de repaso':'casos pendientes de repaso')+'</div>';
     overview.innerHTML=h;
-    $('trainStart').onclick=()=>{trainLanding=false;tsel=new Set(Object.keys(Insight.GROUPS.F2L).map(id=>'F2L '+id));tTab='F2L';renderCatalog()};
     $('trainChoose').onclick=()=>{trainLanding=false;tsel.clear();tTab='F2L';renderCatalog()};
     overview.querySelectorAll('[data-training-case]').forEach(b=>b.onclick=()=>{const k=b.dataset.trainingCase;startTrain(k.slice(0,k.indexOf(' ')),k.slice(k.indexOf(' ')+1))});
     const coachBtn=overview.querySelector('#trainCoachGo');if(coachBtn)coachBtn.onclick=()=>{
@@ -1552,7 +1560,7 @@ function renderCatalog(){
       if(c&&!c.balanced){coachAction(c);return}
       const dueKeys=Object.keys(lstats).filter(k=>lstats[k]&&lstats[k].due&&lstats[k].due<=Date.now()).slice(0,8);
       if(dueKeys.length)tsel=new Set(dueKeys);else tsel=new Set(Object.keys(Insight.GROUPS.F2L).slice(0,8).map(id=>'F2L '+id));
-      tTab=dueKeys.length?(dueKeys[0].split(' ')[0]):'F2L';torder='rand';trainLanding=false;renderCatalog();
+      trainNow(dueKeys.length?mainOf(dueKeys[0].split(' ')[0]):'F2L');
     };
     return;
   }
