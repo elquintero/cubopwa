@@ -56,7 +56,7 @@ html,body{touch-action:pan-x pan-y} /* sin zoom con pellizco */
 .ib svg{width:20px;height:20px}.ib:hover{color:var(--tx)}.ib.on{color:var(--tx)}
 .ib[hidden]{display:none}
 @media(max-width:700px){
-  #tabs{position:fixed;left:0;right:0;bottom:0;z-index:30;justify-content:space-around;gap:0;height:calc(var(--tab) + env(safe-area-inset-bottom,0px));padding-bottom:env(safe-area-inset-bottom,0px);background:color-mix(in srgb,var(--bg) 94%,transparent);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-top:1px solid var(--line)}
+  #tabs{position:fixed;left:0;right:0;bottom:0;z-index:30;justify-content:space-around;gap:0;height:calc(var(--tab) + env(safe-area-inset-bottom,0px));padding-bottom:env(safe-area-inset-bottom,0px);background:var(--bg);border-top:1px solid var(--line)}
   .tab{flex:1;height:var(--tab);border-radius:0}.tab svg{width:23px;height:23px}.tab.on::after{bottom:7px}
   body{padding-bottom:calc(var(--tab) + env(safe-area-inset-bottom,0px))}
 }
@@ -87,7 +87,7 @@ html,body{touch-action:pan-x pan-y} /* sin zoom con pellizco */
 #scr[data-cap]:not([data-cap=""])::before{content:attr(data-cap);flex:0 0 100%;font:600 11px system-ui,sans-serif;letter-spacing:.08em;text-transform:uppercase;color:var(--mu);margin-bottom:2px}
 #hint{flex:none;min-height:20px;font-size:14px}#hint.p{color:var(--warn)}#hint.e{color:var(--bad)}
 #timer{flex:none;height:clamp(76px,20vw,116px);display:flex;align-items:center;justify-content:center;font-family:Poppins,ui-rounded,'SF Pro Rounded',system-ui,sans-serif;font-size:clamp(64px,19vw,108px);font-weight:600;line-height:1;font-variant-numeric:tabular-nums;letter-spacing:-.02em;cursor:pointer;user-select:none}
-#timer.ready{font-size:clamp(30px,8.5vw,44px);font-weight:700;letter-spacing:0;color:transparent;-webkit-text-fill-color:transparent;background:linear-gradient(100deg,#ff9f1c,#ff3d81,#a64dff,#4d7cff,#ff9f1c) 0 0/300% 100% repeat-x;-webkit-background-clip:text;background-clip:text;animation:shine 5s linear infinite}
+#timer.ready{font-size:clamp(30px,8.5vw,44px);font-weight:700;letter-spacing:0;color:transparent;-webkit-text-fill-color:transparent;background:linear-gradient(100deg,#ff9f1c,#ff3d81,#a64dff,#4d7cff,#ff9f1c) 0 0/300% 100% repeat-x;-webkit-background-clip:text;background-clip:text;animation:shine 5s steps(60,end) infinite}
 @keyframes shine{to{background-position:150% 0}}#timer.insp{color:var(--warn)}
 body.learn #timer{opacity:.5;font-size:clamp(44px,12vw,64px)}body.learn #timer.ready{opacity:1}
 #phase{flex:none;color:var(--mu);font-size:13px;min-height:20px}
@@ -573,6 +573,7 @@ input[type=range]::-webkit-slider-thumb{background:var(--tx);border:2px solid va
 
 <div id="rot"><svg viewBox="0 0 24 24" width="44" height="44" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="7" y="2.5" width="10" height="19" rx="2.5"/><path d="M11 18.5h2"/></svg><b>Gira el móvil</b><span>CubIQ solo funciona en vertical</span></div>
 <script>
+const idle=(f,t=1000)=>window.requestIdleCallback?requestIdleCallback(f,{timeout:t}):setTimeout(f,50); // trabajo pesado fuera del camino crítico
 /* ===== Modelo del cubo: 54 pegatinas con posición, normal y color ===== */
 const FACES={U:[0,1,0],D:[0,-1,0],F:[0,0,1],B:[0,0,-1],R:[1,0,0],L:[-1,0,0]};
 const COL={U:'#f2f2f2',D:'#ffd500',F:'#1faa59',B:'#2a6fdb',R:'#d93a2b',L:'#ff8a1f'},COL0={...COL}; // COL0 = colores originales; COL se modifica con los colores propios
@@ -723,7 +724,8 @@ function finish(){
   solves.push({t,m:mvs.length,s:scr.join(' '),d:Date.now(),p:pen,dv:curDev||undefined,fl:snap?toFacelets(snap):undefined,mv:mvs.map(x=>x.m+' '+Math.round(x.t)).join(',')});save();celebrate();
   $('timer').textContent=fmt(t);$('live').textContent=mvs.length+' mov · '+(mvs.length/(t/1000)).toFixed(2)+' TPS';
   renderStats();const T=$('timer');newScramble();T.className='';$('timer').textContent=fmt(t);
-  if(cfg.insight&&snap&&window.Insight&&mvs.length>3){try{const r=Insight.analyze(snap,mvs);if(r)showAlert(r)}catch(e){console.error(e)}}
+  if(cfg.insight&&snap&&window.Insight&&mvs.length>3){const S=snap,M=mvs;idle(()=>{try{const r=Insight.analyze(S,M);if(r)showAlert(r)}catch(e){console.error(e)}},1500)}
+  scheduleCoach();
 }
 function manual(){ // espacio / toque: sin cubo o para saltar pasos
   if(phase==='scramble')setPhase('ready');
@@ -760,9 +762,16 @@ const save=()=>{solves.forEach((s,i)=>{if(i<solves.length-200){delete s.mv;delet
 const val=s=>s.p===2?Infinity:s.t+(s.p===1?2000:0);
 function avg(a,n){if(a.length<n)return null;const w=a.slice(-n).sort((x,y)=>x-y),k=Math.ceil(n*0.05),m=w.slice(k,n-k);
   return m.includes(Infinity)?Infinity:m.reduce((x,y)=>x+y,0)/m.length}
-const best=(a,n)=>{let b=null;for(let i=n;i<=a.length;i++){const r=avg(a.slice(0,i),n);if(r!==null&&(b===null||r<b))b=r}return b};
+const bestMemo={}; // mejor aoN incremental: si solo se añadieron resoluciones, solo se calculan las ventanas nuevas
+const winAvg=(a,i,n)=>{const w=a.slice(i-n,i).sort((x,y)=>x-y),k=Math.ceil(n*0.05),m=w.slice(k,n-k);return m.includes(Infinity)?Infinity:m.reduce((x,y)=>x+y,0)/m.length};
+const hsh=(a,len)=>{let h=0;for(let i=0;i<len;i++){const x=a[i];h=(h*31+(x===Infinity?7:x|0))|0}return h};
+const best=(a,n)=>{if(a.length<n)return null;
+  const M=bestMemo[n];let b=Infinity,from=n;
+  if(M&&M.len>=n&&M.len<=a.length&&hsh(a,M.len)===M.h){b=M.v;from=M.len+1}
+  for(let i=from;i<=a.length;i++){const r=winAvg(a,i,n);if(r<b)b=r}
+  bestMemo[n]={len:a.length,h:hsh(a,a.length),v:b};return b};
 const H_PLAY='<svg class="i" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M10 8.6v6.8l5.6-3.4z"/></svg>',H_DEL='<svg class="i" viewBox="0 0 24 24"><path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3"/></svg>';
-function renderStats(){setTimeout(()=>{if(typeof scheduleCoach==='function')scheduleCoach()},400);
+function renderStats(){
   const v=solves.map(val),rows=[['single',v.length?v[v.length-1]:null,v.length?Math.min(...v):null]];
   for(const n of[5,12,50,100])rows.push(['ao'+n,avg(v,n),best(v,n)]);
   const f=x=>x===null?'-':fmt(x);
@@ -819,7 +828,7 @@ function celebrate(){
   if(!cfg.success||matchMedia('(prefers-reduced-motion: reduce)').matches)return;
   const c=document.createElement('canvas');c.style.cssText='position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:50';
   c.width=innerWidth;c.height=innerHeight;document.body.appendChild(c);const x=c.getContext('2d'),cols=Object.values(COL);
-  const P=Array.from({length:150},()=>({x:c.width/2,y:c.height*0.4,vx:(Math.random()-.5)*16,vy:-Math.random()*14-3,r:Math.random()*5+3,c:cols[Math.random()*6|0],a:Math.random()*6,va:(Math.random()-.5)*.4}));
+  const P=Array.from({length:80},()=>({x:c.width/2,y:c.height*0.4,vx:(Math.random()-.5)*16,vy:-Math.random()*14-3,r:Math.random()*5+3,c:cols[Math.random()*6|0],a:Math.random()*6,va:(Math.random()-.5)*.4}));
   let t=0;(function f(){x.clearRect(0,0,c.width,c.height);t++;
     P.forEach(p=>{p.vy+=.35;p.x+=p.vx;p.y+=p.vy;p.a+=p.va;x.save();x.translate(p.x,p.y);x.rotate(p.a);x.fillStyle=p.c;x.fillRect(-p.r,-p.r/2,p.r*2,p.r);x.restore()});
     t<110?requestAnimationFrame(f):c.remove()})();
@@ -941,7 +950,7 @@ function show(v){
   if(v==='home')draw();
   else if(v==='learn')renderLearn();
   else if(v==='train')renderCatalog();
-  else if(v==='stats'){renderStats();drawChart()}
+  else if(v==='stats'){renderStats()}
   else if(v==='set')syncSet();
   else if(v==='prof')renderProf();
   else if(v==='quiz')renderQuiz();
@@ -1033,9 +1042,14 @@ const iconOf=(c,size)=>c.icon||f2lImg(c,size);
 const icSlot=(k,i)=>iconCache[k+' '+i]?'<span class="ic">'+iconCache[k+' '+i]+'</span>':'<span class="ic" data-ic="'+k+'|'+i+'"></span>';
 let icIO=null;
 function fillIc(el){const[k,i]=el.dataset.ic.split('|');el.innerHTML=iconFor(k,i);el.removeAttribute('data-ic')}
+let icQ=[],icRaf=0;
+function icPump(){icRaf=0;const t0=performance.now();let n=0;
+  while(icQ.length&&n<6&&performance.now()-t0<8){const el=icQ.shift();if(el.isConnected&&el.dataset.ic){fillIc(el);n++}}
+  if(icQ.length)icRaf=requestAnimationFrame(icPump)}
+const icPush=el=>{icQ.push(el);if(!icRaf)icRaf=requestAnimationFrame(icPump)};
 function hydrate(root){const els=root.querySelectorAll('.ic[data-ic]');if(!els.length)return;
-  if(!('IntersectionObserver' in window)){els.forEach(fillIc);return}
-  icIO=icIO||new IntersectionObserver(es=>{for(const e of es)if(e.isIntersecting){icIO.unobserve(e.target);fillIc(e.target)}},{rootMargin:'300px'});
+  if(!('IntersectionObserver' in window)){els.forEach(icPush);return}
+  icIO=icIO||new IntersectionObserver(es=>{for(const e of es)if(e.isIntersecting){icIO.unobserve(e.target);icPush(e.target)}},{rootMargin:'300px'});
   els.forEach(el=>icIO.observe(el))}
 function iconFor(kind,id){const key=kind+' '+id;return iconCache[key]||(iconCache[key]=iconOf(Insight.getCase(kind,id)))}
 
@@ -1068,10 +1082,12 @@ function solveInfo(sv){
 let cTimer=0,coachMemo=null;
 const coachPending=()=>solves.slice(-20).some(s=>s.ci===undefined&&s.mv&&s.fl&&s.p!==2);
 function scheduleCoach(){ // una resolución por tarea, para no bloquear la pantalla
-  if(cTimer||guest&&false)return;
+  if(cTimer)return;
   const todo=solves.slice(-20).find(s=>s.ci===undefined&&s.mv&&s.fl&&s.p!==2);
   if(!todo)return;
-  cTimer=setTimeout(()=>{cTimer=0;solveInfo(todo);if(coachPending())scheduleCoach();else{save();if(vNow==='learn')renderLearn()}},40);
+  cTimer=idle(()=>{cTimer=0;
+    if(phase==='running'||phase==='inspect'){setTimeout(scheduleCoach,3000);return}
+    solveInfo(todo);if(coachPending())scheduleCoach();else{idle(save,2000);if(vNow==='learn')renderLearn()}},2500);
 }
 function coachData(){
   const arr=solves.slice(-20),key=profileId+guest+':'+arr.length+':'+arr.filter(s=>s.ci!==undefined).length+':'+(arr.length?arr[arr.length-1].d:0);
@@ -1791,6 +1807,7 @@ for(const ev of ['gesturestart','gesturechange','gestureend'])document.addEventL
 if('serviceWorker' in navigator&&location.protocol.startsWith('http'))navigator.serviceWorker.register('sw.js').catch(()=>{});
 $('btnGyro').hidden=!cfg.gyro;
 draw();renderStats();newScramble();$('svPlay').innerHTML=PLAY;$('csPlay').innerHTML=PLAY;
+setTimeout(()=>idle(()=>{try{if(window.Insight)probs();scheduleCoach()}catch(e){PROB=null}},8000),3000);
 </script>
 <script type="module" src="./src/bt.js"></script>
 </body>
