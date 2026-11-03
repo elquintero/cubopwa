@@ -120,7 +120,22 @@ function topUniform(c, f) {
 const run = (c, moves) => { const { mv } = CM(); moves.forEach((m) => mv(c, m)); return c; };
 
 // ---- Identificación de casos por simulación ----
+// Caché acotada de identificación: analyze() y casesOf() suelen consultar
+// exactamente el mismo estado durante el detalle de una resolución.
+const _caseCache = { OLL: new Map(), PLL: new Map() };
+function cachedCase(kind, S, f, compute) {
+  const key = f + '|' + CM().sig(S);
+  const cache = _caseCache[kind];
+  if (cache.has(key)) return cache.get(key);
+  const result = compute();
+  if (cache.size >= 160) cache.delete(cache.keys().next().value);
+  cache.set(key, result);
+  return result;
+}
 function matchOLL(S, f) {
+  return cachedCase('OLL', S, f, () => matchOLLRaw(S, f));
+}
+function matchOLLRaw(S, f) {
   const { clone } = CM();
   for (const [id, alg] of Object.entries(OLL)) for (const o of orisWithD(f)) {
     const c = run(clone(S), expand(alg, o));
@@ -135,6 +150,9 @@ function solvedUpToAUF(c, f) {
   return false;
 }
 function matchPLL(S, f) {
+  return cachedCase('PLL', S, f, () => matchPLLRaw(S, f));
+}
+function matchPLLRaw(S, f) {
   const { clone, mv } = CM(), top = OPP[f];
   for (const [id, alg] of Object.entries(PLL)) for (const o of orisWithD(f)) {
     const ex = expand(alg, o);
