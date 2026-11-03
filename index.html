@@ -333,6 +333,28 @@ input[type=range]::-webkit-slider-thumb{background:var(--tx);border:2px solid va
 .lnk{flex:none;color:var(--ac);font-size:12px;font-weight:600}.lnk[hidden]{display:none}
 .prev{display:flex;gap:10px;align-items:center;justify-content:space-around;padding:12px;border:1px solid var(--line);border-radius:18px;background:var(--card)}
 .prev>*{display:grid;justify-items:center;gap:4px;color:var(--mu);font-size:11px;font-weight:600}.prev svg,.prev img,.prev canvas{width:64px;height:64px;display:block}
+
+/* CubIQ refresh: entrenamiento y selectores */
+#trainCatalog{display:flex;flex:1;min-height:0;flex-direction:column}
+#trainCatalog .vt,#trainCatalog .vf{flex:none}
+#trainCatalog .vb{flex:1;min-height:0;overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch}
+#trainCatalog .grid{padding-bottom:18px}
+.train-dashboard{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px;margin:12px 0 16px}
+.train-metric{position:relative;overflow:hidden;border:1px solid var(--line);border-radius:16px;background:linear-gradient(145deg,var(--card),var(--inset));padding:13px;min-height:84px}
+.train-metric small{display:block;color:var(--mu);font-size:11px;letter-spacing:.04em;text-transform:uppercase}
+.train-metric strong{display:block;font:600 23px Poppins,system-ui,sans-serif;letter-spacing:-.04em;margin-top:5px}
+.train-metric em{display:block;color:var(--mu);font-size:11px;font-style:normal;margin-top:1px}
+.train-hero{position:relative;overflow:hidden;background:linear-gradient(125deg,var(--card),var(--inset));border-radius:20px;padding:18px;margin:4px 0 12px}
+.train-hero:after{content:"";position:absolute;width:140px;height:140px;border:1px solid color-mix(in srgb,var(--ac) 22%,transparent);border-radius:50%;right:-52px;top:-62px;box-shadow:0 0 0 18px color-mix(in srgb,var(--ac) 5%,transparent),0 0 0 38px color-mix(in srgb,var(--ac) 3%,transparent);pointer-events:none}
+.train-hero h3{font-size:20px}
+.train-hero p{max-width:290px;line-height:1.5}
+.train-section-title{margin-top:18px}
+#skinCols.sw{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:9px;justify-content:stretch}
+.sw input[type=color]{width:100%;height:auto;aspect-ratio:1;border-radius:12px;padding:3px;background:var(--card);border:1px solid var(--line);box-shadow:0 2px 8px #0002}
+.sw input[type=color]::-webkit-color-swatch{border:0;border-radius:8px}
+.sw input[type=color]::-moz-color-swatch{border:0;border-radius:8px}
+.sw input[type=color]:focus-visible{outline:2px solid var(--ac);outline-offset:3px;transform:scale(1.04)}
+@media(max-width:370px){#skinCols.sw{gap:5px}.train-metric{padding:10px}}
 </style>
 </head>
 <body data-view="home">
@@ -1460,7 +1482,12 @@ function renderCatalog(){
     const C=coachData(),recent=Object.entries(tstats).filter(([k,v])=>v&&v.last>0).sort((a,b)=>b[1].last-a[1].last).slice(0,4);
     const learned=Object.keys(lstats).filter(k=>lstats[k]&&lstats[k].s>0).length;
     const due=dueCases().length;
-    let h='<div class="train-hero"><h3>Tu entrenamiento, a tu ritmo</h3><p>Un plan que se adapta a tus resoluciones y te ayuda a mejorar paso a paso.</p></div>';
+    const solved=Object.values(tstats).reduce((n,v)=>n+(Number(v&&v.n)||0),0);
+    const practiced=Object.keys(tstats).filter(k=>tstats[k]&&tstats[k].n>0).length;
+    const bests=Object.values(tstats).map(v=>Number(v&&v.best)).filter(v=>Number.isFinite(v)&&v>0);
+    const best=bests.length?fmt(Math.min(...bests)):'—';
+    let h='<div class="train-hero"><h3>Entrena con intención</h3><p>Sesiones enfocadas, evolución medible y control de tus casos más difíciles.</p></div>';
+    h+='<div class="train-dashboard"><div class="train-metric"><small>Resoluciones</small><strong>'+solved+'</strong><em>prácticas registradas</em></div><div class="train-metric"><small>Casos practicados</small><strong>'+practiced+'</strong><em>con actividad</em></div><div class="train-metric"><small>Mejor tiempo</small><strong>'+best+'</strong><em>récord personal</em></div><div class="train-metric"><small>Por repasar</small><strong>'+due+'</strong><em>casos pendientes</em></div></div>';
     h+=coachHTML(C);
     h+='<div class="train-actions"><button class="btn pri" id="trainStart">'+SV(P_CAP)+' Empezar a entrenar</button><button class="btn" id="trainChoose">Elegir casos</button></div>';
     h+='<div class="train-section-title"><h3>Últimos entrenamientos</h3><span class="cnt">'+(recent.length?recent.length:'')+'</span></div>';
@@ -1469,7 +1496,7 @@ function renderCatalog(){
     h+='<div class="train-section-title"><h3>Tu progreso</h3></div><div class="train-empty">'+learned+' casos empezados · '+due+' '+(due===1?'caso pendiente de repaso':'casos pendientes de repaso')+'</div>';
     overview.innerHTML=h;
     $('trainStart').onclick=()=>{trainLanding=false;tsel=new Set(Object.keys(Insight.GROUPS.F2L).map(id=>'F2L '+id));tTab='F2L';renderCatalog()};
-    $('trainChoose').onclick=()=>{trainLanding=false;renderCatalog()};
+    $('trainChoose').onclick=()=>{trainLanding=false;tsel.clear();tTab='F2L';renderCatalog()};
     overview.querySelectorAll('[data-training-case]').forEach(b=>b.onclick=()=>{const k=b.dataset.trainingCase;startTrain(k.slice(0,k.indexOf(' ')),k.slice(k.indexOf(' ')+1))});
     const coachBtn=overview.querySelector('#coachGo');if(coachBtn)coachBtn.onclick=()=>{const c=coachData();if(c)coachAction(c)};
     return;
