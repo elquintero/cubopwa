@@ -3,6 +3,38 @@ import '@fontsource/poppins/600.css';
 import '@fontsource/poppins/700.css';
 import './insight.js';
 
+// El análisis de mejora se ejecuta en un hilo separado para no bloquear las pestañas.
+let insightWorker = null, insightWorkerId = 0;
+const insightJobs = new Map();
+try {
+  if (typeof Worker !== 'undefined') {
+    insightWorker = new Worker(new URL('./insight-worker.js', import.meta.url), { type: 'module' });
+    insightWorker.onmessage = ({ data }) => {
+      const job = insightJobs.get(data.id);
+      if (!job) return;
+      insightJobs.delete(data.id);
+      data.error ? job.reject(new Error(data.error)) : job.resolve(data.result);
+    };
+    const failWorker = () => {
+      for (const job of insightJobs.values()) job.reject(new Error('Worker no disponible'));
+      insightJobs.clear(); insightWorker?.terminate(); insightWorker = null;
+    };
+    insightWorker.onerror = failWorker;
+    insightWorker.onmessageerror = failWorker;
+  }
+} catch (_) { insightWorker = null; }
+window.analyzeSolveAsync = (snap, moves) => new Promise((resolve, reject) => {
+  if (!insightWorker) {
+    // Compatibilidad con navegadores sin Web Worker.
+    try { resolve(window.Insight.analyze(snap, moves)); } catch (e) { reject(e); }
+    return;
+  }
+  const id = ++insightWorkerId;
+  insightJobs.set(id, { resolve, reject });
+  try { insightWorker.postMessage({ id, snap, moves }); }
+  catch (e) { insightJobs.delete(id); reject(e); }
+});
+
 // La versión se define una sola vez, en package.json, y se muestra en Ajustes.
 window.APP_VERSION = pkg.version;
 const verEl = document.getElementById('ver');

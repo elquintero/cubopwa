@@ -1,5 +1,5 @@
 // CubIQ · Análisis de resoluciones: detecta fases (F2L, OLL, PLL), identifica el caso y estima el tiempo ahorrable.
-const CM = () => window.CM;
+const CM = () => globalThis.CM || window.CM;
 // Giros/s mínimos que se suponen al ejecutar un algoritmo ya memorizado (valores propios, ajustables; no vienen de una fuente verificada).
 export const TPS_ALG = { OLL: 5, PLL: 6 };
 const OPP = { U: 'D', D: 'U', L: 'R', R: 'L', F: 'B', B: 'F' };
@@ -402,4 +402,4 @@ export function caseIcon(state, kind, flip = false) {
   return `<svg viewBox="0 0 ${W} ${W}" width="56" height="56" aria-hidden="true">${r}</svg>`;
 }
 
-window.Insight = { F2L_CAT, analyze, phases, summarize, casesOf, f2lCases, algsOf, getCase, caseIcon, expand, invert, OLL, PLL, GROUPS, TPS_ALG, HOLD };
+if (typeof window !== 'undefined') window.Insight = { F2L_CAT, analyze, phases, summarize, casesOf, f2lCases, algsOf, getCase, caseIcon, expand, invert, OLL, PLL, GROUPS, TPS_ALG, HOLD };

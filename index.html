@@ -67,6 +67,25 @@ html,body{touch-action:pan-x pan-y} /* sin zoom con pellizco */
 #views{flex:1;min-height:0;position:relative}
 .view{position:absolute;inset:0;display:none;flex-direction:column;background:var(--bg)}
 .view.on{display:flex;animation:vin .18s ease-out}
+body.tab-nav .view.on{animation:none}
+/* Entrenar: portada de coaching y catálogo */
+#trainOverview{flex:1;min-height:0;overflow:auto;padding:4px var(--px) 28px;overscroll-behavior:contain}
+#trainOverview[hidden],#trainCatalog[hidden]{display:none!important}
+.train-hero{border:1px solid var(--line);background:var(--card);border-radius:18px;padding:16px;margin:4px 0 12px}
+.train-hero h3{margin:0 0 6px;font:600 19px Poppins,system-ui,sans-serif}
+.train-hero p{margin:0;color:var(--mu);font-size:13px}
+.train-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:12px 0}
+.train-actions .btn{min-height:44px}
+.train-recent{display:grid;gap:7px;margin:8px 0 14px}
+.train-recent button{display:flex;align-items:center;gap:10px;text-align:left;border:1px solid var(--line);background:var(--card);border-radius:12px;padding:10px 12px}
+.train-recent button .tr-main{flex:1;min-width:0}
+.train-recent button b{display:block;font-size:13px}
+.train-recent button small{display:block;color:var(--mu);font-size:11px}
+.train-recent button strong{font-variant-numeric:tabular-nums;font-size:14px}
+.train-section-title{display:flex;align-items:center;justify-content:space-between;margin:16px 0 8px}
+.train-section-title h3{font:600 15px Poppins,system-ui,sans-serif;margin:0}
+.train-empty{border:1px dashed var(--line);border-radius:14px;padding:14px;color:var(--mu);font-size:13px}
+@media(max-width:420px){.train-actions{grid-template-columns:1fr}}
 @keyframes vin{from{opacity:0;transform:translateY(8px)}}
 .view.wide{--px:max(18px,calc((100vw - 900px)/2))}
 .vh{flex:none;display:flex;align-items:center;gap:4px;height:48px;padding:0 calc(var(--px) - 8px) 0 var(--px)}
@@ -362,16 +381,19 @@ input[type=range]::-webkit-slider-thumb{background:var(--tx);border:2px solid va
 </section>
 
 <section id="vTrain" class="view">
-  <div class="vh"><h2>Entrenar</h2><span class="cnt" id="tcCount"></span></div>
-  <div class="vt"><div class="seg" id="tcTabs"></div><div class="chips" id="tcSubs"></div></div>
-  <div class="vb"><div class="grid" id="tcGrid"></div>
-    <div class="keyrow"><span><i style="background:#3a414b"></i>nuevo</span><span><i style="background:var(--bad)"></i>lento</span><span><i style="background:#ffd54a"></i>medio</span><span><i style="background:var(--ok)"></i>rápido</span></div></div>
-  <div class="vf">
-    <button class="ib" id="tcOrder"></button>
-    <button class="ib" id="tcMine" aria-label="Mis casos aprendidos" title="Elegir los casos que ya has empezado a aprender"><svg viewBox="0 0 24 24"><path d="M3 7.5 12 3l9 4.5-9 4.5Z"/><path d="M7 10.5v5c0 1.4 2.2 2.8 5 2.8s5-1.4 5-2.8v-5"/></svg></button>
-    <button class="ib" id="tcAll" aria-label="Elegir todos" title="Elegir todos"><svg viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="4"/><path d="m8.5 12.3 2.5 2.5 4.6-5"/></svg></button>
-    <button class="ib" id="tcClear" aria-label="Limpiar" title="Limpiar selección"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="m9 9 6 6M15 9l-6 6"/></svg></button>
-    <button class="btn pri grow" id="tcGo"><svg class="i" viewBox="0 0 24 24"><circle cx="12" cy="13.5" r="7.5"/><path d="M12 9.5v4l2.5 1.5M9.5 3h5"/></svg>Entrenar</button>
+  <div class="vh"><button class="ib" id="tcBack" hidden aria-label="Volver al resumen" title="Volver al resumen"><svg viewBox="0 0 24 24"><path d="m15 18-6-6 6-6"/></svg></button><h2 id="tcTitle">Entrenar</h2><span class="cnt" id="tcCount"></span></div>
+  <div id="trainOverview"></div>
+  <div id="trainCatalog" hidden>
+    <div class="vt"><div class="seg" id="tcTabs"></div><div class="chips" id="tcSubs"></div></div>
+    <div class="vb"><div class="grid" id="tcGrid"></div>
+      <div class="keyrow"><span><i style="background:#3a414b"></i>nuevo</span><span><i style="background:var(--bad)"></i>lento</span><span><i style="background:#ffd54a"></i>medio</span><span><i style="background:var(--ok)"></i>rápido</span></div></div>
+    <div class="vf">
+      <button class="ib" id="tcOrder"></button>
+      <button class="ib" id="tcMine" aria-label="Mis casos aprendidos" title="Elegir los casos que ya has empezado a aprender"><svg viewBox="0 0 24 24"><path d="M3 7.5 12 3l9 4.5-9 4.5Z"/><path d="M7 10.5v5c0 1.4 2.2 2.8 5 2.8s5-1.4 5-2.8v-5"/></svg></button>
+      <button class="ib" id="tcAll" aria-label="Elegir todos" title="Elegir todos"><svg viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="4"/><path d="m8.5 12.3 2.5 2.5 4.6-5"/></svg></button>
+      <button class="ib" id="tcClear" aria-label="Limpiar" title="Limpiar selección"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="m9 9 6 6M15 9l-6 6"/></svg></button>
+      <button class="btn pri grow" id="tcGo"><svg class="i" viewBox="0 0 24 24"><circle cx="12" cy="13.5" r="7.5"/><path d="M12 9.5v4l2.5 1.5M9.5 3h5"/></svg>Entrenar</button>
+    </div>
   </div>
 </section>
 
@@ -591,8 +613,7 @@ const mv=(cube,m)=>{
   const times=sg>0?3*q:q;
   for(const s of cube)if(s.p[ax]===sg)for(let i=0;i<times;i++){s.p=ROT[ax](s.p);s.n=ROT[ax](s.n)}
 };
-// El orden de las 54 pegatinas es estable: no hace falta ordenar en cada movimiento.
-const sig=c=>{let out='';for(let i=0;i<c.length;i++){const s=c[i];out+=s.p[0]+','+s.p[1]+','+s.p[2]+'|'+s.n[0]+','+s.n[1]+','+s.n[2]+'|'+s.c+';'}return out};
+const sig=c=>c.map(s=>s.p+'|'+s.n+'|'+s.c).sort().join();
 const isSolved=c=>c.every(s=>s.c===NAME[s.n]);
 const build=ms=>{const c=solvedCube();ms.forEach(m=>mv(c,m));return c};
 const genScramble=(n=20)=>{const out=[],ax={U:0,D:0,L:1,R:1,F:2,B:2};let last=-1;
@@ -686,27 +707,19 @@ const OPP={U:'D',D:'U',L:'R',R:'L',F:'B',B:'F'},qOf=m=>m.endsWith("'")?3:m.endsW
 function setScramble(list){scr=list;const c=clone(cube);pre=[sig(c)];scr.forEach(m=>{mv(c,m);pre.push(sig(c))});prog=0;wrong=[];setPhase('scramble');renderScr()}
 function newScramble(){setScramble(train?train.setup:genScramble())}
 const dsp=m=>train&&train.frame?train.frame[m[0]]+m.slice(1):m; // en entrenamiento, los giros se muestran según cómo sujetas el cubo
-let scrRenderList=null,scrNodes=[];
-function renderScr(){ // actualiza clases sobre nodos existentes; no reconstruye el DOM en cada giro Bluetooth
-  const el=$('scr'),h=$('hint');
+function renderScr(){ // verde = bien · amarillo = medio giro · rojo = error
+  const el=$('scr'),h=$('hint');el.innerHTML='';
   $('cv').className=phase==='scramble'&&scr.length?(wrong.length?'bad':prog>0&&prog<scr.length?'ok':''):'';
-  el.dataset.cap=train&&phase==='scramble'?'Giros para crear el caso':'';
-  if(train&&phase!=='scramble'){h.className='';h.textContent='';sayTrain();return}
-  if(scrRenderList!==scr||scrNodes.length!==scr.length){
-    const frag=document.createDocumentFragment();scrNodes=[];
-    scr.forEach(()=>{const sp=document.createElement('span');scrNodes.push(sp);frag.append(sp,document.createTextNode(' '))});
-    el.replaceChildren(frag);scrRenderList=scr;
-  }
+  $('scr').dataset.cap=train&&phase==='scramble'?'Giros para crear el caso':'';
+  if(train&&phase!=='scramble'){h.className='';h.textContent='';sayTrain();return} // en entrenamiento solo se ve el algoritmo
   const e=scr[prog],half=wrong.length===1&&e&&wrong[0][0]===e[0]&&qOf(e)===2;
-  for(let i=0;i<scr.length;i++){
-    const sp=scrNodes[i],m=scr[i],cls=phase==='scramble'?(i<prog?'d':i>prog?'n':!wrong.length?'c':half?'p':'e'):phase==='ready'?'d':'f';
-    if(sp.textContent!==dsp(m))sp.textContent=dsp(m);
-    if(sp.className!==cls)sp.className=cls;
-  }
+  scr.forEach((m,i)=>{const sp=document.createElement('span');
+    sp.className=phase==='scramble'?(i<prog?'d':i>prog?'n':!wrong.length?'c':half?'p':'e'):phase==='ready'?'d':'f';
+    sp.textContent=dsp(m);el.appendChild(sp);el.appendChild(document.createTextNode(' '))});
   if(phase==='scramble'&&wrong.length){h.className=half?'p':'e';
     h.textContent=half?'Medio giro hecho: repite el mismo movimiento':'Error. Deshaz: '+wrong.slice().reverse().map(([f,q])=>dsp(qs(f,(4-q)%4))).join(' ')}
   else{h.className='';h.textContent=''}
-  if(train)sayTrain();
+  if(train)sayTrain(); // el aviso se calcula al final, cuando ya se sabe qué giro hay que deshacer
 }
 function trackSync(){const j=pre.indexOf(sig(cube));if(j>=0){prog=j;wrong=[]}renderScr();if(phase==='scramble'&&prog===scr.length)setPhase('ready')}
 function trackMove(m){
@@ -728,17 +741,15 @@ function onMove(m){
   gest.push(m);if(gest.length>4)gest.shift();
   if(gest.length===4&&gest.every(x=>x===m)&&'RLU'.includes(m[0])&&phase!=='running'){gest=[];gesture(m[0])}
 }
-// El reloj se calcula siempre con performance.now(), pero el DOM solo se actualiza 20 veces/s.
-// Así conserva precisión sin forzar 60 escrituras por segundo en el hilo principal.
-function itick(){if(phase!=='inspect')return;const r=15-(performance.now()-ti)/1000;$('timer').textContent=r>0?Math.ceil(r):r>-2?'+2':'DNF';setTimeout(itick,33)}
-function tick(){if(phase!=='running')return;$('timer').textContent=fmt(performance.now()-t0);setTimeout(tick,33)}
+function itick(){if(phase!=='inspect')return;const r=15-(performance.now()-ti)/1000;$('timer').textContent=r>0?Math.ceil(r):r>-2?'+2':'DNF';requestAnimationFrame(itick)}
+function tick(){if(phase!=='running')return;$('timer').textContent=fmt(performance.now()-t0);requestAnimationFrame(tick)}
 function finish(){
   const t=Math.round(performance.now()-t0);
   if(train)return finishTrain(t);
   solves.push({t,m:mvs.length,s:scr.join(' '),d:Date.now(),p:pen,dv:curDev||undefined,fl:snap?toFacelets(snap):undefined,mv:mvs.map(x=>x.m+' '+Math.round(x.t)).join(',')});save();celebrate();
   $('timer').textContent=fmt(t);$('live').textContent=mvs.length+' mov · '+(mvs.length/(t/1000)).toFixed(2)+' TPS';
   renderStats();const T=$('timer');newScramble();T.className='';$('timer').textContent=fmt(t);
-  if(cfg.insight&&snap&&window.Insight&&mvs.length>3){const S=snap,M=mvs;idle(()=>{try{const r=Insight.analyze(S,M);if(r)showAlert(r)}catch(e){console.error(e)}},1500)}
+  if(cfg.insight&&snap&&window.Insight&&mvs.length>3){const S=clone(snap),M=mvs.map(x=>({...x}));idle(()=>{if(window.analyzeSolveAsync)window.analyzeSolveAsync(S,M).then(r=>{if(r&&phase!=='running')showAlert(r)}).catch(e=>console.error(e));else{try{const r=Insight.analyze(S,M);if(r)showAlert(r)}catch(e){console.error(e)}}},1500)}
   scheduleCoach();
 }
 function manual(){ // espacio / toque: sin cubo o para saltar pasos
@@ -869,13 +880,8 @@ try{gM=JSON.parse(localStorage.getItem('gyroCal')||'null')}catch(e){}
 const G=v=>{if(train)v=[-v[0],-v[1],v[2]];return cfg.gyro&&gq?qrot(gq,v):v}; // en entrenamiento el cubo se ve con amarillo arriba (giro z2)
 function gloop(){
   gRaf=0;if(!cfg.gyro||!gt)return;
-  if(!gq)gq=gt;
-  else{
-    const dot=gq.w*gt.w+gq.x*gt.x+gq.y*gt.y+gq.z*gt.z,s=dot<0?-1:1;
-    // Si ya está alineado, termina el RAF: antes quedaba dibujando a 60 FPS incluso quieto.
-    if(Math.abs(dot)>0.9997){gq=gt;draw();return}
-    const k=0.4;gq=qnorm({w:gq.w+(s*gt.w-gq.w)*k,x:gq.x+(s*gt.x-gq.x)*k,y:gq.y+(s*gt.y-gq.y)*k,z:gq.z+(s*gt.z-gq.z)*k});
-  }
+  if(!gq)gq=gt;else{const s=(gq.w*gt.w+gq.x*gt.x+gq.y*gt.y+gq.z*gt.z)<0?-1:1,k=0.4;
+    gq=qnorm({w:gq.w+(s*gt.w-gq.w)*k,x:gq.x+(s*gt.x-gq.x)*k,y:gq.y+(s*gt.y-gq.y)*k,z:gq.z+(s*gt.z-gq.z)*k})}
   draw();gRaf=requestAnimationFrame(gloop);
 }
 function onGyro(q){
@@ -959,7 +965,10 @@ $('oGyro').onchange=e=>setGyro(e.target.checked);
 /* ===== Pantallas (sustituyen a los pop-ups) ===== */
 const TABS=['home','learn','train','stats','set'],VID={home:'vHome',learn:'vLearn',train:'vTrain',stats:'vStats',set:'vSet',case:'vCase',solve:'vSolve',prof:'vProf',quiz:'vQuiz'};
 let vNow='home',vStack=[],rootTab='home';
+const viewScroll={};
+function viewScroller(v){const root=$(VID[v]||'vHome');if(v==='home')return root;if(v==='train'){const ov=$('trainOverview');return ov&&!ov.hidden?ov:root.querySelector('.vb')}return root.querySelector('.vb')||root;}
 function show(v){
+  const oldScroll=viewScroller(vNow);if(oldScroll)viewScroll[vNow]=oldScroll.scrollTop||0;
   if(typeof hHide==='function')hHide();
   if(vNow==='solve'&&v!=='solve'&&typeof rpPlay==='function')rpPlay(false);
   if(vNow==='case'&&v!=='case')cpPlay(false);
@@ -973,8 +982,9 @@ function show(v){
   else if(v==='set')syncSet();
   else if(v==='prof')renderProf();
   else if(v==='quiz')renderQuiz();
+  const target=viewScroller(v);if(target)requestAnimationFrame(()=>{target.scrollTop=viewScroll[v]||0});
 }
-const nav=v=>{vStack=[];show(v)},push=v=>{vStack.push(vNow);show(v)},back=()=>show(vStack.pop()||rootTab);
+const nav=v=>{vStack=[];if(v==='train'){trainLanding=true;viewScroll.train=0}document.body.classList.add('tab-nav');show(v);requestAnimationFrame(()=>document.body.classList.remove('tab-nav'))},push=v=>{vStack.push(vNow);show(v)},back=()=>show(vStack.pop()||rootTab);
 $('tabs').onclick=e=>{const b=e.target.closest('.tab');if(b)nav(b.dataset.v)};
 $('csBack').onclick=back;
 /* Ayudas «i» */
@@ -1031,7 +1041,7 @@ function showAlert(r){
 function hideAlert(){$('alert').hidden=true;alertData=null;clearTimeout(alertTimer)}
 
 /* ===== Datos de aprendizaje y entrenamiento ===== */
-let trReview=false,trFail=false,tsel=new Set(),tstats={},tses={n:0},tTab='F2L',lastKey='',iconCache={},at=null,tmode='drill',torder='rand',seqI=0,trFrom=null,tpeek=false;
+let trReview=false,trFail=false,tsel=new Set(),tstats={},tses={n:0},tTab='F2L',lastKey='',iconCache={},at=null,tmode='drill',torder='rand',seqI=0,trFrom=null,tpeek=false,trainLanding=true;
 let lstats={},lfav={},lrec=[]; // lstats[caso]={s: nivel 0-3, c: seguidas limpias, n: repeticiones}
 try{tstats=JSON.parse(PS.get('tstats')||'{}');lstats=JSON.parse(PS.get('lstats')||'{}');lfav=JSON.parse(PS.get('lfav')||'{}');lrec=JSON.parse(PS.get('lrec')||'[]')}catch(e){}
 const saveTS=()=>{try{PS.set('tstats',JSON.stringify(tstats))}catch(e){}};
@@ -1442,7 +1452,29 @@ function finishTrain(t){
 }
 
 /* ===== Pantalla Entrenar: varios casos seguidos, con tiempo ===== */
+const fmtDate=t=>{try{return new Intl.DateTimeFormat('es-ES',{day:'2-digit',month:'short'}).format(new Date(t))}catch(e){return ''}};
 function renderCatalog(){
+  const overview=$('trainOverview'),catalog=$('trainCatalog'),backBtn=$('tcBack'),title=$('tcTitle');
+  if(trainLanding){
+    overview.hidden=false;catalog.hidden=true;backBtn.hidden=true;title.textContent='Entrenar';
+    const C=coachData(),recent=Object.entries(tstats).filter(([k,v])=>v&&v.last>0).sort((a,b)=>b[1].last-a[1].last).slice(0,4);
+    const learned=Object.keys(lstats).filter(k=>lstats[k]&&lstats[k].s>0).length;
+    const due=dueCases().length;
+    let h='<div class="train-hero"><h3>Tu entrenamiento, a tu ritmo</h3><p>Un plan que se adapta a tus resoluciones y te ayuda a mejorar paso a paso.</p></div>';
+    h+=coachHTML(C);
+    h+='<div class="train-actions"><button class="btn pri" id="trainStart">'+SV(P_CAP)+' Empezar a entrenar</button><button class="btn" id="trainChoose">Elegir casos</button></div>';
+    h+='<div class="train-section-title"><h3>Últimos entrenamientos</h3><span class="cnt">'+(recent.length?recent.length:'')+'</span></div>';
+    if(recent.length){h+='<div class="train-recent">'+recent.map(([k,v])=>{const i=k.indexOf(' '),kind=k.slice(0,i),id=k.slice(i+1),when=fmtDate(v.last);return '<button data-training-case="'+esc(k)+'"><span class="tr-main"><b>'+esc(lbl(kind,id))+'</b><small>'+when+' · '+v.n+' repeticiones · mejor '+fmt(v.best)+'</small></span><strong>'+fmt(v.last)+'</strong></button>'}).join('')+'</div>';}
+    else h+='<div class="train-empty">Todavía no hay entrenamientos registrados. Empieza con unos casos de F2L y aquí aparecerán tus últimas prácticas y resultados.</div>';
+    h+='<div class="train-section-title"><h3>Tu progreso</h3></div><div class="train-empty">'+learned+' casos empezados · '+due+' '+(due===1?'caso pendiente de repaso':'casos pendientes de repaso')+'</div>';
+    overview.innerHTML=h;
+    $('trainStart').onclick=()=>{trainLanding=false;tsel=new Set(Object.keys(Insight.GROUPS.F2L).map(id=>'F2L '+id));tTab='F2L';renderCatalog()};
+    $('trainChoose').onclick=()=>{trainLanding=false;renderCatalog()};
+    overview.querySelectorAll('[data-training-case]').forEach(b=>b.onclick=()=>{const k=b.dataset.trainingCase;startTrain(k.slice(0,k.indexOf(' ')),k.slice(k.indexOf(' ')+1))});
+    const coachBtn=overview.querySelector('#coachGo');if(coachBtn)coachBtn.onclick=()=>{const c=coachData();if(c)coachAction(c)};
+    return;
+  }
+  overview.hidden=true;catalog.hidden=false;backBtn.hidden=false;title.textContent='Elegir casos';
   const grid=$('tcGrid'),box=grid.parentElement,sc=box.scrollTop,ids=Object.keys(Insight.GROUPS[tTab]);grid.innerHTML='';
   const mt=mainOf(tTab),cnt=m=>[...tsel].filter(k=>mainOf(k.split(' ')[0])===m).length;
   $('tcTabs').innerHTML=MAINS.map(([k,l])=>'<button data-k="'+k+'" class="'+(k===mt?'on':'')+'">'+l+(cnt(k)?' · '+cnt(k):'')+'</button>').join('');
@@ -1457,6 +1489,7 @@ function renderCatalog(){
   hydrate(grid);box.scrollTop=sc;$('tcCount').textContent=tsel.size?tsel.size+' elegidos':'';$('tcGo').disabled=!tsel.size;
   $('tcOrder').innerHTML=SV(torder==='rand'?P_SHUF:P_LIST);$('tcOrder').title=torder==='rand'?'Orden: al azar (más peso a los lentos)':'Orden: uno tras otro';$('tcOrder').setAttribute('aria-label',$('tcOrder').title);
 }
+$('tcBack').onclick=()=>{trainLanding=true;renderCatalog()};
 $('tcTabs').onclick=e=>{const b=e.target.closest('button');if(!b)return;tTab=SUBS[b.dataset.k][0][0];$('tcGrid').parentElement.scrollTop=0;renderCatalog()};
 $('tcSubs').onclick=e=>{const b=e.target.closest('button');if(!b)return;tTab=b.dataset.k;$('tcGrid').parentElement.scrollTop=0;renderCatalog()};
 $('tcAll').onclick=()=>{Object.keys(Insight.GROUPS[tTab]).forEach(id=>tsel.add(tTab+' '+id));renderCatalog()};

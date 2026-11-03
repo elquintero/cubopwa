@@ -1,32 +1,63 @@
 /* CubIQ · service worker. La versión y la lista de precarga las rellena vite.config.js en cada build. */
 const V = '__VERSION__', PRECACHE = /*__PRECACHE__*/[], C = 'cubiq-' + V;
-const abs = (u) => new URL(u, self.registration.scope).href;
+const SCOPE = self.registration.scope;
+const abs = (u) => new URL(u, SCOPE).href;
+const isInScope = (url) => url.origin === self.location.origin && url.href.startsWith(SCOPE);
 
-// Instalación: todo lo necesario para funcionar sin conexión se descarga de una vez (en paralelo).
-self.addEventListener('install', (e) => e.waitUntil(
-  caches.open(C)
-    .then((c) => c.addAll(PRECACHE.map((u) => new Request(abs(u), { cache: 'reload' }))))
-    .then(() => self.skipWaiting())
-));
 
-// Activación: borra cachés de versiones anteriores y toma el control.
-self.addEventListener('activate', (e) => e.waitUntil(
-  caches.keys()
-    .then((ks) => Promise.all(ks.filter((k) => k.startsWith('cubiq-') && k !== C).map((k) => caches.delete(k))))
-    .then(() => self.clients.claim())
-));
+// Instalación: precarga completa y atómica. Si falla un recurso, no se activa una
+// versión incompleta de la aplicación y la versión anterior sigue disponible.
+self.addEventListener('install', (event) => event.waitUntil((async () => {
+  const cache = await caches.open(C);
+  await cache.addAll(PRECACHE.map((url) => new Request(abs(url), { cache: 'reload' })));
+  await self.skipWaiting();
+})()));
 
-// Fetch: caché primero (los archivos llevan hash en el nombre, así que nunca quedan obsoletos).
-// Las actualizaciones llegan con un sw.js nuevo (la versión cambia con el contenido), no con red en cada carga.
-self.addEventListener('fetch', (e) => {
-  const r = e.request;
-  if (r.method !== 'GET' || !PRECACHE.length) return; // en desarrollo (sin lista) no se interviene
-  if (new URL(r.url).origin !== location.origin) return;
-  const nav = r.mode === 'navigate';
-  e.respondWith(
-    caches.match(nav ? abs('./') : r, { ignoreSearch: nav }).then((hit) => hit || fetch(r).then((res) => {
-      if (res.ok && res.type === 'basic') { const cp = res.clone(); caches.open(C).then((c) => c.put(r, cp)); }
-      return res;
-    }))
-  );
+
+// Activación: conserva únicamente la caché de la versión actual y toma el control.
+self.addEventListener('activate', (event) => event.waitUntil((async () => {
+  const keys = await caches.keys();
+  await Promise.all(keys.filter((key) => key.startsWith('cubiq-') && key !== C).map((key) => caches.delete(key)));
+  await self.clients.claim();
+})()));
+
+
+self.addEventListener('fetch', (event) => {
+  const request = event.request;
+  if (request.method !== 'GET' || request.headers.has('range')) return;
+  const url = new URL(request.url);
+  if (!isInScope(url) || !PRECACHE.length) return; // desarrollo: no interferir con Vite
+
+  // Navegación: devuelve la página precargada para que el inicio offline sea fiable.
+  if (request.mode === 'navigate') {
+    event.respondWith((async () => {
+      const cache = await caches.open(C);
+      const offlinePage = await cache.match(abs('./')) || await cache.match(abs('./index.html'));
+      try {
+        const response = await fetch(request);
+        return response.ok ? response : (offlinePage || response);
+      } catch (_) {
+        return offlinePage || new Response('CubIQ no está disponible sin conexión.', {
+          status: 503, headers: { 'Content-Type': 'text/plain; charset=utf-8' }
+        });
+      }
+    })());
+    return;
+  }
+
+  // Recursos estáticos: caché primero. Los nombres generados por Vite incluyen hash.
+  event.respondWith((async () => {
+    const cache = await caches.open(C);
+    const cached = await cache.match(request, { ignoreSearch: false });
+    if (cached) return cached;
+    try {
+      const response = await fetch(request);
+      if (response.ok && response.type === 'basic' && response.headers.get('Cache-Control') !== 'no-store') {
+        event.waitUntil(cache.put(request, response.clone()).catch(() => {}));
+      }
+      return response;
+    } catch (error) {
+      return new Response('', { status: 504, statusText: 'Offline' });
+    }
+  })());
 });
