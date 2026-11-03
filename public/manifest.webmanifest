@@ -1,11 +1,24 @@
 {
+ "id": "./",
  "name": "CubIQ",
  "short_name": "CubIQ",
- "start_url": ".",
+ "description": "Cronómetro, análisis y entrenamiento para cubos Rubik Bluetooth.",
+ "lang": "es",
+ "start_url": "./",
+ "scope": "./",
  "display": "standalone",
+ "display_override": [
+  "standalone",
+  "minimal-ui"
+ ],
  "orientation": "portrait",
- "background_color": "#0e1116",
- "theme_color": "#0e1116",
+ "background_color": "#0b0d10",
+ "theme_color": "#0b0d10",
+ "categories": [
+  "games",
+  "sports",
+  "utilities"
+ ],
  "icons": [
   {
    "src": "icon-192.png",

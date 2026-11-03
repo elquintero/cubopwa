@@ -4,6 +4,9 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <meta name="theme-color" content="#0b0d10">
+<meta name="color-scheme" content="dark light">
+<meta name="description" content="CubIQ: cronómetro, análisis y entrenamiento para cubos Rubik Bluetooth.">
+<meta name="apple-mobile-web-app-title" content="CubIQ">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -1804,7 +1807,7 @@ $('btnConn').onclick=()=>{if($('status').className==='on'&&window.disconnectCube
 
 /* ===== Arranque ===== */
 for(const ev of ['gesturestart','gesturechange','gestureend'])document.addEventListener(ev,e=>e.preventDefault()); // iOS: sin zoom con pellizco
-if('serviceWorker' in navigator&&location.protocol.startsWith('http'))navigator.serviceWorker.register('sw.js').catch(()=>{});
+if('serviceWorker' in navigator&&location.protocol.startsWith('http'))addEventListener('load',()=>idle(()=>navigator.serviceWorker.register('sw.js',{updateViaCache:'none'}).then(r=>document.addEventListener('visibilitychange',()=>{if(!document.hidden)r.update().catch(()=>{})})).catch(()=>{}),4000)); // registro fuera del arranque; busca actualizaciones al volver a la app
 $('btnGyro').hidden=!cfg.gyro;
 draw();renderStats();newScramble();$('svPlay').innerHTML=PLAY;$('csPlay').innerHTML=PLAY;
 setTimeout(()=>idle(()=>{try{if(window.Insight)probs();scheduleCoach()}catch(e){PROB=null}},8000),3000);
