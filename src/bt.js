@@ -1,4 +1,3 @@
-import { connectSmartCube } from 'smartcube-web-bluetooth';
 import pkg from '../package.json';
 import '@fontsource/poppins/600.css';
 import '@fontsource/poppins/700.css';
@@ -59,6 +58,7 @@ window.connectCube = async (app) => {
   provider.macAddressProvider = provider;
   provider.customMacAddressProvider = provider;
   try {
+    const { connectSmartCube } = await import('smartcube-web-bluetooth'); // se descarga solo al conectar
     conn = await connectSmartCube(provider);
     const mine = conn; // para distinguir una desconexión inesperada de la que pides tú
     const name = conn.deviceName || lastName || 'Cubo';
