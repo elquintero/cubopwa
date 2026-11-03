@@ -14,10 +14,10 @@
 <script>/*THEME*/try{var _c=JSON.parse(localStorage.getItem("cfg")||"{}"),_t=_c.theme||"dark";document.documentElement.dataset.theme=(_t==="light"||(_t==="auto"&&matchMedia("(prefers-color-scheme: light)").matches))?"light":"dark"}catch(e){}</script>
 <style>
 :root{--bg:#0b0d10;--tx:#e8ecf1;--mu:#6b7380;--line:#1c2128;--ac:#ff8a1f;--ok:#3ddc97;--bad:#ff6b6b;--card:#0f1318;--tab:56px;--px:max(18px,calc((100vw - 640px)/2));
-  --inset:#0b0d10;--bg2:#1c2128;--track:#262d36;--bd2:#3a414b;--pop:#12161b;--selbg:#2b1a0b;--onac:#1c1003;--warn:#ffd54a;--orange:#ff9a3d;--okbg:#10231b;--badbg:#27140f;
+  --inset:#0b0d10;--bg2:#1c2128;--track:#262d36;--bd2:#3a414b;--pop:#12161b;--selbg:#2b1a0b;--onac:#1c1003;--gf:#0b0d10;--gs:#262c34;--gd:#0b0d10;--gc:#262c34;--warn:#ffd54a;--orange:#ff9a3d;--okbg:#10231b;--badbg:#27140f;
   --gbg:#120e1b;--gpill:#1a1426;--gtx:#d9c4ff;--gbd:#6b4fa8;color-scheme:dark}
 :root[data-theme=light]{--bg:#f3f5f8;--tx:#12161c;--mu:#5b6573;--line:#dde2e9;--ac:#e8830c;--ok:#12915a;--bad:#d6382f;--card:#ffffff;
-  --inset:#e8ecf2;--bg2:#e6eaf0;--track:#d3d9e2;--bd2:#b4bdca;--pop:#ffffff;--selbg:#fdebd6;--onac:#ffffff;--warn:#a86b00;--orange:#c75a00;--okbg:#e2f6ec;--badbg:#fde8e5;
+  --inset:#e8ecf2;--bg2:#e6eaf0;--track:#d3d9e2;--bd2:#b4bdca;--pop:#ffffff;--selbg:#fdebd6;--onac:#ffffff;--gf:#e6eaf0;--gs:#dde2e9;--gd:#ffffff;--gc:#c9d0da;--warn:#a86b00;--orange:#c75a00;--okbg:#e2f6ec;--badbg:#fde8e5;
   --gbg:#f3ecff;--gpill:#efe5ff;--gtx:#5b3aa5;--gbd:#b99be6;color-scheme:light}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;scrollbar-width:none}
 *::-webkit-scrollbar{display:none}
@@ -34,6 +34,8 @@ header{flex:none;display:flex;align-items:center;gap:6px;height:calc(52px + env(
 .brand{font:700 20px/1 Poppins,ui-rounded,system-ui,sans-serif;letter-spacing:-.02em}
 html,body{touch-action:pan-x pan-y} /* sin zoom con pellizco */
 .brand span{color:#ff8a1f}
+#rot{display:none}
+@media (pointer:coarse) and (orientation:landscape) and (max-height:540px){#rot{display:flex;position:fixed;inset:0;z-index:100;background:var(--bg);color:var(--tx);flex-direction:column;align-items:center;justify-content:center;gap:10px;text-align:center}#rot span{color:var(--mu);font-size:14px}}
 .hi{display:inline-grid;place-items:center;width:17px;height:17px;border:1.4px solid currentColor;border-radius:50%;color:var(--mu);font:italic 700 11px/1 Georgia,serif;vertical-align:middle;margin-left:6px;opacity:.85;flex:none;padding:0}
 .hi:hover{color:var(--ac);opacity:1}body.nohelp .hi{display:none!important}
 #hpop{position:fixed;z-index:60;max-width:min(290px,calc(100vw - 24px));background:var(--pop);color:var(--tx);border:1px solid var(--line);border-radius:12px;padding:10px 13px;font-size:13px;line-height:1.4;box-shadow:0 8px 28px rgba(0,0,0,.28);text-align:left}
@@ -246,13 +248,12 @@ dialog .vh{padding:0 8px 0 18px}dialog .vb{padding:4px 18px 18px}
 .coach{border:1px solid var(--line);border-radius:18px;background:var(--card);padding:12px 14px;margin-top:6px;text-align:left}
 .coach.mu{display:flex;gap:10px;align-items:center;font-size:13px}.coach.mu svg{width:18px;height:18px;flex:none}
 .coach h3{margin:0 0 8px}.coach h3 small,h3 small{margin-left:auto;font-weight:500;letter-spacing:0;text-transform:none;font-size:12px}
-.cbars{display:grid;gap:11px}
-.cb{display:grid;grid-template-columns:44px 1fr 38px;align-items:center;gap:10px}
-.cb span{font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--c)}
-.cb .tr{position:relative;height:12px;border-radius:99px;background:var(--inset)}
-.cb .tr i{display:block;height:100%;border-radius:99px;background:linear-gradient(90deg,color-mix(in srgb,var(--c) 62%,#000),var(--c));box-shadow:0 0 12px -3px var(--c);min-width:10px}
-.cb .tr u{position:absolute;top:-4px;bottom:-4px;width:2px;border-radius:2px;background:var(--mu);opacity:.6}
-.cb b{text-align:right;font:600 14px Poppins,system-ui,sans-serif;font-variant-numeric:tabular-nums}.cb.w b{color:var(--ac)}
+.cbars{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:20px;align-items:end}
+.cb{display:grid;justify-items:center;gap:7px}
+.cb .tr{position:relative;width:100%;max-width:60px;height:96px;border-radius:14px;background:var(--inset);display:flex;align-items:flex-end}
+.cb .tr i{display:block;width:100%;border-radius:14px;border-top:2px solid var(--c);background:linear-gradient(180deg,color-mix(in srgb,var(--c) 40%,transparent),color-mix(in srgb,var(--c) 10%,transparent));box-shadow:0 -4px 14px -6px var(--c)}
+.cb .tr b{position:absolute;left:-6px;right:-6px;text-align:center;font:600 15px Poppins,system-ui,sans-serif;font-variant-numeric:tabular-nums}.cb.w .tr b{color:var(--ac)}
+.cb span{font:700 13px Poppins,system-ui,sans-serif;letter-spacing:.05em;text-transform:uppercase;color:var(--c)}
 .coach p{margin:10px 0 0;font-size:14px;line-height:1.4}.coach p b{color:var(--tx)}
 .coach .btn{margin-top:10px;font-size:13px;padding:7px 12px}
 
@@ -421,7 +422,7 @@ input[type=range]::-webkit-slider-thumb{background:var(--tx);border:2px solid va
       <div id="log">Aquí aparecerán los datos crudos del cubo.</div>
     </details>
     <h3>Acerca de</h3>
-    <p class="mu" style="margin:0">CubIQ · versión <span id="ver">1.20.0</span></p>
+    <p class="mu" style="margin:0">CubIQ · versión <span id="ver">1.20.1</span></p>
   </div>
   <div class="vb" id="setTheme" hidden>
     <h3 style="margin-top:6px">Tema</h3>
@@ -552,6 +553,7 @@ input[type=range]::-webkit-slider-thumb{background:var(--tx);border:2px solid va
 </div>
 <div id="toast"></div>
 
+<div id="rot"><svg viewBox="0 0 24 24" width="44" height="44" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="7" y="2.5" width="10" height="19" rx="2.5"/><path d="M11 18.5h2"/></svg><b>Gira el móvil</b><span>CubIQ solo funciona en vertical</span></div>
 <script>
 /* ===== Modelo del cubo: 54 pegatinas con posición, normal y color ===== */
 const FACES={U:[0,1,0],D:[0,-1,0],F:[0,0,1],B:[0,0,-1],R:[1,0,0],L:[-1,0,0]};
@@ -583,7 +585,7 @@ const clone=c=>c.map(s=>({p:[...s.p],n:[...s.n],c:s.c}));
 const rotV=(v,ax,t)=>{const c=Math.cos(t),s=Math.sin(t),[x,y,z]=v;return ax===0?[x,y*c-z*s,y*s+z*c]:ax===1?[x*c+z*s,y,-x*s+z*c]:[x*c-y*s,x*s+y*c,z]};
 let LINEC='#0b0d10';
 function paintCube(g,W,state,an,Gf,vw,cf){
-  const S=W/6,Q=[],GG=v=>Gf?Gf(v):v,small=W<300,lh=small?0.465:0.5,lc=small?(window.__cubeLight?'#dde2e9':/^#[0-9a-f]{6}$/i.test(LINEC)?LINEC+'8c':LINEC):LINEC; // iconos pequeños: en tema claro, marco gris suave en vez de negro
+  const S=W/6,Q=[],GG=v=>Gf?Gf(v):v,small=!!cf||W<300,lh=small?0.465:0.5,lc=small?(window.__cubeLight?'#dde2e9':/^#[0-9a-f]{6}$/i.test(LINEC)?LINEC+'8c':LINEC):LINEC; // iconos pequeños: en tema claro, marco gris suave en vez de negro
  g.clearRect(0,0,W,W);
   for(const s of state){
     const n=s.n,inL=an&&s.p[an.ax]===an.sg,rot=v=>inL?rotV(v,an.ax,an.th):v;
@@ -1093,8 +1095,8 @@ const dueCases=()=>Object.keys(lstats).filter(k=>lstats[k].s>=3&&lstats[k].due&&
 function setMastered(k,iv){const L=lstats[k]||(lstats[k]={s:0,c:0,n:0});L.s=3;L.c=0;L.i=iv;L.due=Date.now()+IV[iv]*DAY}
 function coachHTML(C){
   if(!C)return '<div class="coach mu">'+SV(P_SPARK)+'<span>'+(coachPending()?'Analizando tus resoluciones…':'Resuelve unas cuantas veces con tu cubo conectado y aquí verás tu diagnóstico personal.')+'</span></div>';
-  const PC={cross:'#9b7bf0',f2l:'#4a82f0',oll:'#e867b8',pll:'#3ddc97'},SC=70; // la barra llena = 70 % del tiempo
-  const bars=GRP.map(k=>'<div class="cb'+(k===C.weak&&!C.balanced?' w':'')+'" style="--c:'+PC[k]+'"><span>'+GRP_N[k]+'</span><div class="tr"><i style="width:'+Math.min(100,C.share[k]*100/SC*100).toFixed(1)+'%"></i><u style="left:'+(EXPECT[k]*100/SC*100).toFixed(1)+'%"></u></div><b>'+Math.round(C.share[k]*100)+'%</b></div>').join('');
+  const PC={cross:'#9b7bf0',f2l:'#4a82f0',oll:'#f0a43c',pll:'#3ddc97'};
+  const bars=GRP.map(k=>{const h=Math.max(6,Math.min(100,Math.round(C.share[k]*100*1.6)));return '<div class="cb'+(k===C.weak&&!C.balanced?' w':'')+'" style="--c:'+PC[k]+'"><div class="tr"><i style="height:'+h+'%"></i><b style="bottom:calc('+h+'% + 6px)">'+Math.round(C.share[k]*100)+'%</b></div><span>'+GRP_N[k]+'</span></div>'}).join('');
   const w=GRP_N[C.weak],pct=Math.round(C.recShare*100);
   const msg=C.balanced?'Tu resolución va equilibrada, ¡buen trabajo! Sigue repasando tus casos más lentos para seguir mejorando.'
     :C.kind==='rec'?'<b>'+w+'</b>: dedicas el '+pct+' % del tiempo a mirar antes de mover. Con un poco de práctica de reconocimiento lo verás de un vistazo y ganarás mucho tiempo.'
@@ -1102,7 +1104,7 @@ function coachHTML(C){
     :'<b>'+w+'</b> es donde más tiempo se te va. Repite sus casos más lentos y verás cómo mejora tu regularidad.';
   const can=(C.weak==='oll'||C.weak==='pll'||C.weak==='f2l')&&!C.balanced;
   const act=can?'<button class="btn" id="coachGo">'+(C.kind==='exe'?SV(P_CAP)+'Practicar el caso más lento':C.kind==='rec'?SV(P_EYE)+'Reconocer casos de '+w+' sin cubo':SV(P_WATCH)+'Entrenar mis casos de '+w)+'</button>':'';
-  return '<div class="coach"><h3>'+SV(P_SPARK)+'Tu diagnóstico <small>últimas '+C.n+'</small>'+HI('Reparte el tiempo de tus últimas resoluciones por fases y señala dónde pierdes más: si es por parar a pensar (reconocer el caso) o por girar despacio (ejecutarlo). La marca vertical de cada barra es el reparto típico.')+'</h3><div class="cbars">'+bars+'</div><p>'+msg+'</p>'+act+'</div>';
+  return '<div class="coach"><h3>'+SV(P_SPARK)+'Tu diagnóstico <small>últimas '+C.n+'</small>'+HI('Reparte el tiempo de tus últimas resoluciones por fases y señala dónde pierdes más: si es por parar a pensar (reconocer el caso) o por girar despacio (ejecutarlo).')+'</h3><div class="cbars">'+bars+'</div><p>'+msg+'</p>'+act+'</div>';
 }
 function coachAction(C){
   const main={oll:'OLL',pll:'PLL',f2l:'F2L'}[C.weak],cs=C.slow.filter(c=>mainOf(c.kind)===main);
@@ -1616,7 +1618,7 @@ const sec=ms=>(ms/1000).toFixed(2);
 function phLabel(seg,cases){return seg.key==='cross'?'Cruz':seg.key.startsWith('slot')?'F2L '+seg.key.slice(4):seg.key==='oll'?'OLL'+(cases.oll?' '+cases.oll.id:''):'PLL'+(cases.pll?' '+cases.pll.id:'')}
 function f2lGlyph(a,b){ // pareja de colores: dos mitades separadas por una línea oscura
   const id='g'+Math.random().toString(36).slice(2,8);
-  return '<svg viewBox="0 0 40 40"><defs><clipPath id="'+id+'"><rect x="4" y="4" width="32" height="32" rx="8"/></clipPath></defs><rect x=".5" y=".5" width="39" height="39" rx="11" fill="#0b0d10" stroke="#262c34"/><g clip-path="url(#'+id+')"><rect x="3" y="3" width="34" height="34" fill="'+COL[a]+'"/><path d="M3 3H37V37Z" fill="'+COL[b]+'"/></g><path d="M4.5 4.5 35.5 35.5" stroke="#0b0d10" stroke-width="2.8" stroke-linecap="round"/></svg>';
+  return '<svg viewBox="0 0 40 40"><defs><clipPath id="'+id+'"><rect x="4" y="4" width="32" height="32" rx="8"/></clipPath></defs><rect x=".5" y=".5" width="39" height="39" rx="11" style="fill:var(--gf);stroke:var(--gs)"/><g clip-path="url(#'+id+')"><rect x="3" y="3" width="34" height="34" fill="'+COL[a]+'"/><path d="M3 3H37V37Z" fill="'+COL[b]+'"/></g><path d="M4.5 4.5 35.5 35.5" style="stroke:var(--gd)" stroke-width="2.8" stroke-linecap="round"/></svg>';
 }
 function caseOfSeg(x){ // caso detectado en una fase (OLL, PLL o una de las 4 parejas de F2L)
   if(!rp||!rp.cases)return null;
@@ -1624,7 +1626,7 @@ function caseOfSeg(x){ // caso detectado en una fase (OLL, PLL o una de las 4 pa
   return c?{kind:x.key==='oll'?'OLL':x.key==='pll'?'PLL':'F2L',id:String(c.id)}:null;
 }
 function phGlyph(seg,P,cases){ // imagen de cada fase: cruz, pareja de colores o dibujo del caso
-  if(seg.key==='cross'){const c=COL[P.f];return '<svg viewBox="0 0 40 40"><g fill="'+c+'"><rect x="15" y="3" width="10" height="11" rx="2.5"/><rect x="15" y="26" width="10" height="11" rx="2.5"/><rect x="3" y="15" width="11" height="10" rx="2.5"/><rect x="26" y="15" width="11" height="10" rx="2.5"/></g><rect x="15" y="15" width="10" height="10" rx="2.5" fill="#262c34"/></svg>'}
+  if(seg.key==='cross'){const c=COL[P.f];return '<svg viewBox="0 0 40 40"><g fill="'+c+'"><rect x="15" y="3" width="10" height="11" rx="2.5"/><rect x="15" y="26" width="10" height="11" rx="2.5"/><rect x="3" y="15" width="11" height="10" rx="2.5"/><rect x="26" y="15" width="11" height="10" rx="2.5"/></g><rect x="15" y="15" width="10" height="10" rx="2.5" style="fill:var(--gc)"/></svg>'}
   if(seg.key.startsWith('slot')){const [a,b]=seg.colors||['U','U'];return f2lGlyph(a,b)}
   const c=seg.key==='oll'?cases.oll:cases.pll;
   return c?Insight.getCase(seg.key.toUpperCase(),c.id).icon:'<svg viewBox="0 0 40 40"><path d="m10 21 7 7 14-15" fill="none" stroke="#3ddc97" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/></svg>';
