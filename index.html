@@ -332,7 +332,7 @@ input[type=range]::-webkit-slider-thumb{background:var(--tx);border:2px solid va
 .sw input[type=color]::-moz-color-swatch{border:1.5px solid var(--bd2);border-radius:50%}
 .lnk{flex:none;color:var(--ac);font-size:12px;font-weight:600}.lnk[hidden]{display:none}
 .prev{display:flex;gap:10px;align-items:center;justify-content:space-around;padding:12px;border:1px solid var(--line);border-radius:18px;background:var(--card)}
-.prev>*{display:grid;justify-items:center;gap:4px;color:var(--mu);font-size:11px;font-weight:600}.prev svg,.prev img,.prev canvas{width:64px;height:64px;display:block}
+.prev>*{display:grid;justify-items:center;gap:4px;color:var(--mu);font-size:11px;font-weight:600}.prev svg,.prev img,.prev canvas{width:64px;height:64px;display:block;object-fit:contain}
 
 /* CubIQ refresh: entrenamiento y selectores */
 #trainCatalog{display:flex;flex:1;min-height:0;flex-direction:column}
@@ -355,6 +355,35 @@ input[type=range]::-webkit-slider-thumb{background:var(--tx);border:2px solid va
 .sw input[type=color]::-moz-color-swatch{border:0;border-radius:8px}
 .sw input[type=color]:focus-visible{outline:2px solid var(--ac);outline-offset:3px;transform:scale(1.04)}
 @media(max-width:370px){#skinCols.sw{gap:5px}.train-metric{padding:10px}}
+
+/* Entrenador personal */
+.personal-coach{border:1px solid var(--line);border-radius:18px;background:var(--card);padding:15px;margin:8px 0 12px}
+.pc-head{display:flex;align-items:center;gap:10px}.pc-mark{width:36px;height:36px;display:grid;place-items:center;border-radius:12px;background:var(--inset);color:var(--ac);flex:none}.pc-mark svg{width:19px;height:19px}
+.pc-head>div{min-width:0;flex:1}.pc-head small{font-size:9px;letter-spacing:.12em;color:var(--mu);font-weight:700}.pc-head h3{font:600 16px Poppins,system-ui,sans-serif;margin:2px 0 0}
+.pc-tag{font-size:9px;letter-spacing:.08em;color:var(--ok);font-weight:700}.personal-coach>p{font-size:13px;color:var(--mu);margin:12px 0}
+.pc-steps{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px;margin:12px 0}
+.pc-steps>div{display:flex;gap:6px;align-items:flex-start;padding:9px 7px;background:var(--inset);border-radius:11px;min-width:0}
+.pc-steps>div>b{font:700 10px Poppins,system-ui,sans-serif;color:var(--ac)}
+.pc-steps span{min-width:0}.pc-steps strong,.pc-steps small{display:block}.pc-steps strong{font-size:10px}.pc-steps small{font-size:9px;color:var(--mu);line-height:1.35;margin-top:2px}
+.pc-cta{width:100%;display:flex;justify-content:space-between;align-items:center;padding:11px 13px!important;border-radius:12px!important;background:var(--inset)!important;font-weight:650}.pc-cta span{font-size:18px;color:var(--ac)}
+@media(max-width:380px){.pc-steps{gap:5px}.pc-steps>div{padding:8px 5px}.pc-steps small{font-size:8px}}
+/* Ajustes visuales del logo */
+.logo-settings{display:flex;align-items:center;justify-content:space-between;padding:13px 2px;border-bottom:1px solid var(--line);margin-top:8px}
+.logo-settings b,.logo-settings small{display:block}.logo-settings b{font-size:13px}.logo-settings small{font-size:11px;color:var(--mu);margin-top:2px}
+.switch{position:relative;width:42px;height:25px;flex:none}.switch input{opacity:0;width:0;height:0}.switch span{position:absolute;inset:0;border-radius:20px;background:var(--track);transition:.2s}.switch span:before{content:"";position:absolute;width:19px;height:19px;left:3px;top:3px;border-radius:50%;background:#fff;transition:.2s}.switch input:checked+span{background:var(--ac)}.switch input:checked+span:before{transform:translateX(17px)}
+.logo-upload{display:flex;align-items:center;gap:12px;padding:12px 2px;border-bottom:1px solid var(--line)}
+.logo-preview{width:48px;height:48px;border-radius:13px;border:1px solid var(--bd2);background:var(--inset);display:grid;place-items:center;font-weight:800;color:var(--ac);overflow:hidden;flex:none}.logo-preview img{width:100%;height:100%;object-fit:contain}
+.logo-upload-copy{min-width:0}.logo-upload-copy b,.logo-upload-copy small{display:block}.logo-upload-copy b{font-size:12px}.logo-upload-copy small{font-size:10px;color:var(--mu);margin:2px 0 5px}
+.color-dot{width:26px;height:26px;border:2px solid var(--bd2);border-radius:50%;padding:0;box-shadow:inset 0 0 0 2px var(--card)}
+.color-modal-backdrop{position:fixed;inset:0;z-index:1000;background:#0009;display:grid;place-items:center;padding:22px}
+.color-modal{width:min(100%,390px);background:var(--card);border:1px solid var(--line);border-radius:20px;padding:20px;box-shadow:0 22px 70px #0005}
+.color-modal h3{margin:0;font:600 19px Poppins,system-ui,sans-serif}.color-modal p{font-size:12px;color:var(--mu);margin:4px 0 16px}
+.cm-preview{height:42px;border-radius:11px;border:1px solid var(--bd2);margin-bottom:16px}
+.cm-range{display:grid;grid-template-columns:72px 1fr;gap:10px;align-items:center;margin:13px 0;font-size:12px;color:var(--mu)}
+.cm-range input{width:100%;accent-color:var(--ac)}
+.cm-hex{display:flex;align-items:center;gap:10px;margin:15px 0}.cm-hex input{width:100%;min-width:0;background:var(--inset);border:1px solid var(--line);border-radius:10px;padding:10px;color:var(--tx);font:13px ui-monospace,monospace}
+.cm-presets{display:grid;grid-template-columns:repeat(8,1fr);gap:8px;margin:14px 0}.cm-presets button{aspect-ratio:1;border-radius:9px;border:2px solid var(--bd2)}
+.cm-actions{display:flex;justify-content:flex-end;gap:18px;margin-top:18px}.cm-actions button{color:var(--ac);font-weight:650;padding:8px}
 </style>
 </head>
 <body data-view="home">
@@ -478,7 +507,7 @@ input[type=range]::-webkit-slider-thumb{background:var(--tx);border:2px solid va
       <div id="log">Aquí aparecerán los datos crudos del cubo.</div>
     </details>
     <h3>Acerca de</h3>
-    <p class="mu" style="margin:0">CubIQ · versión <span id="ver">1.21.0</span></p>
+    <p class="mu" style="margin:0">CubIQ · versión <span id="ver">1.22.0</span></p>
   </div>
   <div class="vb" id="setTheme" hidden>
     <h3 style="margin-top:6px">Tema</h3>
@@ -491,9 +520,11 @@ input[type=range]::-webkit-slider-thumb{background:var(--tx);border:2px solid va
     <p class="mu" style="margin:-4px 0 4px">Color de las separaciones entre casillas, en el cubo 3D y en los dibujos de los casos.</p>
     <h3 style="margin-top:14px">Aspecto del cubo</h3>
     <div class="seg" id="skinSeg" style="margin-top:0"><button data-t="classic">Clásico</button><button data-t="round">Redondeado</button><button data-t="neon">Neón</button></div>
+    <div class="logo-settings"><div><b>Logo en la cara blanca</b><small>Identidad visual del cubo</small></div><label class="switch"><input type="checkbox" id="cubeLogoToggle"><span></span></label></div>
+    <div class="logo-upload"><div class="logo-preview" id="cubeLogoPreview">IQ</div><div class="logo-upload-copy"><b>Logo personalizado</b><small>PNG o JPG · recomendado 128 × 128 px</small><button class="lnk" id="cubeLogoPick" type="button">Adjuntar imagen</button><button class="lnk" id="cubeLogoRemove" type="button" hidden>Quitar imagen</button></div><input id="cubeLogoFile" type="file" accept="image/png,image/jpeg,image/webp" hidden></div>
     <div class="swrow"><span>Colores</span>
       <div class="sw" id="skinCols">
-        <input type="color" data-f="U" title="Arriba" aria-label="Color de la cara de arriba (U)"><input type="color" data-f="L" title="Izquierda" aria-label="Color de la cara izquierda (L)"><input type="color" data-f="F" title="Frente" aria-label="Color de la cara frontal (F)"><input type="color" data-f="R" title="Derecha" aria-label="Color de la cara derecha (R)"><input type="color" data-f="B" title="Atrás" aria-label="Color de la cara trasera (B)"><input type="color" data-f="D" title="Abajo" aria-label="Color de la cara de abajo (D)">
+        <button class="color-dot" data-f="U" title="Arriba" aria-label="Color de arriba"></button><button class="color-dot" data-f="L" title="Izquierda" aria-label="Color de izquierda"></button><button class="color-dot" data-f="F" title="Frente" aria-label="Color de frente"></button><button class="color-dot" data-f="R" title="Derecha" aria-label="Color de derecha"></button><button class="color-dot" data-f="B" title="Atrás" aria-label="Color de atrás"></button><button class="color-dot" data-f="D" title="Abajo" aria-label="Color de abajo"></button>
       </div>
       <button class="lnk" id="skReset" hidden>Restaurar</button>
     </div>
@@ -660,7 +691,7 @@ function paintCube(g,W,state,an,Gf,vw,cf){
     const sc=cf?cf(s):COL[s.c]; // SKIN 2 = neón: casilla negra con el contorno luminoso del color de la pegatina
     const polys=(SKIN===2?[[0.45,'#05070a',.1,sc]]:SKIN?[[lh,lc,.08],[0.41,sc,.34]]:[[lh,lc],[0.43,sc]]).map(([h,col,rd,st])=>[col,[[-1,-1],[1,-1],[1,1],[-1,1]].map(([i,j])=>vw(GG(rot(c.map((x,t)=>x+h*(i*u[t]+j*vv[t])))))),rd,st]);
     let txt=null; // logo IQ sobre el centro blanco (solo si se ve de frente, nunca en espejo)
-    if(SKIN===1&&!cf&&s.c==='U'&&s.p.filter(x=>x!==0).length===1){
+    if(cfg.cubeLogoEnabled!==false&&!cf&&s.c==='U'&&s.p.filter(x=>x!==0).length===1){
       const P0=vw(GG(rot(c))),Pu=vw(GG(rot(c.map((x,t)=>x+u[t]*.5)))),Pv=vw(GG(rot(c.map((x,t)=>x+vv[t]*.5))));
       const bx=(Pu[0]-P0[0])*2*S,by=-(Pu[1]-P0[1])*2*S,cx2=(Pv[0]-P0[0])*2*S,cy2=-(Pv[1]-P0[1])*2*S;
       if(bx*cy2-by*cx2>0)txt=[bx,by,cx2,cy2,W/2+P0[0]*S,W/2-P0[1]*S,sc];
@@ -679,7 +710,10 @@ function paintCube(g,W,state,an,Gf,vw,cf){
       if(st){g.save();g.lineJoin='round';g.strokeStyle=st;g.lineWidth=Math.max(1.6,W*.011);g.shadowColor=st;g.shadowBlur=W*.035;g.stroke();g.shadowBlur=0;g.lineWidth=Math.max(1,W*.005);g.stroke();g.restore()}}
     if(q.txt){const [a,b,c2,d,e,f,sc]=q.txt,m=/^#([0-9a-f]{2})([0-9a-f]{2})([0-9a-f]{2})$/i.exec(sc),lum=m?(.299*parseInt(m[1],16)+.587*parseInt(m[2],16)+.114*parseInt(m[3],16))/255:1;
       g.save();g.transform(a,b,c2,d,e,f);g.scale(.01,.01);
-      g.fillStyle=lum>.55?'#0b0d10':'#f4f6fa';g.font='800 50px Poppins,ui-rounded,system-ui,sans-serif';g.textAlign='center';g.textBaseline='middle';g.fillText('IQ',0,3);g.restore()}
+      const logo=cfg.cubeLogoEnabled!==false&&window.__cubeLogoImg&&window.__cubeLogoImg.complete&&window.__cubeLogoImg.naturalWidth;
+      if(logo){g.drawImage(window.__cubeLogoImg,-40,-40,80,80)}
+      else if(cfg.cubeLogoEnabled!==false){g.fillStyle=lum>.55?'#0b0d10':'#f4f6fa';g.font='800 50px Poppins,ui-rounded,system-ui,sans-serif';g.textAlign='center';g.textBaseline='middle';g.fillText('IQ',0,3)}
+      g.restore()}
   }
 }
 function draw(){paintCube(g,cv.width,disp,anim,G,view)}
@@ -1211,7 +1245,7 @@ function coachHTML(C){
   return '<div class="coach"><h3>'+SV(P_SPARK)+'Tu diagnóstico <small>últimas '+C.n+'</small>'+HI('Reparte el tiempo de tus últimas resoluciones por fases y señala dónde pierdes más: si es por parar a pensar (reconocer el caso) o por girar despacio (ejecutarlo).')+'</h3><div class="cbars">'+bars+'</div><p>'+msg+'</p>'+act+'</div>';
 }
 function coachAction(C){
-  const main={oll:'OLL',pll:'PLL',f2l:'F2L'}[C.weak],cs=C.slow.filter(c=>mainOf(c.kind)===main);
+  const main={oll:'OLL',pll:'PLL',f2l:'F2L',cross:'F2L'}[C.weak],cs=C.slow.filter(c=>mainOf(c.kind)===main);
   if(C.kind==='rec')return openQuizMenu(main);
   if(C.kind==='exe'&&cs.length)return openCase(cs[0].kind,cs[0].id);
   tsel=new Set(cs.slice(0,8).map(c=>c.kind+' '+c.id));
@@ -1305,7 +1339,7 @@ $('lnBody').onclick=e=>{
   if(e.target.closest('#qzOpen')){const C=coachData();openQuizMenu(C&&{oll:'OLL',pll:'PLL',f2l:'F2L'}[C.weak]);return}
   const t=e.target.closest('.tile'),sg=e.target.closest('#lnTabs button'),ch=e.target.closest('#lnSubs button');
   if(t)openCase(t.dataset.k,t.dataset.i);
-  else if(sg){lTab=sg.dataset.k;if(SUBS[lTab])lSub=SUBS[lTab][0][0];$('lnBody').scrollTop=0;renderLearn()}
+  else if(sg){const keep=$('lnBody').scrollTop;lTab=sg.dataset.k;if(SUBS[lTab])lSub=SUBS[lTab][0][0];renderLearn();requestAnimationFrame(()=>{$('lnBody').scrollTop=keep})}
   else if(ch){lSub=ch.dataset.k;renderLearn()}
   else if(e.target.closest('#lnCats button')){lCat=e.target.closest('#lnCats button').dataset.c;renderLearn()}
 };
@@ -1475,6 +1509,21 @@ function finishTrain(t){
 
 /* ===== Pantalla Entrenar: varios casos seguidos, con tiempo ===== */
 const fmtDate=t=>{try{return new Intl.DateTimeFormat('es-ES',{day:'2-digit',month:'short'}).format(new Date(t))}catch(e){return ''}};
+
+function trainingCoachHTML(C,due,learned){
+  const plan=recPath(),next=plan[0],target=C?({cross:'Cruz',f2l:'F2L',oll:'OLL',pll:'PLL'}[C.weak]||'F2L'):(next?next[0]:'F2L');
+  const title=C?(C.balanced?'Mantén tu ritmo':('Tu siguiente objetivo: '+target)):'Tu plan de entrenamiento';
+  const detail=C?(C.balanced?'Tu reparto de tiempos está equilibrado. Trabaja la consistencia y afianza los casos que ya conoces.':
+    C.kind==='rec'?'Vamos a entrenar el reconocimiento de '+target+': identifica el patrón antes de ejecutar el algoritmo.':
+    C.kind==='exe'?'En '+target+' ya reconoces el caso. Ahora busca fluidez y precisión en los giros.':
+    'Dedica una sesión corta a '+target+' y mejora la regularidad de tus ejecuciones.')
+    :(due?('Tienes '+due+' casos pendientes de repaso. Una sesión breve ayudará a fijarlos en la memoria.'):
+      (next?'Empieza por '+lbl(next[0],next[1])+'. Trabaja pocos casos y repítelos hasta reconocerlos sin esfuerzo.':'Elige una fase y completa una sesión corta para empezar a construir tu progreso.'));
+  const cta=C?(C.kind==='rec'?'Practicar reconocimiento':C.kind==='exe'?'Ver caso recomendado':'Entrenar '+target):due?'Repasar casos pendientes':'Comenzar sesión guiada';
+  return '<section class="personal-coach"><div class="pc-head"><span class="pc-mark">'+SV(P_SPARK)+'</span><div><small>COACH CUBIQ · PLAN PERSONAL</small><h3>'+title+'</h3></div><span class="pc-tag">'+(C?'ACTUALIZADO':'LISTO')+'</span></div>'+
+    '<p>'+detail+'</p><div class="pc-steps"><div><b>01</b><span><strong>Enfoque</strong><small>'+target+' · 8–12 min</small></span></div><div><b>02</b><span><strong>Objetivo</strong><small>'+(due?'Consolidar '+Math.min(due,8)+' casos':'Mejorar reconocimiento y fluidez')+'</small></span></div><div><b>03</b><span><strong>Progreso</strong><small>'+learned+' casos iniciados · '+due+' por repasar</small></span></div></div>'+
+    '<button class="btn pc-cta" id="trainCoachGo">'+cta+' <span>→</span></button></section>';
+}
 function renderCatalog(){
   const overview=$('trainOverview'),catalog=$('trainCatalog'),backBtn=$('tcBack'),title=$('tcTitle');
   if(trainLanding){
@@ -1488,7 +1537,7 @@ function renderCatalog(){
     const best=bests.length?fmt(Math.min(...bests)):'—';
     let h='<div class="train-hero"><h3>Entrena con intención</h3><p>Sesiones enfocadas, evolución medible y control de tus casos más difíciles.</p></div>';
     h+='<div class="train-dashboard"><div class="train-metric"><small>Resoluciones</small><strong>'+solved+'</strong><em>prácticas registradas</em></div><div class="train-metric"><small>Casos practicados</small><strong>'+practiced+'</strong><em>con actividad</em></div><div class="train-metric"><small>Mejor tiempo</small><strong>'+best+'</strong><em>récord personal</em></div><div class="train-metric"><small>Por repasar</small><strong>'+due+'</strong><em>casos pendientes</em></div></div>';
-    h+=coachHTML(C);
+    h+=trainingCoachHTML(C,due,learned);
     h+='<div class="train-actions"><button class="btn pri" id="trainStart">'+SV(P_CAP)+' Empezar a entrenar</button><button class="btn" id="trainChoose">Elegir casos</button></div>';
     h+='<div class="train-section-title"><h3>Últimos entrenamientos</h3><span class="cnt">'+(recent.length?recent.length:'')+'</span></div>';
     if(recent.length){h+='<div class="train-recent">'+recent.map(([k,v])=>{const i=k.indexOf(' '),kind=k.slice(0,i),id=k.slice(i+1),when=fmtDate(v.last);return '<button data-training-case="'+esc(k)+'"><span class="tr-main"><b>'+esc(lbl(kind,id))+'</b><small>'+when+' · '+v.n+' repeticiones · mejor '+fmt(v.best)+'</small></span><strong>'+fmt(v.last)+'</strong></button>'}).join('')+'</div>';}
@@ -1498,7 +1547,13 @@ function renderCatalog(){
     $('trainStart').onclick=()=>{trainLanding=false;tsel=new Set(Object.keys(Insight.GROUPS.F2L).map(id=>'F2L '+id));tTab='F2L';renderCatalog()};
     $('trainChoose').onclick=()=>{trainLanding=false;tsel.clear();tTab='F2L';renderCatalog()};
     overview.querySelectorAll('[data-training-case]').forEach(b=>b.onclick=()=>{const k=b.dataset.trainingCase;startTrain(k.slice(0,k.indexOf(' ')),k.slice(k.indexOf(' ')+1))});
-    const coachBtn=overview.querySelector('#coachGo');if(coachBtn)coachBtn.onclick=()=>{const c=coachData();if(c)coachAction(c)};
+    const coachBtn=overview.querySelector('#trainCoachGo');if(coachBtn)coachBtn.onclick=()=>{
+      const c=coachData();
+      if(c&&!c.balanced){coachAction(c);return}
+      const dueKeys=Object.keys(lstats).filter(k=>lstats[k]&&lstats[k].due&&lstats[k].due<=Date.now()).slice(0,8);
+      if(dueKeys.length)tsel=new Set(dueKeys);else tsel=new Set(Object.keys(Insight.GROUPS.F2L).slice(0,8).map(id=>'F2L '+id));
+      tTab=dueKeys.length?(dueKeys[0].split(' ')[0]):'F2L';torder='rand';trainLanding=false;renderCatalog();
+    };
     return;
   }
   overview.hidden=true;catalog.hidden=false;backBtn.hidden=false;title.textContent='Elegir casos';
@@ -1725,7 +1780,7 @@ function applyCubeStyle(){
   SKIN=sk;window.__skinKey=skKey;
   {const pal=cust?Object.assign({},base,cc):base;for(const f in base)COL[f]=pal[f]} // colores propios (valen para cualquier forma) o los originales
   document.querySelectorAll('#skinSeg button').forEach(b=>b.classList.toggle('on',b.dataset.t===['classic','round','neon'][sk]));
-  $('skReset').hidden=!cust;$('skinCols').querySelectorAll('input').forEach(i=>{i.value=COL[i.dataset.f]});
+  $('skReset').hidden=!cust;$('skinCols').querySelectorAll('[data-f]').forEach(i=>{i.style.background=COL[i.dataset.f];i.setAttribute('aria-label','Cambiar color '+i.title)});
   window.__cubeLight=light;window.__cubeLine=ln;LINEC=ln==='white'?'#ffffff':'#0b0d10';GREY=light?(ln==='white'?'#d3d9e2':'#f3f5f8'):(ln==='white'?'#4a525e':'#39414b');
   document.querySelectorAll('#lineSeg button').forEach(b=>b.classList.toggle('on',b.dataset.t===ln));
   document.querySelectorAll('#cubeSeg button').forEach(b=>b.classList.toggle('on',b.dataset.t===cs));
@@ -1739,13 +1794,74 @@ function refreshCubeIcons(){
 }
 $('lineSeg').onclick=e=>{const b=e.target.closest('button');if(!b)return;cfg.cubeLines=b.dataset.t;saveCfg();applyCubeStyle()};
 $('skinSeg').onclick=e=>{const b=e.target.closest('button');if(!b)return;cfg.cubeSkin=b.dataset.t;saveCfg();applyCubeStyle()};
-$('skinCols').addEventListener('input',e=>{const i=e.target.closest('input');if(!i)return;const base=baseCols(cfg.cubeLines==='white'?'white':'dark'),cc=Object.assign({},cfg.cubeColors);
-  if(i.value.toLowerCase()===base[i.dataset.f])delete cc[i.dataset.f];else cc[i.dataset.f]=i.value; // solo se guardan las caras cambiadas
-  if(Object.keys(cc).length)cfg.cubeColors=cc;else delete cfg.cubeColors;saveCfg();applyCubeStyle()});
+function setSkinColor(face,color){
+  const base=baseCols(cfg.cubeLines==='white'?'white':'dark'),cc=Object.assign({},cfg.cubeColors);
+  if(color.toLowerCase()===base[face])delete cc[face];else cc[face]=color;
+  if(Object.keys(cc).length)cfg.cubeColors=cc;else delete cfg.cubeColors;saveCfg();applyCubeStyle();
+}
+$('skinCols').addEventListener('click',e=>{const b=e.target.closest('[data-f]');if(b)openColorModal(b.dataset.f,COL[b.dataset.f])});
 $('skReset').onclick=()=>{delete cfg.cubeColors;saveCfg();applyCubeStyle();toast('Colores originales restaurados')};
+
+function updateLogoControls(){
+  const on=cfg.cubeLogoEnabled!==false,sw=$('cubeLogoToggle');if(sw)sw.checked=on;
+  const data=cfg.cubeLogoData,prev=$('cubeLogoPreview'),remove=$('cubeLogoRemove');
+  if(prev)prev.innerHTML=data?'<img alt="Logo personalizado" src="'+data+'">':'IQ';
+  if(remove)remove.hidden=!data;
+  const pick=$('cubeLogoPick');if(pick)pick.textContent=data?'Cambiar imagen':'Adjuntar imagen';
+}
+$('cubeLogoToggle').onchange=e=>{cfg.cubeLogoEnabled=e.target.checked;saveCfg();updateLogoControls();draw();renderPrev()};
+$('cubeLogoPick').onclick=()=>$('cubeLogoFile').click();
+$('cubeLogoRemove').onclick=()=>{delete cfg.cubeLogoData;window.__cubeLogoImg=null;saveCfg();updateLogoControls();draw();renderPrev()};
+$('cubeLogoFile').onchange=e=>{
+  const file=e.target.files&&e.target.files[0];if(!file)return;
+  if(!/^image\/(png|jpeg|webp)$/.test(file.type)){toast('Elige una imagen PNG, JPG o WebP');e.target.value='';return}
+  const reader=new FileReader();reader.onload=()=>{
+    const img=new Image();img.onload=()=>{
+      const c=document.createElement('canvas');c.width=c.height=128;const g=c.getContext('2d');
+      const scale=Math.min(112/img.width,112/img.height),w=img.width*scale,h=img.height*scale;
+      g.clearRect(0,0,128,128);g.drawImage(img,(128-w)/2,(128-h)/2,w,h);
+      try{cfg.cubeLogoData=c.toDataURL('image/webp',.88)}catch(err){cfg.cubeLogoData=c.toDataURL('image/png')}
+      const logo=new Image();logo.onload=()=>{window.__cubeLogoImg=logo;draw();renderPrev()};logo.src=cfg.cubeLogoData;
+      saveCfg();updateLogoControls();toast('Logo personalizado guardado');
+    };img.onerror=()=>toast('No se pudo abrir la imagen');img.src=reader.result;
+  };reader.readAsDataURL(file);e.target.value='';
+};
+function hsvHex(h,ss,v){
+  const s=ss/100,val=v/100,c=val*s,x=c*(1-Math.abs((h/60)%2-1)),m=val-c;
+  let a=[0,0,0];if(h<60)a=[c,x,0];else if(h<120)a=[x,c,0];else if(h<180)a=[0,c,x];else if(h<240)a=[0,x,c];else if(h<300)a=[x,0,c];else a=[c,0,x];
+  return '#'+a.map(q=>Math.round((q+m)*255).toString(16).padStart(2,'0')).join('');
+}
+function hexHsv(hex){
+  const n=parseInt(hex.slice(1),16),r=((n>>16)&255)/255,g=((n>>8)&255)/255,b=(n&255)/255;
+  const mx=Math.max(r,g,b),mn=Math.min(r,g,b),d=mx-mn;
+  let h=0;if(d){if(mx===r)h=60*(((g-b)/d)%6);else if(mx===g)h=60*((b-r)/d+2);else h=60*((r-g)/d+4)}
+  return [Math.round((h+360)%360),Math.round(mx?d/mx*100:0),Math.round(mx*100)];
+}
+let colorFace='U';
+function openColorModal(face,color){
+  colorFace=face;const hsv=hexHsv(color);
+  let back=document.getElementById('colorModalBackdrop');
+  if(!back){back=document.createElement('div');back.id='colorModalBackdrop';back.className='color-modal-backdrop';back.innerHTML='<div class="color-modal" role="dialog" aria-modal="true" aria-labelledby="cmTitle"><h3 id="cmTitle">Color de la cara</h3><p>Personaliza el tono y ajusta su intensidad</p><div class="cm-preview" id="cmPreview"></div><label class="cm-range">Matiz <input id="cmHue" type="range" min="0" max="359"></label><label class="cm-range">Saturación <input id="cmSat" type="range" min="0" max="100"></label><label class="cm-range">Valor <input id="cmVal" type="range" min="0" max="100"></label><div class="cm-hex"><span>HEX</span><input id="cmHex" maxlength="7" value="#ffffff" aria-label="Código hexadecimal"></div><div class="cm-presets">'+['#ffffff','#ffd500','#1faa59','#d93a2b','#2a6fdb','#ff8a1f','#7b4ce2','#111827'].map(c=>'<button type="button" data-color="'+c+'" style="background:'+c+'"></button>').join('')+'</div><div class="cm-actions"><button id="cmCancel">Cancelar</button><button id="cmApply">Aplicar color</button></div></div>';
+    document.body.appendChild(back);
+    back.addEventListener('click',e=>{if(e.target===back)back.remove()});
+    back.querySelector('#cmCancel').onclick=()=>back.remove();
+    back.querySelector('#cmApply').onclick=()=>{const v=back.querySelector('#cmHex').value;if(/^#[0-9a-f]{6}$/i.test(v)){setSkinColor(colorFace,v);back.remove()}else toast('Código HEX no válido')};
+    back.querySelectorAll('[data-color]').forEach(b=>b.onclick=()=>{back.querySelector('#cmHex').value=b.dataset.color;const a=hexHsv(b.dataset.color);['cmHue','cmSat','cmVal'].forEach((id,i)=>back.querySelector('#'+id).value=a[i]);syncColorModal()});
+    ['cmHue','cmSat','cmVal'].forEach(id=>back.querySelector('#'+id).addEventListener('input',syncColorModal));
+    back.querySelector('#cmHex').addEventListener('input',()=>{const v=back.querySelector('#cmHex').value;if(/^#[0-9a-f]{6}$/i.test(v)){back.querySelector('#cmPreview').style.background=v;const a=hexHsv(v);['cmHue','cmSat','cmVal'].forEach((id,i)=>back.querySelector('#'+id).value=a[i])}});
+  }
+  back.querySelector('#cmTitle').textContent='Color · '+({U:'Arriba',L:'Izquierda',F:'Frente',R:'Derecha',B:'Atrás',D:'Abajo'}[face]||face);
+  ['cmHue','cmSat','cmVal'].forEach((id,i)=>back.querySelector('#'+id).value=hsv[i]);back.querySelector('#cmHex').value=color;syncColorModal();
+}
+function syncColorModal(){
+  const b=document.getElementById('colorModalBackdrop');if(!b)return;
+  const hex=hsvHex(+b.querySelector('#cmHue').value,+b.querySelector('#cmSat').value,+b.querySelector('#cmVal').value);
+  b.querySelector('#cmHex').value=hex;b.querySelector('#cmPreview').style.background=hex;
+  b.querySelector('#cmHue').style.accentColor=hsvHex(+b.querySelector('#cmHue').value,100,100);
+}
 function renderPrev(){
   if(!window.Insight||!$('themePrev'))return;
-  const st=solvedCube();let h='<div>'+iconOf(Insight.getCase('OLL','21'),120)+'OLL</div><div>'+iconOf(Insight.getCase('PLL','Aa'),120)+'PLL</div><div>'+iconOf(Insight.getCase('F2L','1'),120)+'F2L</div><div><canvas id="prevCube" width="160" height="160"></canvas>Cubo</div>';
+  const st=solvedCube();let h='<div>'+iconOf(Insight.getCase('OLL','21'),120)+'OLL</div><div>'+iconOf(Insight.getCase('PLL','Aa'),120)+'PLL</div><div>'+iconOf(Insight.getCase('F2L','1'),120)+'F2L</div><div><canvas id="prevCube" width="240" height="240"></canvas>Cubo</div>';
   $('themePrev').innerHTML=h;paintCube($('prevCube').getContext('2d'),160,st,null,null,DV);
 }
 $('setTabs').onclick=e=>{const b=e.target.closest('button');if(!b)return;
@@ -1754,7 +1870,8 @@ $('setTabs').onclick=e=>{const b=e.target.closest('button');if(!b)return;
 $('cubeSeg').onclick=e=>{const b=e.target.closest('button');if(!b)return;cfg.cubeStyle=b.dataset.t;saveCfg();applyCubeStyle()};
 $('themeSeg').onclick=e=>{const b=e.target.closest('button');if(!b)return;cfg.theme=b.dataset.t;saveCfg();applyTheme()};
 mqLight.addEventListener('change',()=>{if(cfg.theme==='auto')applyTheme()});
-applyTheme();
+applyTheme();updateLogoControls();
+if(cfg.cubeLogoData){const li=new Image();li.onload=()=>{window.__cubeLogoImg=li;draw();renderPrev()};li.src=cfg.cubeLogoData}
 /* ===== Detalle de la resolución: repetición, fases y cómo mejorar ===== */
 const PH_COL={cross:'#9b7bf0',slot1:'#5b6bf0',slot2:'#4a82f0',slot3:'#3a9be8',slot4:'#34b0de',oll:'#e867b8',pll:'#3ddc97'};
 let rp=null;
