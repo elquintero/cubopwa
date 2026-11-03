@@ -300,6 +300,15 @@ body.guest .pf-hero{border-style:dashed;border-color:var(--gbd);background:var(-
 input[type=range]::-webkit-slider-thumb{background:var(--tx);border:2px solid var(--bg)}input[type=range]::-moz-range-thumb{background:var(--tx);border:2px solid var(--bg)}
 
 .vb[hidden]{display:none}
+.swrow{display:flex;align-items:center;gap:12px;padding:12px 2px 8px;margin-top:6px;border-top:1px solid var(--line)}
+.swrow>span{flex:none;font-size:13px;color:var(--mu)}
+.sw{display:flex;gap:10px;flex:1;justify-content:flex-end}
+.sw input[type=color]{-webkit-appearance:none;appearance:none;width:26px;height:26px;border:0;padding:0;border-radius:50%;background:none;cursor:pointer;transition:transform .12s}
+.sw input[type=color]:hover{transform:scale(1.12)}
+.sw input[type=color]::-webkit-color-swatch-wrapper{padding:0}
+.sw input[type=color]::-webkit-color-swatch{border:1.5px solid var(--bd2);border-radius:50%}
+.sw input[type=color]::-moz-color-swatch{border:1.5px solid var(--bd2);border-radius:50%}
+.lnk{flex:none;color:var(--ac);font-size:12px;font-weight:600}.lnk[hidden]{display:none}
 .prev{display:flex;gap:10px;align-items:center;justify-content:space-around;padding:12px;border:1px solid var(--line);border-radius:18px;background:var(--card)}
 .prev>*{display:grid;justify-items:center;gap:4px;color:var(--mu);font-size:11px;font-weight:600}.prev svg,.prev img,.prev canvas{width:64px;height:64px;display:block}
 </style>
@@ -422,7 +431,7 @@ input[type=range]::-webkit-slider-thumb{background:var(--tx);border:2px solid va
       <div id="log">Aquí aparecerán los datos crudos del cubo.</div>
     </details>
     <h3>Acerca de</h3>
-    <p class="mu" style="margin:0">CubIQ · versión <span id="ver">1.20.1</span></p>
+    <p class="mu" style="margin:0">CubIQ · versión <span id="ver">1.21.0</span></p>
   </div>
   <div class="vb" id="setTheme" hidden>
     <h3 style="margin-top:6px">Tema</h3>
@@ -433,6 +442,15 @@ input[type=range]::-webkit-slider-thumb{background:var(--tx);border:2px solid va
     <h3 style="margin-top:14px">Líneas del cubo</h3>
     <div class="seg" id="lineSeg" style="margin-top:0"><button data-t="dark"><svg class="i" viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="3" fill="#8c95a3" stroke="#0b0d10" stroke-width="2.4"/></svg>Negras</button><button data-t="white"><svg class="i" viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="3" fill="#8c95a3" stroke="#ffffff" stroke-width="2.4"/></svg>Blancas</button></div>
     <p class="mu" style="margin:-4px 0 4px">Color de las separaciones entre casillas, en el cubo 3D y en los dibujos de los casos.</p>
+    <h3 style="margin-top:14px">Aspecto del cubo</h3>
+    <div class="seg" id="skinSeg" style="margin-top:0"><button data-t="classic">Clásico</button><button data-t="round">Redondeado</button><button data-t="neon">Neón</button></div>
+    <div class="swrow"><span>Colores</span>
+      <div class="sw" id="skinCols">
+        <input type="color" data-f="U" title="Arriba" aria-label="Color de la cara de arriba (U)"><input type="color" data-f="L" title="Izquierda" aria-label="Color de la cara izquierda (L)"><input type="color" data-f="F" title="Frente" aria-label="Color de la cara frontal (F)"><input type="color" data-f="R" title="Derecha" aria-label="Color de la cara derecha (R)"><input type="color" data-f="B" title="Atrás" aria-label="Color de la cara trasera (B)"><input type="color" data-f="D" title="Abajo" aria-label="Color de la cara de abajo (D)">
+      </div>
+      <button class="lnk" id="skReset" hidden>Restaurar</button>
+    </div>
+    <p class="mu" style="margin:0 0 4px">Toca un color para cambiarlo. Se aplica a cualquier forma y se guarda.</p>
     <h3 style="margin-top:14px">Vista previa</h3>
     <div class="prev" id="themePrev"></div>
   </div>
@@ -557,7 +575,7 @@ input[type=range]::-webkit-slider-thumb{background:var(--tx);border:2px solid va
 <script>
 /* ===== Modelo del cubo: 54 pegatinas con posición, normal y color ===== */
 const FACES={U:[0,1,0],D:[0,-1,0],F:[0,0,1],B:[0,0,-1],R:[1,0,0],L:[-1,0,0]};
-const COL={U:'#f2f2f2',D:'#ffd500',F:'#1faa59',B:'#2a6fdb',R:'#d93a2b',L:'#ff8a1f'};
+const COL={U:'#f2f2f2',D:'#ffd500',F:'#1faa59',B:'#2a6fdb',R:'#d93a2b',L:'#ff8a1f'},COL0={...COL}; // COL0 = colores originales; COL se modifica con los colores propios
 const NAME={};for(const f in FACES)NAME[FACES[f]]=f;
 const solvedCube=()=>{const s=[];for(const f in FACES){const n=FACES[f];for(let a=-1;a<=1;a++)for(let b=-1;b<=1;b++){
   s.push({p:n[1]?[a,n[1],b]:n[0]?[n[0],a,b]:[a,b,n[2]],n:[...n],c:f})}}return s};
@@ -583,7 +601,7 @@ const view=v=>{const a=A,b=flip?-Bt:Bt;let x=v[0]*Math.cos(a)+v[2]*Math.sin(a),z
 let disp=solvedCube(),queue=[],anim=null;
 const clone=c=>c.map(s=>({p:[...s.p],n:[...s.n],c:s.c}));
 const rotV=(v,ax,t)=>{const c=Math.cos(t),s=Math.sin(t),[x,y,z]=v;return ax===0?[x,y*c-z*s,y*s+z*c]:ax===1?[x*c+z*s,y,-x*s+z*c]:[x*c-y*s,x*s+y*c,z]};
-let LINEC='#0b0d10';
+let LINEC='#0b0d10',SKIN=0; // SKIN: 0 = clásico, 1 = casillas redondeadas con logo IQ, 2 = neón
 function paintCube(g,W,state,an,Gf,vw,cf){
   const S=W/6,Q=[],GG=v=>Gf?Gf(v):v,small=!!cf||W<300,lh=small?0.465:0.5,lc=small?(window.__cubeLight?'#dde2e9':/^#[0-9a-f]{6}$/i.test(LINEC)?LINEC+'8c':LINEC):LINEC; // iconos pequeños: en tema claro, marco gris suave en vez de negro
  g.clearRect(0,0,W,W);
@@ -591,11 +609,30 @@ function paintCube(g,W,state,an,Gf,vw,cf){
     const n=s.n,inL=an&&s.p[an.ax]===an.sg,rot=v=>inL?rotV(v,an.ax,an.th):v;
     const nv=vw(GG(rot(n)));if(nv[2]<=0.001&&!(an&&inL))continue;
     const u=n[1]||n[2]?[1,0,0]:[0,1,0],vv=n[2]?[0,1,0]:[0,0,1],c=s.p.map((x,i)=>x+n[i]*0.5);
-    const polys=[[lh,lc],[0.43,cf?cf(s):COL[s.c]]].map(([h,col])=>[col,[[-1,-1],[1,-1],[1,1],[-1,1]].map(([i,j])=>vw(GG(rot(c.map((x,t)=>x+h*(i*u[t]+j*vv[t]))))))]);
-    Q.push({z:vw(GG(rot(c)))[2],polys});
+    const sc=cf?cf(s):COL[s.c]; // SKIN 2 = neón: casilla negra con el contorno luminoso del color de la pegatina
+    const polys=(SKIN===2?[[0.45,'#05070a',.1,sc]]:SKIN?[[lh,lc,.08],[0.41,sc,.34]]:[[lh,lc],[0.43,sc]]).map(([h,col,rd,st])=>[col,[[-1,-1],[1,-1],[1,1],[-1,1]].map(([i,j])=>vw(GG(rot(c.map((x,t)=>x+h*(i*u[t]+j*vv[t])))))),rd,st]);
+    let txt=null; // logo IQ sobre el centro blanco (solo si se ve de frente, nunca en espejo)
+    if(SKIN===1&&!cf&&s.c==='U'&&s.p.filter(x=>x!==0).length===1){
+      const P0=vw(GG(rot(c))),Pu=vw(GG(rot(c.map((x,t)=>x+u[t]*.5)))),Pv=vw(GG(rot(c.map((x,t)=>x+vv[t]*.5))));
+      const bx=(Pu[0]-P0[0])*2*S,by=-(Pu[1]-P0[1])*2*S,cx2=(Pv[0]-P0[0])*2*S,cy2=-(Pv[1]-P0[1])*2*S;
+      if(bx*cy2-by*cx2>0)txt=[bx,by,cx2,cy2,W/2+P0[0]*S,W/2-P0[1]*S,sc];
+    }
+    Q.push({z:vw(GG(rot(c)))[2],polys,txt});
   }
   Q.sort((a,b)=>a.z-b.z);
-  for(const q of Q)for(const [col,pts] of q.polys){g.beginPath();pts.forEach((P,k)=>{const X=W/2+P[0]*S,Y=W/2-P[1]*S;k?g.lineTo(X,Y):g.moveTo(X,Y)});g.closePath();g.fillStyle=col;g.fill()}
+  for(const q of Q){
+    for(const [col,pts,rd,st] of q.polys){
+      const sp=pts.map(P=>[W/2+P[0]*S,W/2-P[1]*S]);g.beginPath();
+      if(rd){for(let k=0;k<4;k++){ // esquinas redondeadas: curva entre un punto de cada lado
+        const a=sp[(k+3)%4],b=sp[k],d=sp[(k+1)%4],p1=[b[0]+(a[0]-b[0])*rd,b[1]+(a[1]-b[1])*rd],p2=[b[0]+(d[0]-b[0])*rd,b[1]+(d[1]-b[1])*rd];
+        k?g.lineTo(p1[0],p1[1]):g.moveTo(p1[0],p1[1]);g.quadraticCurveTo(b[0],b[1],p2[0],p2[1])}}
+      else sp.forEach((P,k)=>k?g.lineTo(P[0],P[1]):g.moveTo(P[0],P[1]));
+      g.closePath();g.fillStyle=col;g.fill();
+      if(st){g.save();g.lineJoin='round';g.strokeStyle=st;g.lineWidth=Math.max(1.6,W*.011);g.shadowColor=st;g.shadowBlur=W*.035;g.stroke();g.shadowBlur=0;g.lineWidth=Math.max(1,W*.005);g.stroke();g.restore()}}
+    if(q.txt){const [a,b,c2,d,e,f,sc]=q.txt,m=/^#([0-9a-f]{2})([0-9a-f]{2})([0-9a-f]{2})$/i.exec(sc),lum=m?(.299*parseInt(m[1],16)+.587*parseInt(m[2],16)+.114*parseInt(m[3],16))/255:1;
+      g.save();g.transform(a,b,c2,d,e,f);g.scale(.01,.01);
+      g.fillStyle=lum>.55?'#0b0d10':'#f4f6fa';g.font='800 50px Poppins,ui-rounded,system-ui,sans-serif';g.textAlign='center';g.textBaseline='middle';g.fillText('IQ',0,3);g.restore()}
+  }
 }
 function draw(){paintCube(g,cv.width,disp,anim,G,view)}
 function pump(){ // anima los giros en cola (más rápido si se acumulan)
@@ -1584,10 +1621,17 @@ function applyTheme(){
   if(vNow==='stats')drawChart();
 }
 // Estilo de los dibujos de casos: Auto sigue al tema; Claro = casillas blancas; Oscuro = casillas grises oscuras
+const baseCols=ln=>Object.assign({},COL0,{U:ln==='white'?'#d9dee6':COL0.U}); // paleta base: la cara U se atenúa con líneas blancas
 function applyCubeStyle(){
   const cs=cfg.cubeStyle||'auto',light=cs==='light'||(cs==='auto'&&document.documentElement.dataset.theme==='light');
-  const ln=cfg.cubeLines==='white'?'white':'dark',changed=!!window.__cubeLight!==light||window.__cubeLine!==ln;
-  window.__cubeLight=light;window.__cubeLine=ln;LINEC=ln==='white'?'#ffffff':'#0b0d10';COL.U=ln==='white'?'#d9dee6':'#f2f2f2';GREY=light?(ln==='white'?'#d3d9e2':'#f3f5f8'):(ln==='white'?'#4a525e':'#39414b');
+  const ln=cfg.cubeLines==='white'?'white':'dark',sk=({round:1,neon:2})[cfg.cubeSkin]||0,base=baseCols(ln),cc=cfg.cubeColors||{},
+    cust=Object.keys(cc).some(f=>base[f]&&String(cc[f]).toLowerCase()!==base[f]),skKey=sk+(cust?'c'+JSON.stringify(cc):''),
+    changed=!!window.__cubeLight!==light||window.__cubeLine!==ln||window.__skinKey!==skKey;
+  SKIN=sk;window.__skinKey=skKey;
+  {const pal=cust?Object.assign({},base,cc):base;for(const f in base)COL[f]=pal[f]} // colores propios (valen para cualquier forma) o los originales
+  document.querySelectorAll('#skinSeg button').forEach(b=>b.classList.toggle('on',b.dataset.t===['classic','round','neon'][sk]));
+  $('skReset').hidden=!cust;$('skinCols').querySelectorAll('input').forEach(i=>{i.value=COL[i.dataset.f]});
+  window.__cubeLight=light;window.__cubeLine=ln;LINEC=ln==='white'?'#ffffff':'#0b0d10';GREY=light?(ln==='white'?'#d3d9e2':'#f3f5f8'):(ln==='white'?'#4a525e':'#39414b');
   document.querySelectorAll('#lineSeg button').forEach(b=>b.classList.toggle('on',b.dataset.t===ln));
   document.querySelectorAll('#cubeSeg button').forEach(b=>b.classList.toggle('on',b.dataset.t===cs));
   if(changed&&window.Insight){refreshCubeIcons();draw();renderPrev()}
@@ -1599,6 +1643,11 @@ function refreshCubeIcons(){
   else if(vNow==='home'&&train)renderTrain();
 }
 $('lineSeg').onclick=e=>{const b=e.target.closest('button');if(!b)return;cfg.cubeLines=b.dataset.t;saveCfg();applyCubeStyle()};
+$('skinSeg').onclick=e=>{const b=e.target.closest('button');if(!b)return;cfg.cubeSkin=b.dataset.t;saveCfg();applyCubeStyle()};
+$('skinCols').addEventListener('input',e=>{const i=e.target.closest('input');if(!i)return;const base=baseCols(cfg.cubeLines==='white'?'white':'dark'),cc=Object.assign({},cfg.cubeColors);
+  if(i.value.toLowerCase()===base[i.dataset.f])delete cc[i.dataset.f];else cc[i.dataset.f]=i.value; // solo se guardan las caras cambiadas
+  if(Object.keys(cc).length)cfg.cubeColors=cc;else delete cfg.cubeColors;saveCfg();applyCubeStyle()});
+$('skReset').onclick=()=>{delete cfg.cubeColors;saveCfg();applyCubeStyle();toast('Colores originales restaurados')};
 function renderPrev(){
   if(!window.Insight||!$('themePrev'))return;
   const st=solvedCube();let h='<div>'+iconOf(Insight.getCase('OLL','21'),120)+'OLL</div><div>'+iconOf(Insight.getCase('PLL','Aa'),120)+'PLL</div><div>'+iconOf(Insight.getCase('F2L','1'),120)+'F2L</div><div><canvas id="prevCube" width="160" height="160"></canvas>Cubo</div>';
