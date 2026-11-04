@@ -1375,7 +1375,7 @@ $('lnBody').onclick=e=>{
   if(t)openCase(t.dataset.k,t.dataset.i);
   else if(sg){lTab=sg.dataset.k;if(SUBS[lTab])lSub=SUBS[lTab][0][0];renderLearnAnchored()}
   else if(ch){lSub=ch.dataset.k;renderLearnAnchored()}
-  else if(e.target.closest('#lnCats button')){lCat=e.target.closest('#lnCats button').dataset.c;renderLearn()}
+  else if(e.target.closest('#lnCats button')){lCat=e.target.closest('#lnCats button').dataset.c;renderLearnAnchored()}
 };
 $('trHelp').onclick=()=>{lTab='giros';nav('learn')};
 
