@@ -1,5 +1,11 @@
 # CubIQ · Historial de versiones
 
+## 1.27.0
+- Motor del cubo más rápido, sin cambiar lo que se ve ni lo que hace: los giros se calculan de una sola vez, la comparación de estados ya no construye ni ordena cadenas y las pegatinas del cubo físico (facelets) se localizan con una tabla precalculada. En pruebas con el mismo código: giros ≈ 2,5× más rápidos, firma de estado ≈ 25× y lectura/escritura de facelets ≈ 200×. Se nota sobre todo al recibir cada posición del cubo Bluetooth, al guardar una resolución y en el análisis.
+- El análisis de mejora (hilo en segundo plano) usa ahora el mismo motor que la interfaz, en un módulo propio (src/cube-engine.js), y deja de llevar una copia aparte. Con 240 resoluciones sintéticas, el análisis tarda 1,8 s en lugar de 3,5 s y da exactamente los mismos resultados.
+- Nuevas pruebas automáticas (npm test): comparan el motor nuevo con el de la 1.26.0 en giros, firmas, facelets, clonado y «resuelto», y comprueban que la copia del motor dentro de index.html es idéntica al módulo. Se ejecutan también antes de publicar.
+- Listas y pantallas: sin cambios visibles. Las pestañas ya usaban eventos delegados, iconos con carga diferida e historial paginado, así que no se tocan.
+
 ## 1.26.0
 - Repetición de la resolución: ahora puedes girar el cubo arrastrando con el dedo (como en el cronómetro), también mientras se reproduce. Doble toque para centrarlo. Lo mismo en la animación de los casos de Aprender.
 - Tras terminar una resolución aparece el botón «Análisis» bajo el tiempo, que abre directamente su repetición y sus consejos. Se oculta al empezar la siguiente.
