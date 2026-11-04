@@ -415,6 +415,15 @@ input[type=range]::-webkit-slider-thumb{background:var(--tx);border:2px solid va
 .cm-hex span{font-size:10px;font-weight:600;letter-spacing:.08em;color:var(--mu)}.cm-hex input{flex:1;min-width:0;background:none;border:0;outline:0;color:var(--tx);font:13px ui-monospace,SFMono-Regular,monospace;text-transform:uppercase}
 .cm-presets{display:grid;grid-template-columns:repeat(8,1fr);gap:7px;margin-top:14px}.cm-presets button{aspect-ratio:1;border-radius:50%;border:1px solid rgba(128,128,128,.4);box-shadow:inset 0 0 0 2px var(--card)}.cm-presets button.on{border-color:var(--ac);box-shadow:inset 0 0 0 2px var(--card),0 0 0 1px var(--ac)}
 .cm-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:18px}.cm-btn{height:40px;border-radius:11px;border:1px solid var(--line);font-size:13px;font-weight:600;color:var(--tx)}.cm-btn:hover{border-color:var(--mu)}.cm-btn.pri{background:var(--ac);border-color:var(--ac);color:var(--onac)}.cm-btn.pri:hover{filter:brightness(1.06)}
+/* 1.26: giro del cubo en repeticiones, botón Análisis, selector de ajustes e historial paginado */
+#svCv,#csCv{touch-action:none;cursor:grab;-webkit-user-select:none;user-select:none}
+#svCv:active,#csCv:active{cursor:grabbing}
+.ana{flex:none;display:inline-flex;align-items:center;gap:6px;height:30px;padding:0 14px;margin:2px 0 4px;border:1px solid var(--ac);border-radius:999px;color:var(--ac);font-weight:600;font-size:13px;background:transparent}
+.ana[hidden]{display:none}.ana svg{width:16px;height:16px}.ana:active{background:var(--inset)}
+.opt select{flex:none;background:var(--inset);color:var(--tx);border:1px solid var(--line);border-radius:10px;padding:8px 10px;font:inherit;font-size:14px;max-width:46%}
+#hist .hmore{justify-content:center;border-bottom:0;padding:10px 0;gap:10px;flex-wrap:wrap}
+#hist .hmore button{padding:8px 16px;border:1px solid var(--line);border-radius:999px;color:var(--tx);font-weight:600;font-size:13px}
+#hist .hmore span{color:var(--mu);font-size:12px;width:100%;text-align:center}
 </style>
 </head>
 <body data-view="home">
@@ -453,6 +462,7 @@ input[type=range]::-webkit-slider-thumb{background:var(--tx);border:2px solid va
   <div id="timer">0.00</div>
   <div id="phase"></div>
   <div id="live"></div>
+  <button id="btnAna" class="ana" hidden aria-label="Ver el análisis de la resolución" title="Ver el análisis de esta resolución"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20V10M10 20V4M16 20v-7M2 20h20"/></svg>Análisis</button>
   <div id="quick"></div>
   <div class="cvwrap"><canvas id="cv" width="520" height="520" aria-label="Vista 3D del cubo"></canvas></div>
 </main>
@@ -508,6 +518,7 @@ input[type=range]::-webkit-slider-thumb{background:var(--tx);border:2px solid va
     <button class="profcard" id="spProf"></button>
     <label class="opt"><span><b>Inspección de 15 s</b><small>Cuenta atrás antes de resolver. Tras 15 s se aplica +2 y tras 17 s, DNF</small></span><input type="checkbox" role="switch" id="oInsp"></label>
     <label class="opt"><span><b>Mantener la pantalla encendida</b><small>Evita que el móvil se apague mientras practicas o resuelves (se libera tras 10 min sin actividad)</small></span><input type="checkbox" role="switch" id="oWake"></label>
+    <label class="opt"><span><b>Desconectar el cubo por inactividad</b><small>Si no giras el cubo ni tocas la app durante este tiempo, se desconecta para ahorrar la batería del cubo. Se vuelve a conectar con «Conectar»</small></span><select id="oIdle" aria-label="Desconectar el cubo por inactividad"><option value="0">Nunca</option><option value="2">2 min</option><option value="5">5 min</option><option value="10">10 min</option><option value="15">15 min</option></select></label>
     <label class="opt"><span><b>Inicio automático</b><small>Empieza al realizar un giro cuando el scramble está hecho y aparece ¡Start!</small></span><input type="checkbox" role="switch" id="oAuto"></label>
     <label class="opt"><span><b>Animación de éxito</b><small>Reproduce una animación cuando el cubo está resuelto o un caso de entrenamiento terminado</small></span><input type="checkbox" role="switch" id="oSucc"></label>
     <label class="opt"><span><b>Análisis y consejos</b><small>Recibe alertas instantáneas sobre cómo podrías haber ahorrado tiempo</small></span><input type="checkbox" role="switch" id="oIns"></label>
@@ -637,7 +648,7 @@ input[type=range]::-webkit-slider-thumb{background:var(--tx);border:2px solid va
       </div>
       <div id="svPhases"></div>
       <div id="svCase" hidden></div>
-      <div class="legend"><span><i style="background:#8c95a3"></i>pausa</span><span><i style="background:var(--ac)"></i>giros</span><span><i style="background:var(--ac);border-radius:50%;width:6px;height:6px"></i>caso detectado</span><button class="hi" data-h="Repetición de tu resolución: ▶ la reproduce y la barra te mueve por ella. Cada fase muestra su tiempo. «Pausa» es el tiempo parado antes de girar, «giros» el tiempo moviendo, y el punto marca el caso detectado." aria-label="Ayuda">i</button></div>
+      <div class="legend"><span><i style="background:#8c95a3"></i>pausa</span><span><i style="background:var(--ac)"></i>giros</span><span><i style="background:var(--ac);border-radius:50%;width:6px;height:6px"></i>caso detectado</span><button class="hi" data-h="Repetición de tu resolución: ▶ la reproduce y la barra te mueve por ella. Cada fase muestra su tiempo. «Pausa» es el tiempo parado antes de girar, «giros» el tiempo moviendo, y el punto marca el caso detectado. Arrastra el cubo para girarlo; doble toque para centrarlo." aria-label="Ayuda">i</button></div>
       <div id="svTips"></div>
     </div>
     <p id="svNo" class="mu" hidden>Esta resolución se guardó sin movimientos, así que no hay repetición.</p>
@@ -802,6 +813,7 @@ function setPhase(p){phase=p;const T=$('timer');
   T.className=p==='ready'?'ready':p==='running'?'run':p==='inspect'?'insp':'';
   if(p==='ready'){T.textContent=train?'¡Start!':cfg.insp?'15':cfg.auto?'¡Start!':'0.00';$('live').textContent=''}
   if(p==='ready'&&train)initAlg();
+  if((p==='running'||p==='inspect')&&typeof anaHide==='function')anaHide();
   if(typeof updateWake==='function')updateWake();
   if(scr.length)renderScr();if(train)renderTrain();$('trainbar').classList.toggle('setup',p==='scramble')}
 let prog=0,wrong=[],pre=[];
@@ -852,8 +864,13 @@ function finish(){
   $('timer').textContent=fmt(t);$('live').textContent=mvs.length+' mov · '+(mvs.length/(t/1000)).toFixed(2)+' TPS';
   renderStats();const T=$('timer');newScramble();T.className='';$('timer').textContent=fmt(t);
   if(cfg.insight&&snap&&window.Insight&&mvs.length>3){const S=clone(snap),M=mvs.map(x=>({...x}));idle(()=>{if(window.analyzeSolveAsync)window.analyzeSolveAsync(S,M).then(r=>{if(r&&phase!=='running')showAlert(r)}).catch(e=>console.error(e));else{try{const r=Insight.analyze(S,M);if(r)showAlert(r)}catch(e){console.error(e)}}},1500)}
+  if(mvs.length>3)anaShow(solves[solves.length-1]);
   scheduleCoach();
 }
+var anaSv=null;
+function anaShow(sv){anaSv=sv;$('btnAna').hidden=false}
+function anaHide(){anaSv=null;const b=$('btnAna');if(b)b.hidden=true}
+$('btnAna').onclick=()=>{const i=solves.indexOf(anaSv);if(i<0){anaHide();return}openSolve(i)};
 function manual(){ // espacio / toque: sin cubo o para saltar pasos
   if(phase==='scramble')setPhase('ready');
   else if(phase==='ready'){if(cfg.insp&&!train){ti=performance.now();setPhase('inspect');itick()}else{snap=clone(cube);pen=0;t0=performance.now();mvs=[];setPhase('running');tick()}}
@@ -880,8 +897,9 @@ const pk=(k,id=profileId)=>id==='main'?k:'p_'+id+'_'+k;
   const bad=x=>x==='F2L 3'||(Array.isArray(x)&&x[0]==='F2L 3')||(x&&x.k==='F2L 3');
   for(const k of ks){const v=JSON.parse(localStorage.getItem(k));if(Array.isArray(v))localStorage.setItem(k,JSON.stringify(v.filter(x=>!bad(x))));else if(v&&typeof v==='object'){delete v['F2L 3'];localStorage.setItem(k,JSON.stringify(v))}}
   localStorage.setItem('cubiq.f2l41','1')}catch(e){}})(); // con los 41 casos, el antiguo «F2L 3» pasa a ser otro caso
-const PS={get:k=>guest?(k in guestMem?guestMem[k]:null):localStorage.getItem(pk(k)),set:(k,v)=>{if(guest)guestMem[k]=v;else localStorage.setItem(pk(k),v)}};
-const saveProfiles=()=>{try{localStorage.setItem('profiles',JSON.stringify(profiles));localStorage.setItem('profile',profileId)}catch(e){}};
+var REV=0; // sube con cada cambio de datos o ajustes: las pantallas pesadas solo se regeneran si ha cambiado algo
+const PS={get:k=>guest?(k in guestMem?guestMem[k]:null):localStorage.getItem(pk(k)),set:(k,v)=>{REV++;if(guest)guestMem[k]=v;else localStorage.setItem(pk(k),v)}};
+const saveProfiles=()=>{REV++;try{localStorage.setItem('profiles',JSON.stringify(profiles));localStorage.setItem('profile',profileId)}catch(e){}};
 /* ===== Estadísticas ===== */
 let solves=[];try{solves=JSON.parse(PS.get('solves')||'[]')}catch(e){}
 const save=()=>{solves.forEach((s,i)=>{if(i<solves.length-200){delete s.mv;delete s.fl}}); // solo las 200 últimas guardan la repetición
@@ -908,14 +926,27 @@ function renderStats(){
   $('stats').innerHTML='<tr><th></th><th>Ahora</th><th>Mejor</th></tr>'+rows.map(r=>`<tr><td>${r[0]}</td><td>${f(r[1])}</td><td>${f(r[2])}</td></tr>`).join('');
   const ok=solves.filter(s=>s.p!==2&&s.m>0),tps=ok.length?ok.reduce((a,s)=>a+s.m/(s.t/1000),0)/ok.length:0,fin=v.filter(x=>x!==Infinity);
   $('extra').textContent=`${solves.length} resoluciones · media ${fin.length?fmt(fin.reduce((a,b)=>a+b,0)/fin.length):'-'} · TPS medio ${tps?tps.toFixed(2):'-'}`;
-  $('hist').innerHTML=solves.length?'':'Aún no hay resoluciones. Conecta el cubo o usa el simulador.';
-  solves.map((s,i)=>[s,i]).slice(-50).reverse().forEach(([s,i])=>{
+  renderHist();
+  if(vNow==='stats')drawChart();
+  VKEY.stats=viewKey('stats');
+}
+let histN=10;const HIST_MAX=50; // el historial muestra 10 y se amplía con «Ver más» hasta 50
+function renderHist(){
+  const box=$('hist');box.innerHTML=solves.length?'':'Aún no hay resoluciones. Conecta el cubo o usa el simulador.';
+  const lim=Math.min(histN,HIST_MAX),frag=document.createDocumentFragment();
+  solves.map((s,i)=>[s,i]).slice(-lim).reverse().forEach(([s,i])=>{
     const d=document.createElement('div');
     d.innerHTML=`<span class="n">${i+1}</span><span class="t">${fmt(val(s))}${s.p===1?'+':''}</span><span class="i">${s.m?s.m+' mov · '+(s.m/(s.t/1000)).toFixed(1)+' TPS':'manual'}</span>`;
     for(const [l,fn,keep,tt] of[...(s.mv?[[H_PLAY,()=>openSolve(i),1,'Ver la repetición']]:[]),['+2',()=>s.p=s.p===1?0:1,0,'+2 s'],['DNF',()=>s.p=s.p===2?0:2,0,'DNF'],[H_DEL,()=>solves.splice(i,1),0,'Borrar']]){
       const b=document.createElement('button');b.className='hb';b.innerHTML=l;b.title=tt;b.setAttribute('aria-label',tt);b.onclick=()=>{fn();if(!keep){save();renderStats()}};d.appendChild(b)}
-    $('hist').appendChild(d)});
-  if(vNow==='stats')drawChart();
+    frag.appendChild(d)});
+  box.appendChild(frag);
+  if(solves.length>10){
+    const m=document.createElement('div');m.className='hmore';
+    if(lim<Math.min(solves.length,HIST_MAX)){const b=document.createElement('button');b.textContent='Ver más';b.onclick=()=>{histN=Math.min(HIST_MAX,histN+10);renderHist()};m.appendChild(b)}
+    if(histN>10){const b=document.createElement('button');b.textContent='Ver menos';b.onclick=()=>{histN=10;renderHist()};m.appendChild(b)}
+    if(solves.length>HIST_MAX&&lim>=HIST_MAX){const t=document.createElement('span');t.textContent='Mostrando las últimas '+HIST_MAX+' de '+solves.length;m.appendChild(t)}
+    if(m.children.length)box.appendChild(m)}
 }
 $('btnClear').onclick=()=>{if(confirm('¿Borrar todas las resoluciones?')){solves=[];save();renderStats()}};
 $('btnExport').onclick=()=>{const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([JSON.stringify(solves,null,1)],{type:'application/json'}));a.download='resoluciones.json';a.click()};
@@ -923,7 +954,7 @@ $('btnExport').onclick=()=>{const a=document.createElement('a');a.href=URL.creat
 /* ===== Ajustes, dispositivos y animación ===== */
 let cfg={auto:true,success:true,insp:false,gyro:false,insight:true,showAlg:true},devices=[],curDev=null;
 try{Object.assign(cfg,JSON.parse(localStorage.getItem('cfg')||'{}'));devices=JSON.parse(localStorage.getItem('devices')||'[]')}catch(e){}
-const saveCfg=()=>{try{localStorage.setItem('cfg',JSON.stringify(cfg))}catch(e){}},applyHelp=()=>document.body.classList.toggle('nohelp',cfg.help===false),saveDev=()=>{try{localStorage.setItem('devices',JSON.stringify(devices))}catch(e){}};
+const saveCfg=()=>{REV++;try{localStorage.setItem('cfg',JSON.stringify(cfg))}catch(e){}},applyHelp=()=>document.body.classList.toggle('nohelp',cfg.help===false),saveDev=()=>{try{localStorage.setItem('devices',JSON.stringify(devices))}catch(e){}};
 function renderDevs(){
   const box=$('devs');box.innerHTML='';
   if(!devices.length){box.innerHTML='<p class="mu">Aún no hay cubos guardados. Conecta uno y aparecerá aquí.</p>';return}
@@ -1164,15 +1195,20 @@ function show(v){
   vNow=v;document.body.dataset.view=v;if(TABS.includes(v))rootTab=v;if(typeof updateWake==='function')updateWake();
   for(const k in VID)$(VID[k]).classList.toggle('on',k===v);
   document.querySelectorAll('#tabs .tab').forEach(b=>{b.classList.toggle('on',b.dataset.v===rootTab);b.setAttribute('aria-current',b.dataset.v===rootTab?'page':'false')});
+  const restore=()=>{const t=viewScroller(v);if(t)t.scrollTop=viewScroll[v]||0};
   if(v==='home')draw();
-  else if(v==='learn')renderLearn();
+  else if(v==='learn'||v==='stats'){ // pantallas pesadas: primero se pinta la pestaña y el contenido se genera después, y solo si algo ha cambiado
+    if(VKEY[v]===viewKey(v)){if(v==='stats')drawChart()}
+    else requestAnimationFrame(()=>setTimeout(()=>{if(vNow!==v)return;v==='learn'?renderLearn():renderStats();restore()},0));
+  }
   else if(v==='train')renderCatalog();
-  else if(v==='stats'){renderStats()}
   else if(v==='set')syncSet();
   else if(v==='prof')renderProf();
   else if(v==='quiz')renderQuiz();
-  const target=viewScroller(v);if(target)requestAnimationFrame(()=>{target.scrollTop=viewScroll[v]||0});
+  requestAnimationFrame(restore);
 }
+var VKEY={}; // huella del contenido con que se generó cada pantalla pesada
+function viewKey(v){return [v,REV,profileId,solves.length,new Date().toDateString(),document.documentElement.dataset.theme,v==='learn'?lTab+'|'+lSub+'|'+lCat:''].join('|')}
 const nav=v=>{vStack=[];if(v==='train'){trainLanding=true;viewScroll.train=0}document.body.classList.add('tab-nav');show(v);requestAnimationFrame(()=>document.body.classList.remove('tab-nav'))},push=v=>{vStack.push(vNow);show(v)},back=()=>show(vStack.pop()||rootTab);
 $('tabs').onclick=e=>{const b=e.target.closest('.tab');if(b)nav(b.dataset.v)};
 $('csBack').onclick=back;
@@ -1210,7 +1246,7 @@ window.addEventListener('popstate',()=>{
 /* Solo vertical en móvil (la app instalada ya lo fija desde el manifest) */
 if(matchMedia('(pointer:coarse)').matches)document.addEventListener('pointerdown',()=>{try{screen.orientation.lock('portrait').catch(()=>{})}catch(e){}},{once:true});
 document.addEventListener('keydown',e=>{if(e.key==='Escape'&&vStack.length&&!document.querySelector('dialog[open]'))back()});
-function syncSet(){if(!$('setTheme').hidden&&typeof renderPrev==='function')renderPrev();$('oIns').checked=cfg.insight;$('oGyro').checked=cfg.gyro;$('oHelp').checked=cfg.help!==false;$('oInsp').checked=cfg.insp;$('oAuto').checked=cfg.auto;$('oSucc').checked=cfg.success;$('oWake').checked=cfg.wake!==false;renderDevs()}
+function syncSet(){if(!$('setTheme').hidden&&typeof renderPrev==='function')renderPrev();$('oIns').checked=cfg.insight;$('oGyro').checked=cfg.gyro;$('oHelp').checked=cfg.help!==false;$('oInsp').checked=cfg.insp;$('oAuto').checked=cfg.auto;$('oSucc').checked=cfg.success;$('oWake').checked=cfg.wake!==false;$('oIdle').value=String(cubeIdleMin());renderDevs()}
 
 /* ===== Aviso instantáneo ===== */
 let alertTimer=0,alertData=null;
@@ -1465,7 +1501,7 @@ function renderLearn(){
     if(lSub==='F2L'){const all=ids;h+='<div class="chips" id="lnCats">'+F2L_CATS.map(([c,l])=>{const a=all.filter(i=>!c||Insight.F2L_CAT[i]===c);return '<button data-c="'+c+'" class="'+(c===lCat?'on':'')+'">'+l+' · '+a.filter(i=>stageOf('F2L '+i)>=3).length+'/'+a.length+'</button>'}).join('')+'</div>';ids=all.filter(i=>!lCat||Insight.F2L_CAT[i]===lCat)}
     h+='<div class="grid">'+ids.map(id=>tileL(lSub,id)).join('')+'</div>';
   }
-  box.innerHTML=h;hydrate(box);box.scrollTop=sc;
+  box.innerHTML=h;hydrate(box);box.scrollTop=sc;VKEY.learn=viewKey('learn');
 }
 // Al cambiar de pestaña, la barra de pestañas se queda donde está en pantalla aunque la lista nueva sea más corta
 // (si hace falta, se añade un hueco al final para poder mantener esa posición).
@@ -1542,7 +1578,7 @@ function cpFrame(){
   for(let j=0;j<=k;j++)mv(st,m[j].m);
   let an=null;const nx=m[k+1];
   if(cp.play&&nx&&nx.t-cp.T<cp.win){const q=nx.m.endsWith("'")?-1:nx.m.endsWith('2')?2:1,n=FACES[nx.m[0]],ax=n.findIndex(v=>v),sg=n[ax],e=1-(nx.t-cp.T)/cp.win;an={ax,sg,th:-sg*q*Math.PI/2*e*e*(3-2*e)}}
-  paintCube(cvs.getContext('2d'),cvs.width,st,an,GFL,DV);
+  paintCube(cvs.getContext('2d'),cvs.width,st,an,GFL,cview);
   $('csSeek').value=cp.dur?Math.round(cp.T/cp.dur*1000):0;$('csTime').textContent=(k+1)+' / '+m.length;
   csMark(k+1);
 }
@@ -2054,6 +2090,16 @@ if(cfg.cubeLogoData){const li=new Image();li.onload=()=>{window.__cubeLogoImg=li
 /* ===== Detalle de la resolución: repetición, fases y cómo mejorar ===== */
 const PH_COL={cross:'#9b7bf0',slot1:'#5b6bf0',slot2:'#4a82f0',slot3:'#3a9be8',slot4:'#34b0de',oll:'#e867b8',pll:'#3ddc97'};
 let rp=null;
+const mkView=A=>v=>{const a=A.a,b=A.b;let x=v[0]*Math.cos(a)+v[2]*Math.sin(a),z=-v[0]*Math.sin(a)+v[2]*Math.cos(a);const y=v[1]*Math.cos(b)-z*Math.sin(b);z=v[1]*Math.sin(b)+z*Math.cos(b);return[x,y,z]};
+const RA={a:-0.6,b:0.45},rview=mkView(RA),CA={a:-0.6,b:0.45},cview=mkView(CA); // ángulos de la vista en la repetición y en el reproductor de casos
+function orbit(cvs,A,redraw){ // arrastrar para girar el cubo, igual que en el cronómetro; doble toque para centrarlo
+  let d=null;
+  cvs.addEventListener('pointerdown',e=>{d=[e.clientX,e.clientY];try{cvs.setPointerCapture(e.pointerId)}catch(_){}});
+  cvs.addEventListener('pointermove',e=>{if(!d)return;A.a+=(e.clientX-d[0])*0.01;A.b=Math.max(-1.4,Math.min(1.4,A.b+(e.clientY-d[1])*0.01));d=[e.clientX,e.clientY];redraw()});
+  for(const ev of['pointerup','pointercancel'])cvs.addEventListener(ev,()=>{d=null});
+  cvs.addEventListener('dblclick',()=>{A.a=-0.6;A.b=0.45;redraw()});
+  cvs.addEventListener('contextmenu',e=>e.preventDefault());
+}
 const sec=ms=>(ms/1000).toFixed(2);
 function phLabel(seg,cases){return seg.key==='cross'?'Cruz':seg.key.startsWith('slot')?'F2L '+seg.key.slice(4):seg.key==='oll'?'OLL'+(cases.oll?' '+cases.oll.id:''):'PLL'+(cases.pll?' '+cases.pll.id:'')}
 function f2lGlyph(a,b){ // pareja de colores: dos mitades separadas por una línea oscura
@@ -2073,7 +2119,7 @@ function phGlyph(seg,P,cases){ // imagen de cada fase: cruz, pareja de colores o
 }
 const ring=(pc,col)=>'<svg viewBox="0 0 36 36"><circle cx="18" cy="18" r="15" fill="none" style="stroke:var(--track)" stroke-width="4"/><circle cx="18" cy="18" r="15" fill="none" stroke="'+col+'" stroke-width="4" stroke-linecap="round" pathLength="100" stroke-dasharray="'+Math.max(1,pc)+' 100" transform="rotate(-90 18 18)"/><text x="18" y="22" text-anchor="middle" font-size="10" font-weight="700" style="fill:var(--tx)">'+pc+'%</text></svg>';
 function openSolve(i){
-  const sv=solves[i];if(!sv)return;
+  const sv=solves[i];if(!sv)return;RA.a=-0.6;RA.b=0.45;
   const moves=sv.mv?sv.mv.split(',').map(x=>{const [m,t]=x.split(' ');return{m,t:+t}}):[],start=sv.fl?fromFacelets(sv.fl):null,has=!!(start&&moves.length);
   rp={sv,moves,start,T:0,play:false,speed:1,dur:has?moves[moves.length-1].t:0,last:0,P:null,segs:[]};
   const dv=devices.find(d=>d.id===sv.dv),tps=sv.m&&sv.t?sv.m/(sv.t/1000):0;
@@ -2101,9 +2147,13 @@ function renderTips(P,cases,start,moves){
   const sm=(x)=>'<span class="g">'+phGlyph(x,P,cases)+'</span>',lb=(x)=>phLabel(x,cases);
   let h='<div class="tip"><h4>Pausas</h4>'+ring(pc,pc<=15?'#3ddc97':'#8c95a3')+(wp?sm(wp)+'<small>'+lb(wp)+' · '+sec(wp.rec)+' s</small>':'')+'</div>';
   h+='<div class="tip"><h4>Ritmo</h4>'+(sl?sm(sl)+'<b>'+sl.tps.toFixed(1)+'/s</b><small>'+lb(sl)+'</small>':'<b class="ok">✓</b>')+'</div>';
-  let r=null;try{r=Insight.analyze(start,moves);if(r)noteRec(r)}catch(e){}
-  h+='<div class="tip"><h4>Algoritmo</h4>'+(r?Insight.getCase(r.kind,r.id).icon+'<b>−'+r.save.toFixed(1)+' s</b><button class="btn pri" data-k="'+r.kind+'" data-i="'+r.id+'" title="Ver y aprender '+r.label+'">'+SV(P_CAP)+'</button>':'<b class="ok">✓</b><small>sin mejoras</small>')+'</div>';
+  const algTip=r=>'<h4>Algoritmo</h4>'+(r?Insight.getCase(r.kind,r.id).icon+'<b>−'+r.save.toFixed(1)+' s</b><button class="btn pri" data-k="'+r.kind+'" data-i="'+r.id+'" title="Ver y aprender '+r.label+'">'+SV(P_CAP)+'</button>':'<b class="ok">✓</b><small>sin mejoras</small>');
+  h+='<div class="tip" id="svAlgTip"><h4>Algoritmo</h4><small>analizando…</small></div>';
   box.innerHTML=h;
+  const tok=rp,done=r=>{if(rp!==tok)return;try{if(r)noteRec(r)}catch(e){}const el=$('svAlgTip');if(el)el.innerHTML=algTip(r)}; // el análisis corre en el Web Worker: la repetición se abre sin esperar
+  const S0=clone(start),M0=moves.map(x=>({...x}));
+  if(window.analyzeSolveAsync)window.analyzeSolveAsync(S0,M0).then(done,()=>done(null));
+  else setTimeout(()=>{let r=null;try{r=Insight.analyze(S0,M0)}catch(e){}done(r)},0);
 }
 function rpIdx(T){let k=-1;const m=rp.moves;while(k+1<m.length&&m[k+1].t<=T)k++;return k}
 function rpFrame(T){
@@ -2111,7 +2161,7 @@ function rpFrame(T){
   for(let j=0;j<=k;j++)mv(st,m[j].m);
   let an=null;const nx=m[k+1];
   if(rp.play&&nx&&nx.t-T<180){const q=nx.m.endsWith("'")?-1:nx.m.endsWith('2')?2:1,n=FACES[nx.m[0]],ax=n.findIndex(v=>v),sg=n[ax],e=1-(nx.t-T)/180;an={ax,sg,th:-sg*q*Math.PI/2*e*e*(3-2*e)}}
-  paintCube(c.getContext('2d'),c.width,st,an,null,DV);
+  paintCube(c.getContext('2d'),c.width,st,an,null,rview);
   $('svSeek').value=rp.dur?Math.round(T/rp.dur*1000):0;$('svTime').textContent=sec(T)+' / '+sec(rp.dur);
   rp.segs.forEach((x,n)=>{const a=x.a<0?0:m[x.a].t,b=m[x.b].t,el=$('svPhases').children[n];if(el)el.classList.toggle('on',T>=a&&T<=b&&!(T===a&&n>0))});
 }
@@ -2125,6 +2175,8 @@ function rpPlay(on){
   if(on){rp.last=performance.now();requestAnimationFrame(rpTick)}
 }
 function rpSeek(T){rp.T=Math.max(0,Math.min(rp.dur,T));rpFrame(rp.T)}
+orbit($('svCv'),RA,()=>{if(rp&&rp.moves.length)rpFrame(rp.T)});
+orbit($('csCv'),CA,()=>{if(typeof cp!=='undefined'&&cp.start&&cs)cpFrame()});
 $('svPlay').onclick=()=>rpPlay(!rp.play);
 $('svFirst').onclick=()=>{rpPlay(false);rpSeek(0)};$('svLast').onclick=()=>{rpPlay(false);rpSeek(rp.dur)};
 $('svPrev').onclick=()=>{rpPlay(false);const k=rpIdx(rp.T-1);rpSeek(k>=0?rp.moves[k].t:0)};
@@ -2174,7 +2226,7 @@ async function rawConnect(){
     toast('Conectado a '+(dev.name||'cubo'));
   }catch(e){toast('No se pudo conectar: '+e.message)}
 }
-window.app={busy:()=>phase==='running'||phase==='inspect',setBattery:l=>{const b=$('batt');if(l==null||isNaN(l)){b.classList.remove('on');return}l=Math.max(0,Math.min(100,Math.round(l)));b.classList.add('on');b.classList.toggle('low',l<=15);$('battTx').textContent=l+'%';$('battFill').setAttribute('width',(15.4*l/100).toFixed(1));b.title='Batería del cubo: '+l+'%'},onMove:m=>{touchAct();onMove(m)},toast,log,gyro:onGyro,gyroWatch,setStatus:(t,on)=>{$('status').textContent=t;$('status').className=on?'on':'';if(!on){curDev=null;window.app.setBattery(null)}renderDevs()},getDevice:n=>devices.find(d=>d.id===n),registerDevice:(n,mac,proto)=>{let d=devices.find(x=>x.id===n);if(!d)devices.push(d={id:n,mac:mac||'',alias:''});if(mac)d.mac=mac;if(proto)d.proto=proto;curDev=n;saveDev();renderDevs()},setFacelets,resync:()=>{showCube(solvedCube());newScramble()}};
+window.app={busy:()=>phase==='running'||phase==='inspect',setBattery:l=>{const b=$('batt');if(l==null||isNaN(l)){b.classList.remove('on');return}l=Math.max(0,Math.min(100,Math.round(l)));b.classList.add('on');b.classList.toggle('low',l<=15);$('battTx').textContent=l+'%';$('battFill').setAttribute('width',(15.4*l/100).toFixed(1));b.title='Batería del cubo: '+l+'%'},onMove:m=>{touchAct();onMove(m)},toast,log,gyro:onGyro,gyroWatch,setStatus:(t,on)=>{if(on)touchAct();$('status').textContent=t;$('status').className=on?'on':'';if(!on){curDev=null;window.app.setBattery(null)}renderDevs()},getDevice:n=>devices.find(d=>d.id===n),registerDevice:(n,mac,proto)=>{let d=devices.find(x=>x.id===n);if(!d)devices.push(d={id:n,mac:mac||'',alias:''});if(mac)d.mac=mac;if(proto)d.proto=proto;curDev=n;saveDev();renderDevs()},setFacelets,resync:()=>{showCube(solvedCube());newScramble()}};
 $('btnConn').onclick=()=>{if($('status').className==='on'&&window.disconnectCube){if(confirm('¿Desconectar '+$('status').textContent+'?'))window.disconnectCube(window.app);return}window.connectCube?window.connectCube(window.app):rawConnect()};
 
 /* ===== Pantalla encendida mientras practicas o resuelves ===== */
@@ -2194,6 +2246,16 @@ function touchAct(){lastAct=Date.now();clearTimeout(wakeT);wakeT=setTimeout(upda
 document.addEventListener('visibilitychange',()=>{if(document.hidden)releaseWake();else touchAct()});
 for(const ev of['pointerdown','keydown'])document.addEventListener(ev,touchAct,{passive:true});
 $('oWake').onchange=e=>{cfg.wake=e.target.checked;saveCfg();touchAct();if(!cfg.wake)releaseWake()};
+/* ===== Desconexión del cubo por inactividad (ahorra la batería del cubo) ===== */
+const cubeIdleMin=()=>cfg.idleMin===undefined?5:+cfg.idleMin||0;
+function cubeIdleCheck(){
+  const m=cubeIdleMin();if(!m||$('status').className!=='on'||!window.disconnectCube||window.app.busy())return;
+  if(Date.now()-lastAct<m*60000)return; // lastAct se renueva con cada giro del cubo y con cada toque en la app
+  window.disconnectCube(window.app);toast('Cubo desconectado por inactividad. Toca «Conectar» para volver.');
+}
+setInterval(cubeIdleCheck,20000);
+document.addEventListener('visibilitychange',()=>{if(!document.hidden)cubeIdleCheck()});
+$('oIdle').onchange=e=>{cfg.idleMin=+e.target.value;saveCfg()};
 
 /* ===== Arranque ===== */
 for(const ev of ['gesturestart','gesturechange','gestureend'])document.addEventListener(ev,e=>e.preventDefault()); // iOS: sin zoom con pellizco

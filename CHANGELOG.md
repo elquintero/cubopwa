@@ -1,3 +1,12 @@
+# CubIQ · Historial de versiones
+
+## 1.26.0
+- Repetición de la resolución: ahora puedes girar el cubo arrastrando con el dedo (como en el cronómetro), también mientras se reproduce. Doble toque para centrarlo. Lo mismo en la animación de los casos de Aprender.
+- Tras terminar una resolución aparece el botón «Análisis» bajo el tiempo, que abre directamente su repetición y sus consejos. Se oculta al empezar la siguiente.
+- Pestañas más ágiles: Aprender y Estadísticas se pintan al instante y su contenido se genera justo después; si no ha cambiado nada desde la última visita, ya no se vuelve a generar. Al abrir una resolución, el cálculo del algoritmo recomendado se hace en segundo plano.
+- Ajustes > General > «Desconectar el cubo por inactividad» (Nunca / 2 / 5 / 10 / 15 min; por defecto 5). Si no giras el cubo ni tocas la app, se desconecta para ahorrar la batería del cubo. Nunca lo hace durante una resolución.
+- Estadísticas > Historial: muestra las últimas 10 resoluciones, con «Ver más» (de 10 en 10) hasta un máximo de 50 y «Ver menos».
+
 ## 1.25.1
 - MoYu: se quita el círculo gris alrededor del logo; solo se ve el logo.
 - GAN: se quitan los 4 puntitos de las piezas centrales.
@@ -40,8 +49,6 @@
 ## 1.21.1
 - El análisis automático de mejoras OLL/PLL tras resolver se ejecuta en un Web Worker para mantener fluida la interfaz.
 - Se mantiene una ruta de compatibilidad para navegadores sin soporte de Web Worker.
-
-# CubIQ · Historial de versiones
 
 ## 1.5.0
 - Nueva estructura de app: las pantallas ya no son pop-ups. En móvil hay barra inferior (cronómetro, aprender, entrenar, estadísticas, ajustes) y en escritorio los iconos van en la cabecera. Las pantallas tienen tamaño fijo, sin barras de scroll visibles y la X de cerrar siempre en la cabecera.
