@@ -367,6 +367,7 @@ input[type=range]::-webkit-slider-thumb{background:var(--tx);border:2px solid va
 .train-hero h3{font-size:20px}
 .train-hero p{max-width:290px;line-height:1.5}
 .train-section-title{margin-top:18px}
+#skinSeg button{font-size:13px;padding:7px 2px}
 #skinCols.sw{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:9px;justify-content:stretch}
 .sw input[type=color]{width:100%;height:auto;aspect-ratio:1;border-radius:12px;padding:3px;background:var(--card);border:1px solid var(--line);box-shadow:0 2px 8px #0002}
 .sw input[type=color]::-webkit-color-swatch{border:0;border-radius:8px}
@@ -559,7 +560,7 @@ input[type=range]::-webkit-slider-thumb{background:var(--tx);border:2px solid va
     <div class="seg" id="lineSeg" style="margin-top:0"><button data-t="dark"><svg class="i" viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="3" fill="#8c95a3" stroke="#0b0d10" stroke-width="2.4"/></svg>Negras</button><button data-t="white"><svg class="i" viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="3" fill="#8c95a3" stroke="#ffffff" stroke-width="2.4"/></svg>Blancas</button></div>
     <p class="mu" style="margin:-4px 0 4px">Color de las separaciones entre casillas, en el cubo 3D y en los dibujos de los casos.</p>
     <h3 style="margin-top:14px">Aspecto del cubo</h3>
-    <div class="seg" id="skinSeg" style="margin-top:0"><button data-t="classic">Clásico</button><button data-t="round">Redondeado</button><button data-t="neon">Neón</button></div>
+    <div class="seg" id="skinSeg" style="margin-top:0"><button data-t="classic">Clásico</button><button data-t="round">Redondeado</button><button data-t="neon">Neón</button><button data-t="moyu">MoYu</button><button data-t="gan">GAN</button></div>
     <div class="logo-settings"><div><b>Logo en la cara blanca</b><small>Identidad visual del cubo</small></div><label class="switch"><input type="checkbox" id="cubeLogoToggle"><span></span></label></div>
     <div class="logo-upload"><div class="logo-preview" id="cubeLogoPreview">IQ</div><div class="logo-upload-copy"><b>Logo personalizado</b><small>PNG o JPG · recomendado 128 × 128 px</small><div class="logo-actions"><button class="lnk" id="cubeLogoPick" type="button">Adjuntar imagen</button><button class="lnk lnk-mu" id="cubeLogoRemove" type="button" hidden>Quitar imagen</button></div></div><input id="cubeLogoFile" type="file" accept="image/png,image/jpeg,image/webp" hidden></div>
     <div class="swrow"><span>Colores</span>
@@ -694,7 +695,8 @@ input[type=range]::-webkit-slider-thumb{background:var(--tx);border:2px solid va
 const idle=(f,t=1000)=>window.requestIdleCallback?requestIdleCallback(f,{timeout:t}):setTimeout(f,50); // trabajo pesado fuera del camino crítico
 /* ===== Modelo del cubo: 54 pegatinas con posición, normal y color ===== */
 const FACES={U:[0,1,0],D:[0,-1,0],F:[0,0,1],B:[0,0,-1],R:[1,0,0],L:[-1,0,0]};
-const COL={U:'#f2f2f2',D:'#ffd500',F:'#1faa59',B:'#2a6fdb',R:'#d93a2b',L:'#ff8a1f'},COL0={...COL}; // COL0 = colores originales; COL se modifica con los colores propios
+const COL={U:'#f2f2f2',D:'#ffd500',F:'#1faa59',B:'#2a6fdb',R:'#d93a2b',L:'#ff8a1f'},COL0={...COL},COLM={U:'#eef1f4',D:'#ffdf00',F:'#22b04f',B:'#2a7fe6',R:'#e5322d',L:'#ff7a14'},COLG={U:'#f1f1f4',D:'#e4ef2e',F:'#2fe04a',B:'#2c68e0',R:'#f2391d',L:'#ff8c1a'}; // COLM = paleta «MoYu», COLG = paleta «GAN» (cubos stickerless)
+const SKINMAP={round:1,neon:2,moyu:3,comp:3,gan:4}; // comp = nombre antiguo de MoYu // COL0 = colores originales; COL se modifica con los colores propios
 const NAME={};for(const f in FACES)NAME[FACES[f]]=f;
 const solvedCube=()=>{const s=[];for(const f in FACES){const n=FACES[f];for(let a=-1;a<=1;a++)for(let b=-1;b<=1;b++){
   s.push({p:n[1]?[a,n[1],b]:n[0]?[n[0],a,b]:[a,b,n[2]],n:[...n],c:f})}}return s};
@@ -720,7 +722,7 @@ const view=v=>{const a=A,b=flip?-Bt:Bt;let x=v[0]*Math.cos(a)+v[2]*Math.sin(a),z
 let disp=solvedCube(),queue=[],anim=null;
 const clone=c=>c.map(s=>({p:[...s.p],n:[...s.n],c:s.c}));
 const rotV=(v,ax,t)=>{const c=Math.cos(t),s=Math.sin(t),[x,y,z]=v;return ax===0?[x,y*c-z*s,y*s+z*c]:ax===1?[x*c+z*s,y,-x*s+z*c]:[x*c-y*s,x*s+y*c,z]};
-let LINEC='#0b0d10',SKIN=0; // SKIN: 0 = clásico, 1 = casillas redondeadas con logo IQ, 2 = neón
+let LINEC='#0b0d10',SKIN=0; // SKIN: 0 = clásico, 1 = casillas redondeadas con logo IQ, 2 = neón, 3 = MoYu y 4 = GAN (stickerless)
 function paintCube(g,W,state,an,Gf,vw,cf){
   const S=W/6,Q=[],GG=v=>Gf?Gf(v):v,small=!!cf||W<300,lh=small?0.465:0.5,lc=small?(window.__cubeLight?'#dde2e9':/^#[0-9a-f]{6}$/i.test(LINEC)?LINEC+'8c':LINEC):LINEC; // iconos pequeños: en tema claro, marco gris suave en vez de negro
  g.clearRect(0,0,W,W);
@@ -729,7 +731,9 @@ function paintCube(g,W,state,an,Gf,vw,cf){
     const nv=vw(GG(rot(n)));if(nv[2]<=0.001&&!(an&&inL))continue;
     const u=n[1]||n[2]?[1,0,0]:[0,1,0],vv=n[2]?[0,1,0]:[0,0,1],c=s.p.map((x,i)=>x+n[i]*0.5);
     const sc=cf?cf(s):COL[s.c]; // SKIN 2 = neón: casilla negra con el contorno luminoso del color de la pegatina
-    const polys=(SKIN===2?[[0.45,'#05070a',.1,sc]]:SKIN?[[lh,lc,.08],[0.41,sc,.34]]:[[lh,lc],[0.43,sc]]).map(([h,col,rd,st])=>[col,[[-1,-1],[1,-1],[1,1],[-1,1]].map(([i,j])=>vw(GG(rot(c.map((x,t)=>x+h*(i*u[t]+j*vv[t])))))),rd,st]);
+    const ui=n[1]||n[2]?0:1,vi=n[2]?1:2,pu=s.p[ui],pv=s.p[vi], // SKIN 3/4: esquinas más redondeadas cuanto más cerca del centro de la cara; las exteriores casi rectas
+      rdC=[[-1,-1],[1,-1],[1,1],[-1,1]].map(([i,j])=>{const d=Math.hypot(pu+.5*i,pv+.5*j)-.7;return SKIN===4?Math.max(.07,Math.min(.36,.4-.26*d)):Math.max(.06,Math.min(.3,.34-.2*d))}),
+      polys=(SKIN>=3?[[.5,lc],[SKIN===4?(small?.45:.465):(small?.46:.478),sc,rdC,null,1]]:SKIN===2?[[0.45,'#05070a',.1,sc]]:SKIN?[[lh,lc,.08],[0.41,sc,.34]]:[[lh,lc],[0.43,sc]]).map(([h,col,rd,st,hl])=>[col,[[-1,-1],[1,-1],[1,1],[-1,1]].map(([i,j])=>vw(GG(rot(c.map((x,t)=>x+h*(i*u[t]+j*vv[t])))))),rd,st,hl]);
     let txt=null; // logo IQ sobre el centro blanco (solo si se ve de frente, nunca en espejo)
     if(cfg.cubeLogoEnabled!==false&&!cf&&s.c==='U'&&s.p.filter(x=>x!==0).length===1){
       const P0=vw(GG(rot(c))),Pu=vw(GG(rot(c.map((x,t)=>x+u[t]*.5)))),Pv=vw(GG(rot(c.map((x,t)=>x+vv[t]*.5))));
@@ -740,19 +744,20 @@ function paintCube(g,W,state,an,Gf,vw,cf){
   }
   Q.sort((a,b)=>a.z-b.z);
   for(const q of Q){
-    for(const [col,pts,rd,st] of q.polys){
+    for(const [col,pts,rd,st,hl] of q.polys){
       const sp=pts.map(P=>[W/2+P[0]*S,W/2-P[1]*S]);g.beginPath();
       if(rd){for(let k=0;k<4;k++){ // esquinas redondeadas: curva entre un punto de cada lado
-        const a=sp[(k+3)%4],b=sp[k],d=sp[(k+1)%4],p1=[b[0]+(a[0]-b[0])*rd,b[1]+(a[1]-b[1])*rd],p2=[b[0]+(d[0]-b[0])*rd,b[1]+(d[1]-b[1])*rd];
+        const r=rd[k]??rd,a=sp[(k+3)%4],b=sp[k],d=sp[(k+1)%4],p1=[b[0]+(a[0]-b[0])*r,b[1]+(a[1]-b[1])*r],p2=[b[0]+(d[0]-b[0])*r,b[1]+(d[1]-b[1])*r];
         k?g.lineTo(p1[0],p1[1]):g.moveTo(p1[0],p1[1]);g.quadraticCurveTo(b[0],b[1],p2[0],p2[1])}}
       else sp.forEach((P,k)=>k?g.lineTo(P[0],P[1]):g.moveTo(P[0],P[1]));
       g.closePath();g.fillStyle=col;g.fill();
+      if(hl){g.save();g.lineJoin='round';g.strokeStyle='rgba(255,255,255,.18)';g.lineWidth=Math.max(.8,W*.003);g.stroke();g.restore()} // brillo suave del plástico
       if(st){g.save();g.lineJoin='round';g.strokeStyle=st;g.lineWidth=Math.max(1.6,W*.011);g.shadowColor=st;g.shadowBlur=W*.035;g.stroke();g.shadowBlur=0;g.lineWidth=Math.max(1,W*.005);g.stroke();g.restore()}}
     if(q.txt){const [a,b,c2,d,e,f,sc]=q.txt,m=/^#([0-9a-f]{2})([0-9a-f]{2})([0-9a-f]{2})$/i.exec(sc),lum=m?(.299*parseInt(m[1],16)+.587*parseInt(m[2],16)+.114*parseInt(m[3],16))/255:1;
       g.save();g.transform(a,b,c2,d,e,f);g.scale(.01,.01);
       const logo=cfg.cubeLogoEnabled!==false&&window.__cubeLogoImg&&window.__cubeLogoImg.complete&&window.__cubeLogoImg.naturalWidth;
       if(logo){g.drawImage(window.__cubeLogoImg,-40,-40,80,80)}
-      else if(cfg.cubeLogoEnabled!==false){g.fillStyle=lum>.55?'#0b0d10':'#f4f6fa';g.font='800 50px Poppins,ui-rounded,system-ui,sans-serif';g.textAlign='center';g.textBaseline='middle';g.fillText('IQ',0,3)}
+      else if(cfg.cubeLogoEnabled!==false){g.fillStyle=SKIN>=3?'#0b0d10':lum>.55?'#0b0d10':'#f4f6fa';g.font='800 50px Poppins,ui-rounded,system-ui,sans-serif';g.textAlign='center';g.textBaseline='middle';g.fillText('IQ',0,3)}
       g.restore()}
   }
 }
@@ -1921,15 +1926,15 @@ function applyTheme(){
   if(vNow==='stats')drawChart();
 }
 // Estilo de los dibujos de casos: Auto sigue al tema; Claro = casillas blancas; Oscuro = casillas grises oscuras
-const baseCols=ln=>Object.assign({},COL0,{U:ln==='white'?'#d9dee6':COL0.U}); // paleta base: la cara U se atenúa con líneas blancas
+const baseCols=(ln,sk)=>{const b=sk===3?COLM:sk===4?COLG:COL0;return Object.assign({},b,{U:ln==='white'?'#d9dee6':b.U})}; // paleta base: la cara U se atenúa con líneas blancas
 function applyCubeStyle(){
   const cs=cfg.cubeStyle||'auto',light=cs==='light'||(cs==='auto'&&document.documentElement.dataset.theme==='light');
-  const ln=cfg.cubeLines==='white'?'white':'dark',sk=({round:1,neon:2})[cfg.cubeSkin]||0,base=baseCols(ln),cc=cfg.cubeColors||{},
+  const ln=cfg.cubeLines==='white'?'white':'dark',sk=SKINMAP[cfg.cubeSkin]||0,base=baseCols(ln,sk),cc=cfg.cubeColors||{},
     cust=Object.keys(cc).some(f=>base[f]&&String(cc[f]).toLowerCase()!==base[f]),skKey=sk+(cust?'c'+JSON.stringify(cc):''),
     changed=!!window.__cubeLight!==light||window.__cubeLine!==ln||window.__skinKey!==skKey;
   SKIN=sk;window.__skinKey=skKey;
   {const pal=cust?Object.assign({},base,cc):base;for(const f in base)COL[f]=pal[f]} // colores propios (valen para cualquier forma) o los originales
-  document.querySelectorAll('#skinSeg button').forEach(b=>b.classList.toggle('on',b.dataset.t===['classic','round','neon'][sk]));
+  document.querySelectorAll('#skinSeg button').forEach(b=>b.classList.toggle('on',b.dataset.t===['classic','round','neon','moyu','gan'][sk]));
   $('skReset').hidden=!cust;$('skinCols').querySelectorAll('[data-f]').forEach(i=>{i.style.background=COL[i.dataset.f];i.setAttribute('aria-label','Cambiar color '+i.title)});
   window.__cubeLight=light;window.__cubeLine=ln;LINEC=ln==='white'?'#ffffff':'#0b0d10';GREY=light?(ln==='white'?'#d3d9e2':'#f3f5f8'):(ln==='white'?'#4a525e':'#39414b');
   document.querySelectorAll('#lineSeg button').forEach(b=>b.classList.toggle('on',b.dataset.t===ln));
@@ -1945,7 +1950,7 @@ function refreshCubeIcons(){
 $('lineSeg').onclick=e=>{const b=e.target.closest('button');if(!b)return;cfg.cubeLines=b.dataset.t;saveCfg();applyCubeStyle()};
 $('skinSeg').onclick=e=>{const b=e.target.closest('button');if(!b)return;cfg.cubeSkin=b.dataset.t;saveCfg();applyCubeStyle()};
 function setSkinColor(face,color){
-  const base=baseCols(cfg.cubeLines==='white'?'white':'dark'),cc=Object.assign({},cfg.cubeColors);
+  const base=baseCols(cfg.cubeLines==='white'?'white':'dark',SKINMAP[cfg.cubeSkin]||0),cc=Object.assign({},cfg.cubeColors);
   if(color.toLowerCase()===base[face])delete cc[face];else cc[face]=color;
   if(Object.keys(cc).length)cfg.cubeColors=cc;else delete cfg.cubeColors;saveCfg();applyCubeStyle();
 }
