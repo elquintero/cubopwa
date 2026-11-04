@@ -2,6 +2,11 @@
 const V = '__VERSION__', PRECACHE = /*__PRECACHE__*/[], C = 'cubiq-' + V;
 const SCOPE = self.registration.scope;
 const abs = (u) => new URL(u, SCOPE).href;
+// Una petición que no responde (sin cobertura, «lie-fi») no debe dejar la interfaz esperando.
+const fetchTimeout = (request, ms) => new Promise((resolve, reject) => {
+  const ctl = new AbortController(), t = setTimeout(() => { ctl.abort(); reject(new Error('timeout')); }, ms);
+  fetch(request, { signal: ctl.signal }).then((r) => { clearTimeout(t); resolve(r); }, (e) => { clearTimeout(t); reject(e); });
+});
 const isInScope = (url) => url.origin === self.location.origin && url.href.startsWith(SCOPE);
 
 
@@ -28,16 +33,17 @@ self.addEventListener('fetch', (event) => {
   const url = new URL(request.url);
   if (!isInScope(url) || !PRECACHE.length) return; // desarrollo: no interferir con Vite
 
-  // Navegación: devuelve la página precargada para que el inicio offline sea fiable.
+  // Navegación: caché primero. La página está precargada y versionada, así que no hace falta
+  // esperar a la red (sin wifi ni datos, esperar a que el fetch falle es lo que volvía lenta la app).
+  // Las actualizaciones llegan por el propio sw.js (ver el registro en index.html).
   if (request.mode === 'navigate') {
     event.respondWith((async () => {
       const cache = await caches.open(C);
       const offlinePage = await cache.match(abs('./')) || await cache.match(abs('./index.html'));
-      try {
-        const response = await fetch(request);
-        return response.ok ? response : (offlinePage || response);
-      } catch (_) {
-        return offlinePage || new Response('CubIQ no está disponible sin conexión.', {
+      if (offlinePage) return offlinePage;
+      try { return await fetchTimeout(request, 4000); }
+      catch (_) {
+        return new Response('CubIQ no está disponible sin conexión.', {
           status: 503, headers: { 'Content-Type': 'text/plain; charset=utf-8' }
         });
       }
@@ -51,7 +57,7 @@ self.addEventListener('fetch', (event) => {
     const cached = await cache.match(request, { ignoreSearch: false });
     if (cached) return cached;
     try {
-      const response = await fetch(request);
+      const response = await fetchTimeout(request, 6000);
       if (response.ok && response.type === 'basic' && response.headers.get('Cache-Control') !== 'no-store') {
         event.waitUntil(cache.put(request, response.clone()).catch(() => {}));
       }

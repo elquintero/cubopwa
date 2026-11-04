@@ -332,7 +332,7 @@ input[type=range]::-webkit-slider-thumb{background:var(--tx);border:2px solid va
 .sw input[type=color]::-moz-color-swatch{border:1.5px solid var(--bd2);border-radius:50%}
 .lnk{flex:none;color:var(--ac);font-size:12px;font-weight:600}.lnk[hidden]{display:none}
 .prev{display:flex;gap:10px;align-items:center;justify-content:space-around;padding:12px;border:1px solid var(--line);border-radius:18px;background:var(--card)}
-.prev>*{display:grid;justify-items:center;gap:4px;color:var(--mu);font-size:11px;font-weight:600}.prev svg,.prev img,.prev canvas{width:64px;height:64px;display:block;object-fit:contain}
+.prev>*{display:grid;justify-items:center;gap:6px;color:var(--mu);font-size:11px;font-weight:600;min-width:0}.prev .pv{display:grid;place-items:center;width:64px;height:64px}.prev .pv svg,.prev .pv img,.prev .pv canvas{width:100%;height:100%;display:block;object-fit:contain}
 
 /* CubIQ refresh: entrenamiento y selectores */
 #trainCatalog{display:flex;flex:1;min-height:0;flex-direction:column}
@@ -373,17 +373,28 @@ input[type=range]::-webkit-slider-thumb{background:var(--tx);border:2px solid va
 .switch{position:relative;width:42px;height:25px;flex:none}.switch input{opacity:0;width:0;height:0}.switch span{position:absolute;inset:0;border-radius:20px;background:var(--track);transition:.2s}.switch span:before{content:"";position:absolute;width:19px;height:19px;left:3px;top:3px;border-radius:50%;background:#fff;transition:.2s}.switch input:checked+span{background:var(--ac)}.switch input:checked+span:before{transform:translateX(17px)}
 .logo-upload{display:flex;align-items:center;gap:12px;padding:12px 2px;border-bottom:1px solid var(--line)}
 .logo-preview{width:48px;height:48px;border-radius:13px;border:1px solid var(--bd2);background:var(--inset);display:grid;place-items:center;font-weight:800;color:var(--ac);overflow:hidden;flex:none}.logo-preview img{width:100%;height:100%;object-fit:contain}
-.logo-upload-copy{min-width:0}.logo-upload-copy b,.logo-upload-copy small{display:block}.logo-upload-copy b{font-size:12px}.logo-upload-copy small{font-size:10px;color:var(--mu);margin:2px 0 5px}
+.logo-upload-copy{min-width:0;flex:1}.logo-upload-copy b,.logo-upload-copy small{display:block}.logo-upload-copy b{font-size:13px}.logo-upload-copy small{font-size:11px;line-height:1.35;color:var(--mu);margin:2px 0 8px}
+.logo-actions{display:flex;flex-wrap:wrap;gap:6px 18px}.logo-actions .lnk{padding:2px 0;font-size:13px}.lnk-mu{color:var(--mu)}
+.lnk+.lnk{margin-left:14px}
 .color-dot{width:26px;height:26px;border:2px solid var(--bd2);border-radius:50%;padding:0;box-shadow:inset 0 0 0 2px var(--card)}
-.color-modal-backdrop{position:fixed;inset:0;z-index:1000;background:#0009;display:grid;place-items:center;padding:22px}
-.color-modal{width:min(100%,390px);background:var(--card);border:1px solid var(--line);border-radius:20px;padding:20px;box-shadow:0 22px 70px #0005}
-.color-modal h3{margin:0;font:600 19px Poppins,system-ui,sans-serif}.color-modal p{font-size:12px;color:var(--mu);margin:4px 0 16px}
-.cm-preview{height:42px;border-radius:11px;border:1px solid var(--bd2);margin-bottom:16px}
-.cm-range{display:grid;grid-template-columns:72px 1fr;gap:10px;align-items:center;margin:13px 0;font-size:12px;color:var(--mu)}
-.cm-range input{width:100%;accent-color:var(--ac)}
-.cm-hex{display:flex;align-items:center;gap:10px;margin:15px 0}.cm-hex input{width:100%;min-width:0;background:var(--inset);border:1px solid var(--line);border-radius:10px;padding:10px;color:var(--tx);font:13px ui-monospace,monospace}
-.cm-presets{display:grid;grid-template-columns:repeat(8,1fr);gap:8px;margin:14px 0}.cm-presets button{aspect-ratio:1;border-radius:9px;border:2px solid var(--bd2)}
-.cm-actions{display:flex;justify-content:flex-end;gap:18px;margin-top:18px}.cm-actions button{color:var(--ac);font-weight:650;padding:8px}
+.color-modal-backdrop{position:fixed;inset:0;z-index:1000;background:rgba(5,7,10,.62);-webkit-backdrop-filter:blur(3px);backdrop-filter:blur(3px);display:grid;place-items:center;padding:22px;animation:cmFade .16s ease-out}
+.color-modal{width:min(100%,340px);background:var(--card);border:1px solid var(--line);border-radius:18px;padding:18px;box-shadow:0 24px 60px rgba(0,0,0,.4);animation:cmPop .18s ease-out}
+@keyframes cmFade{from{opacity:0}}@keyframes cmPop{from{opacity:0;transform:translateY(6px) scale(.98)}}
+@media(prefers-reduced-motion:reduce){.color-modal-backdrop,.color-modal{animation:none}}
+.cm-head{display:flex;align-items:center;gap:12px;margin-bottom:16px}
+.cm-chip{flex:none;display:flex;width:34px;height:34px;border-radius:10px;overflow:hidden;border:1px solid var(--bd2)}.cm-chip i{flex:1}
+.cm-title{flex:1;min-width:0}.color-modal h3.cm-h{margin:0;display:block;font:600 15px/1.2 Poppins,system-ui,sans-serif;letter-spacing:-.01em;text-transform:none;color:var(--tx)}.cm-title small{display:block;margin-top:2px;font-size:11px;color:var(--mu)}
+.cm-x{flex:none;width:30px;height:30px;border-radius:9px;display:grid;place-items:center;color:var(--mu)}.cm-x:hover{background:var(--inset);color:var(--tx)}.cm-x svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round}
+.cm-sv{position:relative;height:150px;border-radius:12px;cursor:crosshair;touch-action:none;outline-offset:3px;background:linear-gradient(to top,#000,rgba(0,0,0,0)),linear-gradient(to right,#fff,var(--h,#f00));box-shadow:inset 0 0 0 1px rgba(128,128,128,.25)}
+.cm-knob{position:absolute;width:18px;height:18px;margin:-9px 0 0 -9px;border-radius:50%;border:2px solid #fff;box-shadow:0 0 0 1px rgba(0,0,0,.45),0 2px 6px rgba(0,0,0,.4);pointer-events:none}
+.color-modal input.cm-hue{-webkit-appearance:none;appearance:none;display:block;width:100%;height:12px;margin:16px 0 0;border-radius:8px;outline-offset:4px;background:linear-gradient(to right,#f00,#ff0 17%,#0f0 33%,#0ff 50%,#00f 67%,#f0f 83%,#f00)}
+.color-modal input.cm-hue::-webkit-slider-thumb{-webkit-appearance:none;width:18px;height:18px;border-radius:50%;background:#fff;border:2px solid #fff;box-shadow:0 0 0 1px rgba(0,0,0,.45),0 2px 6px rgba(0,0,0,.4);cursor:grab}
+.color-modal input.cm-hue::-moz-range-thumb{width:14px;height:14px;border-radius:50%;background:#fff;border:2px solid #fff;box-shadow:0 0 0 1px rgba(0,0,0,.45);cursor:grab}
+.cm-hue::-moz-range-track{background:transparent}
+.cm-hex{display:flex;align-items:center;gap:10px;margin-top:16px;padding:0 12px;height:40px;background:var(--inset);border:1px solid var(--line);border-radius:11px}.cm-hex:focus-within{border-color:var(--ac)}
+.cm-hex span{font-size:10px;font-weight:600;letter-spacing:.08em;color:var(--mu)}.cm-hex input{flex:1;min-width:0;background:none;border:0;outline:0;color:var(--tx);font:13px ui-monospace,SFMono-Regular,monospace;text-transform:uppercase}
+.cm-presets{display:grid;grid-template-columns:repeat(8,1fr);gap:7px;margin-top:14px}.cm-presets button{aspect-ratio:1;border-radius:50%;border:1px solid rgba(128,128,128,.4);box-shadow:inset 0 0 0 2px var(--card)}.cm-presets button.on{border-color:var(--ac);box-shadow:inset 0 0 0 2px var(--card),0 0 0 1px var(--ac)}
+.cm-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:18px}.cm-btn{height:40px;border-radius:11px;border:1px solid var(--line);font-size:13px;font-weight:600;color:var(--tx)}.cm-btn:hover{border-color:var(--mu)}.cm-btn.pri{background:var(--ac);border-color:var(--ac);color:var(--onac)}.cm-btn.pri:hover{filter:brightness(1.06)}
 </style>
 </head>
 <body data-view="home">
@@ -521,7 +532,7 @@ input[type=range]::-webkit-slider-thumb{background:var(--tx);border:2px solid va
     <h3 style="margin-top:14px">Aspecto del cubo</h3>
     <div class="seg" id="skinSeg" style="margin-top:0"><button data-t="classic">Clásico</button><button data-t="round">Redondeado</button><button data-t="neon">Neón</button></div>
     <div class="logo-settings"><div><b>Logo en la cara blanca</b><small>Identidad visual del cubo</small></div><label class="switch"><input type="checkbox" id="cubeLogoToggle"><span></span></label></div>
-    <div class="logo-upload"><div class="logo-preview" id="cubeLogoPreview">IQ</div><div class="logo-upload-copy"><b>Logo personalizado</b><small>PNG o JPG · recomendado 128 × 128 px</small><button class="lnk" id="cubeLogoPick" type="button">Adjuntar imagen</button><button class="lnk" id="cubeLogoRemove" type="button" hidden>Quitar imagen</button></div><input id="cubeLogoFile" type="file" accept="image/png,image/jpeg,image/webp" hidden></div>
+    <div class="logo-upload"><div class="logo-preview" id="cubeLogoPreview">IQ</div><div class="logo-upload-copy"><b>Logo personalizado</b><small>PNG o JPG · recomendado 128 × 128 px</small><div class="logo-actions"><button class="lnk" id="cubeLogoPick" type="button">Adjuntar imagen</button><button class="lnk lnk-mu" id="cubeLogoRemove" type="button" hidden>Quitar imagen</button></div></div><input id="cubeLogoFile" type="file" accept="image/png,image/jpeg,image/webp" hidden></div>
     <div class="swrow"><span>Colores</span>
       <div class="sw" id="skinCols">
         <button class="color-dot" data-f="U" title="Arriba" aria-label="Color de arriba"></button><button class="color-dot" data-f="L" title="Izquierda" aria-label="Color de izquierda"></button><button class="color-dot" data-f="F" title="Frente" aria-label="Color de frente"></button><button class="color-dot" data-f="R" title="Derecha" aria-label="Color de derecha"></button><button class="color-dot" data-f="B" title="Atrás" aria-label="Color de atrás"></button><button class="color-dot" data-f="D" title="Abajo" aria-label="Color de abajo"></button>
@@ -1846,31 +1857,55 @@ function hexHsv(hex){
   return [Math.round((h+360)%360),Math.round(mx?d/mx*100:0),Math.round(mx*100)];
 }
 let colorFace='U';
+const FACE_ES={U:'Arriba',L:'Izquierda',F:'Frente',R:'Derecha',B:'Atrás',D:'Abajo'};
+const CM_PRESETS=['#ffffff','#ffd500','#1faa59','#d93a2b','#2a6fdb','#ff8a1f','#7b4ce2','#111827'];
+let cm=null; // {h,s,v,orig}
 function openColorModal(face,color){
-  colorFace=face;const hsv=hexHsv(color);
-  let back=document.getElementById('colorModalBackdrop');
-  if(!back){back=document.createElement('div');back.id='colorModalBackdrop';back.className='color-modal-backdrop';back.innerHTML='<div class="color-modal" role="dialog" aria-modal="true" aria-labelledby="cmTitle"><h3 id="cmTitle">Color de la cara</h3><p>Personaliza el tono y ajusta su intensidad</p><div class="cm-preview" id="cmPreview"></div><label class="cm-range">Matiz <input id="cmHue" type="range" min="0" max="359"></label><label class="cm-range">Saturación <input id="cmSat" type="range" min="0" max="100"></label><label class="cm-range">Valor <input id="cmVal" type="range" min="0" max="100"></label><div class="cm-hex"><span>HEX</span><input id="cmHex" maxlength="7" value="#ffffff" aria-label="Código hexadecimal"></div><div class="cm-presets">'+['#ffffff','#ffd500','#1faa59','#d93a2b','#2a6fdb','#ff8a1f','#7b4ce2','#111827'].map(c=>'<button type="button" data-color="'+c+'" style="background:'+c+'"></button>').join('')+'</div><div class="cm-actions"><button id="cmCancel">Cancelar</button><button id="cmApply">Aplicar color</button></div></div>';
-    document.body.appendChild(back);
-    back.addEventListener('click',e=>{if(e.target===back)back.remove()});
-    back.querySelector('#cmCancel').onclick=()=>back.remove();
-    back.querySelector('#cmApply').onclick=()=>{const v=back.querySelector('#cmHex').value;if(/^#[0-9a-f]{6}$/i.test(v)){setSkinColor(colorFace,v);back.remove()}else toast('Código HEX no válido')};
-    back.querySelectorAll('[data-color]').forEach(b=>b.onclick=()=>{back.querySelector('#cmHex').value=b.dataset.color;const a=hexHsv(b.dataset.color);['cmHue','cmSat','cmVal'].forEach((id,i)=>back.querySelector('#'+id).value=a[i]);syncColorModal()});
-    ['cmHue','cmSat','cmVal'].forEach(id=>back.querySelector('#'+id).addEventListener('input',syncColorModal));
-    back.querySelector('#cmHex').addEventListener('input',()=>{const v=back.querySelector('#cmHex').value;if(/^#[0-9a-f]{6}$/i.test(v)){back.querySelector('#cmPreview').style.background=v;const a=hexHsv(v);['cmHue','cmSat','cmVal'].forEach((id,i)=>back.querySelector('#'+id).value=a[i])}});
-  }
-  back.querySelector('#cmTitle').textContent='Color · '+({U:'Arriba',L:'Izquierda',F:'Frente',R:'Derecha',B:'Atrás',D:'Abajo'}[face]||face);
-  ['cmHue','cmSat','cmVal'].forEach((id,i)=>back.querySelector('#'+id).value=hsv[i]);back.querySelector('#cmHex').value=color;syncColorModal();
+  colorFace=face;
+  document.getElementById('colorModalBackdrop')?.remove();
+  const [h,sa,v]=hexHsv(color);cm={h,s:sa,v,orig:color};
+  const back=document.createElement('div');back.id='colorModalBackdrop';back.className='color-modal-backdrop';
+  back.innerHTML='<div class="color-modal" role="dialog" aria-modal="true" aria-labelledby="cmTitle">'
+    +'<div class="cm-head"><span class="cm-chip" aria-hidden="true"><i style="background:'+color+'"></i><i id="cmPreview"></i></span>'
+    +'<div class="cm-title"><h3 class="cm-h" id="cmTitle">'+(FACE_ES[face]||face)+'</h3><small>Color de la cara</small></div>'
+    +'<button class="cm-x" id="cmClose" type="button" aria-label="Cerrar"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></svg></button></div>'
+    +'<div class="cm-sv" id="cmSV" tabindex="0" role="slider" aria-label="Saturación y brillo"><i class="cm-knob" id="cmKnob"></i></div>'
+    +'<input class="cm-hue" id="cmHue" type="range" min="0" max="359" aria-label="Matiz">'
+    +'<label class="cm-hex"><span>HEX</span><input id="cmHex" maxlength="7" spellcheck="false" autocomplete="off" aria-label="Código hexadecimal"></label>'
+    +'<div class="cm-presets">'+CM_PRESETS.map(c=>'<button type="button" data-color="'+c+'" style="background:'+c+'" aria-label="'+c+'"></button>').join('')+'</div>'
+    +'<div class="cm-actions"><button class="cm-btn" id="cmCancel" type="button">Cancelar</button><button class="cm-btn pri" id="cmApply" type="button">Aplicar</button></div></div>';
+  document.body.appendChild(back);
+  const q=sel=>back.querySelector(sel),close=()=>{back.remove();document.removeEventListener('keydown',onKey)};
+  const onKey=e=>{if(e.key==='Escape')close();else if(e.key==='Enter'&&e.target.id!=='cmCancel'&&e.target.id!=='cmClose')q('#cmApply').click()};
+  document.addEventListener('keydown',onKey);
+  back.addEventListener('pointerdown',e=>{if(e.target===back)close()});
+  q('#cmClose').onclick=q('#cmCancel').onclick=close;
+  q('#cmApply').onclick=()=>{const t=q('#cmHex').value.trim(),ok=/^#?[0-9a-f]{6}$/i.test(t);if(!ok){toast('Código HEX no válido');return}setSkinColor(colorFace,cmHex());close()};
+  const sv=q('#cmSV'),setSV=e=>{const r=sv.getBoundingClientRect();cm.s=Math.round(Math.max(0,Math.min(1,(e.clientX-r.left)/r.width))*100);cm.v=Math.round((1-Math.max(0,Math.min(1,(e.clientY-r.top)/r.height)))*100);syncColorModal()};
+  sv.addEventListener('pointerdown',e=>{sv.setPointerCapture(e.pointerId);setSV(e);sv.onpointermove=setSV});
+  sv.addEventListener('pointerup',()=>{sv.onpointermove=null});
+  sv.addEventListener('keydown',e=>{const d={ArrowLeft:[-1,0],ArrowRight:[1,0],ArrowUp:[0,1],ArrowDown:[0,-1]}[e.key];if(!d)return;e.preventDefault();const st=e.shiftKey?10:2;cm.s=Math.max(0,Math.min(100,cm.s+d[0]*st));cm.v=Math.max(0,Math.min(100,cm.v+d[1]*st));syncColorModal()});
+  q('#cmHue').addEventListener('input',e=>{cm.h=+e.target.value;syncColorModal()});
+  q('#cmHex').addEventListener('input',e=>{const t=e.target.value.trim(),m=/^#?([0-9a-f]{6})$/i.exec(t);if(m){[cm.h,cm.s,cm.v]=hexHsv('#'+m[1].toLowerCase());syncColorModal(true)}});
+  back.querySelectorAll('[data-color]').forEach(b=>b.onclick=()=>{[cm.h,cm.s,cm.v]=hexHsv(b.dataset.color);syncColorModal()});
+  syncColorModal();sv.focus({preventScroll:true});
 }
-function syncColorModal(){
-  const b=document.getElementById('colorModalBackdrop');if(!b)return;
-  const hex=hsvHex(+b.querySelector('#cmHue').value,+b.querySelector('#cmSat').value,+b.querySelector('#cmVal').value);
-  b.querySelector('#cmHex').value=hex;b.querySelector('#cmPreview').style.background=hex;
-  b.querySelector('#cmHue').style.accentColor=hsvHex(+b.querySelector('#cmHue').value,100,100);
+const cmHex=()=>hsvHex(cm.h,cm.s,cm.v);
+function syncColorModal(keepHex){
+  const b=document.getElementById('colorModalBackdrop');if(!b||!cm)return;
+  const hex=cmHex(),sv=b.querySelector('#cmSV'),hexIn=b.querySelector('#cmHex');
+  sv.style.setProperty('--h',hsvHex(cm.h,100,100));
+  const k=b.querySelector('#cmKnob');k.style.left=cm.s+'%';k.style.top=(100-cm.v)+'%';k.style.background=hex;
+  sv.setAttribute('aria-valuetext','Saturación '+cm.s+'%, brillo '+cm.v+'%');
+  b.querySelector('#cmHue').value=cm.h;b.querySelector('#cmPreview').style.background=hex;
+  if(!keepHex)hexIn.value=hex.toUpperCase();
+  b.querySelectorAll('[data-color]').forEach(x=>x.classList.toggle('on',x.dataset.color.toLowerCase()===hex.toLowerCase()));
 }
 function renderPrev(){
   if(!window.Insight||!$('themePrev'))return;
-  const st=solvedCube();let h='<div>'+iconOf(Insight.getCase('OLL','21'),120)+'OLL</div><div>'+iconOf(Insight.getCase('PLL','Aa'),120)+'PLL</div><div>'+iconOf(Insight.getCase('F2L','1'),120)+'F2L</div><div><canvas id="prevCube" width="240" height="240"></canvas>Cubo</div>';
-  $('themePrev').innerHTML=h;paintCube($('prevCube').getContext('2d'),160,st,null,null,DV);
+  const PV=128,st=solvedCube(),tile=(n,inner)=>'<div><span class="pv">'+inner+'</span>'+n+'</div>';
+  $('themePrev').innerHTML=tile('OLL',iconOf(Insight.getCase('OLL','21')))+tile('PLL',iconOf(Insight.getCase('PLL','Aa')))+tile('F2L',iconOf(Insight.getCase('F2L','1'),PV))+tile('Cubo','<canvas id="prevCube" width="'+PV+'" height="'+PV+'"></canvas>');
+  paintCube($('prevCube').getContext('2d'),PV,st,null,null,DV);
 }
 $('setTabs').onclick=e=>{const b=e.target.closest('button');if(!b)return;
   document.querySelectorAll('#setTabs button').forEach(x=>x.classList.toggle('on',x===b));
@@ -2008,7 +2043,7 @@ $('btnConn').onclick=()=>{if($('status').className==='on'&&window.disconnectCube
 
 /* ===== Arranque ===== */
 for(const ev of ['gesturestart','gesturechange','gestureend'])document.addEventListener(ev,e=>e.preventDefault()); // iOS: sin zoom con pellizco
-if('serviceWorker' in navigator&&location.protocol.startsWith('http'))addEventListener('load',()=>idle(()=>navigator.serviceWorker.register('sw.js',{updateViaCache:'none'}).then(r=>document.addEventListener('visibilitychange',()=>{if(!document.hidden)r.update().catch(()=>{})})).catch(()=>{}),4000)); // registro fuera del arranque; busca actualizaciones al volver a la app
+if('serviceWorker' in navigator&&location.protocol.startsWith('http'))addEventListener('load',()=>idle(()=>navigator.serviceWorker.register('sw.js',{updateViaCache:'none'}).then(r=>document.addEventListener('visibilitychange',()=>{if(!document.hidden&&navigator.onLine!==false)r.update().catch(()=>{})})).catch(()=>{}),4000)); // registro fuera del arranque; busca actualizaciones al volver a la app
 $('btnGyro').hidden=!cfg.gyro;
 draw();renderStats();newScramble();$('svPlay').innerHTML=PLAY;$('csPlay').innerHTML=PLAY;
 setTimeout(()=>idle(()=>{try{if(window.Insight)probs();scheduleCoach()}catch(e){PROB=null}},8000),3000);

@@ -364,7 +364,15 @@ export function caseIcon(state, kind, flip = false) {
   const isO = kind === 'OLL' || kind === 'EOLL', corner = (s) => s.p[0] !== 0 && s.p[2] !== 0;
   const col = (s) => (isO ? (s.c === lit ? yel : off) : COL[s.c]);
   let r = `<rect x="${pad + k - 1.1}" y="${pad + k - 1.1}" width="${3 * k + 2.2}" height="${3 * k + 2.2}" rx="3.4" fill="${lineC}"/>`;
-  const rect = (x, y, w, h, c, rx = 2.5) => (r += `<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="${rx}" fill="${c}"/>`);
+  const rect = (x, y, w, h, c, rx = 2.5, op) => (r += `<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="${rx}" fill="${c}"${op ? ` opacity="${op}"` : ''}/>`);
+  if (isO) { // OLL: las 12 barras laterales se dibujan siempre, tenues, para que el icono no parezca deformado cuando faltan barras amarillas
+    const ghost = light ? '#c3cad5' : '#3b434e';
+    for (let i = 0; i < 3; i++) {
+      const o = pad + (i + 1) * k + g;
+      rect(o, pad, k - 2 * g, bar, ghost, 1.5, 0.5); rect(o, pad + 5 * k - bar, k - 2 * g, bar, ghost, 1.5, 0.5);
+      rect(pad, o, bar, k - 2 * g, ghost, 1.5, 0.5); rect(pad + 5 * k - bar, o, bar, k - 2 * g, ghost, 1.5, 0.5);
+    }
+  }
   for (const s of st) {
     if (s.p[1] !== 1) continue;
     const [x, , z] = s.p, n = s.n.join(), cx = pad + (x + 2) * k, cz = pad + (z + 2) * k;
