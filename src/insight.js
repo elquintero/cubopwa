@@ -313,12 +313,13 @@ export function algsOf(kind, id) {
 }
 
 // ---- Casos para entrenar (cubo con AMARILLO arriba y VERDE de frente) ----
-export function getCase(kind, id, alt = 0) {
+export function getCase(kind, id, alt = 0, options = {}) {
   const algs = algsOf(kind, id);
   if (!algs.length) return null;
   const ai = Math.max(0, Math.min(alt | 0, algs.length - 1)), alg = algs[ai];
   const { solvedCube } = CM();
   const ends = [], faceAlg = expand(alg, HOLD, ends), setup = invert(faceAlg);
+  if (options && options.setupOnly) return { kind, id, alg, setup };
   const steps = alg.trim().split(/\s+/).map((t, i) => ({ t, end: ends[i] })); // símbolo + giros de cara acumulados
   const frame = {}; for (const [fr, col] of Object.entries(HOLD)) frame[col] = fr; // cara de color -> posición al sujetarlo
   const flip = (arr) => arr.map((s) => ({ p: [-s.p[0], -s.p[1], s.p[2]], n: [-s.n[0], -s.n[1], s.n[2]], c: s.c }));

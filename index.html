@@ -115,7 +115,7 @@ body.tab-nav .view.on{animation:none}
 body.learn #timer{opacity:.5;font-size:clamp(44px,12vw,64px)}body.learn #timer.ready{opacity:1}
 #phase{flex:none;color:var(--mu);font-size:13px;min-height:20px}
 #live{flex:none;color:var(--mu);font-size:13px;min-height:20px;max-width:100%;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
-#quick{flex:none;display:flex;gap:22px;color:var(--mu);font-size:14px;min-height:22px;font-variant-numeric:tabular-nums}
+#quick{flex:none;display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:6px 14px;color:var(--mu);font-size:14px;min-height:30px;font-variant-numeric:tabular-nums;max-width:100%}
 #quick b{color:var(--tx);font-weight:500}
 .cvwrap{flex:0 1 auto;min-height:0;width:100%;display:flex;align-items:center;justify-content:center;margin:0 0 auto}
 #cv{width:min(74vw,330px);max-height:38dvh;object-fit:contain;aspect-ratio:1;touch-action:none;cursor:grab}
@@ -419,7 +419,7 @@ input[type=range]::-webkit-slider-thumb{background:var(--tx);border:2px solid va
 /* 1.26: giro del cubo en repeticiones, botón Análisis, selector de ajustes e historial paginado */
 #svCv,#csCv{touch-action:none;cursor:grab;-webkit-user-select:none;user-select:none}
 #svCv:active,#csCv:active{cursor:grabbing}
-.ana{flex:none;display:inline-flex;align-items:center;gap:6px;height:30px;padding:0 14px;margin:2px 0 4px;border:1px solid var(--ac);border-radius:999px;color:var(--ac);font-weight:600;font-size:13px;background:transparent}
+.ana{flex:none;display:inline-flex;align-items:center;gap:6px;height:30px;padding:0 14px;margin:0;border:1px solid var(--ac);border-radius:999px;color:var(--ac);font-weight:600;font-size:13px;background:transparent}
 .ana[hidden]{display:none}.ana svg{width:16px;height:16px}.ana:active{background:var(--inset)}
 .opt select{flex:none;background:var(--inset);color:var(--tx);border:1px solid var(--line);border-radius:10px;padding:8px 10px;font:inherit;font-size:14px;max-width:46%}
 #hist .hmore{justify-content:center;border-bottom:0;padding:10px 0;gap:10px;flex-wrap:wrap}
@@ -463,8 +463,7 @@ input[type=range]::-webkit-slider-thumb{background:var(--tx);border:2px solid va
   <div id="timer">0.00</div>
   <div id="phase"></div>
   <div id="live"></div>
-  <button id="btnAna" class="ana" hidden aria-label="Ver el análisis de la resolución" title="Ver el análisis de esta resolución"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20V10M10 20V4M16 20v-7M2 20h20"/></svg>Análisis</button>
-  <div id="quick"></div>
+  <div id="quick"><button id="btnAna" class="ana" hidden aria-label="Ver el análisis de la resolución" title="Ver el análisis de esta resolución"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20V10M10 20V4M16 20v-7M2 20h20"/></svg>Análisis</button></div>
   <div class="cvwrap"><canvas id="cv" width="520" height="520" aria-label="Vista 3D del cubo"></canvas></div>
 </main>
 
@@ -937,7 +936,7 @@ function renderStats(){
   for(const n of[5,12,50,100])rows.push(['ao'+n,avg(v,n),best(v,n)]);
   const f=x=>x===null?'-':fmt(x);
   const q=(n,x)=>x===null?'':`<span>${n} <b>${fmt(x)}</b></span>`;
-  $('quick').innerHTML=[q('ao5',rows[1][1]),q('ao12',rows[2][1]),q('mejor',rows[0][2])].join('');
+  const ana=$('btnAna');$('quick').innerHTML=[q('ao5',rows[1][1]),q('ao12',rows[2][1]),q('mejor',rows[0][2])].join('');$('quick').append(ana);
   renderStatsCards(v);
   $('stats').innerHTML='<tr><th></th><th>Ahora</th><th>Mejor</th></tr>'+rows.map(r=>`<tr><td>${r[0]}</td><td>${f(r[1])}</td><td>${f(r[2])}</td></tr>`).join('');
   const ok=solves.filter(s=>s.p!==2&&s.m>0),tps=ok.length?ok.reduce((a,s)=>a+s.m/(s.t/1000),0)/ok.length:0,fin=v.filter(x=>x!==Infinity);
@@ -1387,12 +1386,12 @@ function probs(){
   PROB={OLL:{},PLL:{},F2L:{}};
   const oriKey=st=>st.filter(s=>s.p[1]===-1&&s.c==='D').map(s=>s.p+'|'+s.n).sort().join(';');
   for(const id of Object.keys(Insight.GROUPS.OLL)){
-    const c=Insight.getCase('OLL',id),st=solvedCube();c.setup.forEach(m=>mv(st,m));const ks=new Set();
+    const c=Insight.getCase('OLL',id,0,{setupOnly:true}),st=solvedCube();c.setup.forEach(m=>mv(st,m));const ks=new Set();
     for(let r=0;r<4;r++){ks.add(oriKey(st));mv(st,'D')}
     PROB.OLL[id]=ks.size/216; // 216 estados de orientación de la última capa
   }
   for(const id of Object.keys(Insight.GROUPS.PLL)){
-    const c=Insight.getCase('PLL',id),ks=new Set();
+    const c=Insight.getCase('PLL',id,0,{setupOnly:true}),ks=new Set();
     for(let pre=0;pre<4;pre++)for(let post=0;post<4;post++){const st=solvedCube();for(let i=0;i<pre;i++)mv(st,'D');c.setup.forEach(m=>mv(st,m));for(let i=0;i<post;i++)mv(st,'D');ks.add(sig(st))}
     PROB.PLL[id]=ks.size/288; // 288 estados de permutación con la última capa orientada
   }
@@ -2278,7 +2277,7 @@ for(const ev of ['gesturestart','gesturechange','gestureend'])document.addEventL
 if('serviceWorker' in navigator&&location.protocol.startsWith('http'))addEventListener('load',()=>idle(()=>navigator.serviceWorker.register('sw.js',{updateViaCache:'none'}).then(r=>document.addEventListener('visibilitychange',()=>{if(!document.hidden&&navigator.onLine!==false)r.update().catch(()=>{})})).catch(()=>{}),4000)); // registro fuera del arranque; busca actualizaciones al volver a la app
 $('btnGyro').hidden=!cfg.gyro;touchAct();
 draw();renderStats();newScramble();$('svPlay').innerHTML=PLAY;$('csPlay').innerHTML=PLAY;
-setTimeout(()=>idle(()=>{try{if(window.Insight)probs();scheduleCoach()}catch(e){PROB=null}},8000),3000);
+setTimeout(()=>idle(()=>{try{scheduleCoach()}catch(e){console.error(e)}},8000),3000);
 </script>
 <script type="module" src="./src/bt.js"></script>
 </body>

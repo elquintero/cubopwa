@@ -55,7 +55,7 @@ function wrapAll() {
   let n = 0;
   for (const name of Object.getOwnPropertyNames(g)) {
     let v; try { v = g[name]; } catch (e) { continue; }
-    if (typeof v !== 'function' || v.__pf || S.fn.has(name)) continue;
+    if (typeof v !== 'function' || v.__pf || S.fn.has(name) || ['setTimeout','setInterval','clearInterval','requestAnimationFrame','cancelAnimationFrame'].includes(name)) continue;
     let src; try { src = Function.prototype.toString.call(v); } catch (e) { continue; }
     if (/\[native code\]/.test(src) || /^class\b/.test(src) || /^(on|webkit)/.test(name)) continue;
     const d = Object.getOwnPropertyDescriptor(g, name); if (!d || !d.writable) continue;
@@ -154,7 +154,7 @@ function segments() {
     if (dur < 1.5 && a.kind === 'view') continue;
     const fns = Object.entries(b.fn).map(([k, [n, ms]]) => { const p = a.fn[k] || [0, 0]; return [k, n - p[0], ms - p[1]]; }).filter((x) => x[1] > 0).sort((x, y) => y[2] - x[2]).slice(0, 6).map(([k, n, ms]) => ({ f: k, n, self: r1(ms) }));
     const fn = b.fr.n - a.fr.n;
-    out.push({ name: a.name, kind: a.kind, view: a.v, sec: r1(dur), fps: dur ? Math.round(fn / dur) : 0, frames: fn, jank34: b.fr.j34 - a.fr.j34, freeze100: b.fr.f100 - a.fr.f100, longtasks: b.lt[0] - a.lt[0], longtask_ms: Math.round(b.lt[1] - a.lt[1]), loaf_ms: Math.round(b.loaf - a.loaf), json_parse_ms: r1(b.jp - a.jp), innerHTML_ms: r1(b.html - a.html), toDataURL_ms: r1(b.url - a.url), storage_ms: r1(b.ls - a.ls), top: fns });
+    out.push({ name: a.name, kind: a.kind, view: a.v, sec: r1(dur), fps: (b.fr.sum - a.fr.sum) > 0 ? Math.round(fn / ((b.fr.sum - a.fr.sum) / 1000)) : 0, frames: fn, jank34: b.fr.j34 - a.fr.j34, freeze100: b.fr.f100 - a.fr.f100, longtasks: b.lt[0] - a.lt[0], longtask_ms: Math.round(b.lt[1] - a.lt[1]), loaf_ms: Math.round(b.loaf - a.loaf), json_parse_ms: r1(b.jp - a.jp), innerHTML_ms: r1(b.html - a.html), toDataURL_ms: r1(b.url - a.url), storage_ms: r1(b.ls - a.ls), top: fns });
   }
   return out;
 }
@@ -198,7 +198,7 @@ async function storageInfo() {
 }
 function bench() {
   const o = {}, loopT = (f, n) => { const t = now(); for (let i = 0; i < n; i++) f(i); return (now() - t); };
-  let x = 0; o.cpu_index_ms = r1(loopT((i) => { x += Math.sqrt(i) % 3; }, 2e6)); g.__pfSink = x; // referencia de velocidad del dispositivo (menos = mejor)
+  let x = 0; o.cpu_index_ms = r1(loopT((i) => { x += Math.sqrt(i) % 3; }, 5e5)); g.__pfSink = x; // referencia de velocidad del dispositivo (menos = mejor)
   const CM = g.CM; const O = (n) => ORIGFN.get(n) || g[n];
   if (CM && CM.solvedCube) {
     const c = CM.solvedCube(), mvs = ["R", "U", "R'", "U'", "F", "D2", "L", "B'"];
@@ -226,7 +226,7 @@ function diagnose(R) {
   if (R.timers.rafPerSec > 70) L.push(`requestAnimationFrame se pide ${R.timers.rafPerSec} veces/s: hay bucles de animación activos que quizá deberían parar en reposo.`);
   if (R.timers.intervals_active > 1) L.push(`Hay ${R.timers.intervals_active} setInterval activos.`);
   const st = R.startup; if (st.paint && st.paint['first-contentful-paint'] > 1800) L.push(`Arranque lento: primer contenido a los ${st.paint['first-contentful-paint']} ms.`);
-  if (R.bench.cpu_index_ms) L.push(`Índice de CPU del dispositivo: ${R.bench.cpu_index_ms} ms (2.000.000 de iteraciones: sirve para comparar dispositivos, menos es más rápido).`);
+  if (R.bench.cpu_index_ms) L.push(`Índice de CPU del dispositivo: ${R.bench.cpu_index_ms} ms (500.000 iteraciones: sirve para comparar dispositivos, menos es más rápido).`);
   if (!L.length) L.push('Sin hallazgos relevantes con la actividad registrada. Recorre las pantallas pesadas (Estadísticas, Aprender, una resolución completa) y vuelve a generar el informe.');
   return L;
 }

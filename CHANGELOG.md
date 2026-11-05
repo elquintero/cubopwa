@@ -1,5 +1,10 @@
 # CubIQ · Historial de versiones
 
+## 1.28.1
+- El botón «Análisis» pasa a compartir la fila de estadísticas rápidas, en lugar de ocupar una fila vertical propia. Así no empuja el cubo ni desplaza el contenido al terminar una resolución; se conserva la función de abrir la repetición y los consejos.
+- El cálculo de probabilidades OLL/PLL deja de ejecutarse durante el arranque. Se calcula cuando se necesita y obtiene únicamente los movimientos de preparación, sin generar SVG ni datos de presentación.
+- Diagnóstico: los FPS de cada escenario se calculan con el tiempo activo entre fotogramas, no con el tiempo de reloj (que incluye pausas); se excluyen temporizadores y requestAnimationFrame del muestreo de funciones y se reduce el coste del benchmark de CPU.
+
 ## 1.28.0
 - Arreglo del scramble: al conectar el cubo Bluetooth a mitad de un scramble, la app ya no lo sustituye por otro. Si el estado real del cubo está en el camino del scramble en curso (resuelto o con parte de los giros hechos), se conserva y sigue por donde vas; solo se genera uno nuevo si el cubo no encaja con él.
 - Icono nuevo (cuadrícula 3×3 con «IQ»), con el negro transparente: icono de la app, favicon y logo de la cabecera. El icono «maskable» de Android y el de iOS llevan fondo oscuro del tema, porque esos sistemas no admiten transparencia.
