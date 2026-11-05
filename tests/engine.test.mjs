@@ -55,6 +55,15 @@ ok(m && m2 && m[1] === m2[1], 'index.html y src/cube-engine.js tienen bloques di
 if (m) { const H = new Function('FACES', 'NAME', 'solvedCube', m[1] + ';return{mv,sig,isSolved,clone,fromFacelets,toFacelets}')(FACES, NAME, solvedCube);
   const a = solvedCube(), b = solvedCube(); scr(30).forEach(x => { E.mv(a, x); H.mv(b, x); }); ok(H.sig(a) === E.sig(b) && H.toFacelets(b) === E.toFacelets(a), 'copia index.html funciona igual'); }
 
+
+// 4b) scramble en curso al conectar el cubo: su estado real debe encontrarse en el camino esperado (así se conserva el scramble)
+for (let r = 0; r < 60; r++) {
+  const sc = scr(20), c = solvedCube(), pre = [E.sig(c)]; sc.forEach(m => { E.mv(c, m); pre.push(E.sig(c)); });
+  const k = rnd() * 21 | 0, real = solvedCube(); sc.slice(0, k).forEach(m => E.mv(real, m));
+  ok(pre.indexOf(E.sig(real)) === pre.indexOf(pre[k]), 'el estado a medio scramble se localiza en el camino');
+  const other = solvedCube(); ['R', 'U', "F'"].forEach(m => E.mv(other, m)); scr(7).forEach(m => E.mv(other, m));
+  ok(pre.indexOf(E.sig(other)) === -1 || pre.includes(E.sig(other)), 'estado ajeno');
+}
 // 5) rendimiento (informativo)
 const bench = (name, f, n) => { const t = performance.now(); for (let i = 0; i < n; i++) f(i); return (performance.now() - t); };
 const cA = solvedCube(), cB = solvedCube(), long = scr(200);

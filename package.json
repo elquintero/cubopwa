@@ -6,7 +6,7 @@
     "dev": "vite --host",
     "build": "vite build",
     "preview": "vite preview --host",
-    "test": "node tests/engine.test.mjs"
+    "test": "node tests/engine.test.mjs && node tests/perf.test.mjs"
   },
   "dependencies": {
     "smartcube-web-bluetooth": "github:poliva/smartcube-web-bluetooth",
@@ -15,5 +15,5 @@
   "devDependencies": {
     "vite": "^5.4.0"
   },
-  "version": "1.27.0"
+  "version": "1.28.0"
 }

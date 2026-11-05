@@ -1,5 +1,11 @@
 # CubIQ · Historial de versiones
 
+## 1.28.0
+- Arreglo del scramble: al conectar el cubo Bluetooth a mitad de un scramble, la app ya no lo sustituye por otro. Si el estado real del cubo está en el camino del scramble en curso (resuelto o con parte de los giros hechos), se conserva y sigue por donde vas; solo se genera uno nuevo si el cubo no encaja con él.
+- Icono nuevo (cuadrícula 3×3 con «IQ»), con el negro transparente: icono de la app, favicon y logo de la cabecera. El icono «maskable» de Android y el de iOS llevan fondo oscuro del tema, porque esos sistemas no admiten transparencia.
+- Diagnóstico de rendimiento oculto: 5 toques seguidos en la versión (Ajustes) lo activan y otros 5 lo desactivan. Mide arranque, tareas largas, fotogramas por pantalla, respuesta a toques, tiempo por función, JSON/localStorage/innerHTML/canvas, memoria y DOM, con marcas por escenario, y genera un informe JSON (copiar, descargar o compartir) sin tiempos de resoluciones. Desactivado no se descarga ni mide nada.
+- Pruebas automáticas ampliadas: el scramble a medio hacer se localiza en su camino y el diagnóstico se prueba con un entorno simulado.
+
 ## 1.27.0
 - Motor del cubo más rápido, sin cambiar lo que se ve ni lo que hace: los giros se calculan de una sola vez, la comparación de estados ya no construye ni ordena cadenas y las pegatinas del cubo físico (facelets) se localizan con una tabla precalculada. En pruebas con el mismo código: giros ≈ 2,5× más rápidos, firma de estado ≈ 25× y lectura/escritura de facelets ≈ 200×. Se nota sobre todo al recibir cada posición del cubo Bluetooth, al guardar una resolución y en el análisis.
 - El análisis de mejora (hilo en segundo plano) usa ahora el mismo motor que la interfaz, en un módulo propio (src/cube-engine.js), y deja de llevar una copia aparte. Con 240 resoluciones sintéticas, el análisis tarda 1,8 s en lugar de 3,5 s y da exactamente los mismos resultados.

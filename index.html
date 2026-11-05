@@ -11,6 +11,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <link rel="manifest" href="manifest.webmanifest">
+<script>try{if(localStorage.getItem('cubiq_perf')==='1'){const E=window.__pfE=[],P=JSON.parse,G=Storage.prototype.getItem,n=()=>performance.now();window.__pfO={P,G};JSON.parse=function(s,r){const t=n();try{return P.call(this,s,r)}finally{const d=n()-t;if(d>.3)E.push(['jp',t,d,s&&s.length|0])}};Storage.prototype.getItem=function(k){const t=n();try{return G.call(this,k)}finally{E.push(['ls',t,n()-t,k])}}}}catch(e){}</script>
 <link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <title>CubIQ</title>
@@ -559,7 +560,7 @@ input[type=range]::-webkit-slider-thumb{background:var(--tx);border:2px solid va
       <div id="log">Aquí aparecerán los datos crudos del cubo.</div>
     </details>
     <h3>Acerca de</h3>
-    <p class="mu" style="margin:0">CubIQ · versión <span id="ver">1.22.0</span></p>
+    <p class="mu" id="verLine" style="margin:0">CubIQ · versión <span id="ver">1.22.0</span></p>
   </div>
   <div class="vb" id="setTheme" hidden>
     <h3 style="margin-top:6px">Tema</h3>
@@ -800,7 +801,11 @@ function showCube(c){cube=c;disp=clone(c);queue=[];anim=null;draw()}
 function setFacelets(str,first){ // refleja el estado real que reporta el cubo (URFDLB)
   if(str.length!==54)return;const c=fromFacelets(str);
   if(sig(c)===sig(cube)&&!first)return;
-  showCube(c);if(first&&phase==='scramble')newScramble();else checkPhase();
+  showCube(c);
+  if(first&&phase==='scramble'){ // primer estado del cubo recién conectado
+    if(scr.length&&pre.indexOf(sig(cube))>=0)trackSync(); // el scramble en curso encaja con el cubo (resuelto o a medio hacer): se conserva y se sigue donde va
+    else newScramble(); // el cubo no está en ese camino: scramble nuevo a partir de su estado real
+  }else checkPhase();
 }
 function checkPhase(){if(phase==='scramble')trackSync();else{if(train&&at&&(phase==='ready'||phase==='running'))algSync();if(phase==='running'&&isSolved(cube))finish()}}
 let drag=null;

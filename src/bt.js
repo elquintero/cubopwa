@@ -132,3 +132,18 @@ window.connectCube = async (app) => {
     console.error(err);
   }
 };
+
+// ---- Diagnóstico de rendimiento (oculto): 5 toques seguidos en la versión de Ajustes lo activa o lo desactiva ----
+// Desactivado no se descarga ni mide nada. Activado, se recuerda entre sesiones para poder medir también el arranque.
+const PERF_FLAG = 'cubiq_perf';
+const loadPerf = () => import('./perf.js');
+try { if (localStorage.getItem(PERF_FLAG) === '1') loadPerf().then((m) => m.start()).catch(console.error); } catch (e) { /* nada */ }
+{
+  let taps = [];
+  document.getElementById('verLine')?.addEventListener('click', () => {
+    const t = performance.now(); taps = taps.filter((x) => t - x < 3000); taps.push(t);
+    if (taps.length < 5) return;
+    taps = [];
+    loadPerf().then((m) => { if (m.isOn()) m.stop(); else m.start(); if (navigator.vibrate) navigator.vibrate(30); }).catch(console.error);
+  });
+}
