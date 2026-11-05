@@ -1,5 +1,11 @@
 # CubIQ · Historial de versiones
 
+## 1.29.1
+- Todos los idiomas se precargan en el service worker (≈ 130 KB), para poder cambiar de idioma sin conexión, también en un APK que cargue la web (TWA). En un APK con los archivos dentro (Capacitor/Cordova) ya iban incluidos en la carpeta lang/.
+
+## 1.29.0
+- Multiidioma: español, inglés, francés, alemán y chino tradicional. Se elige en Ajustes > General > Idioma (por defecto, el del móvil). Las traducciones están en public/lang y solo se descarga la del idioma elegido; el service worker las guarda al usarlas.
+
 ## 1.28.2
 - Las imágenes de Aprender y Entrenar usan siempre el cubo clásico: colores originales, pegatinas cuadradas y sin logo. Las skins y colores personalizados se reservan para el cubo principal de la pantalla de resolución.
 - El botón «Análisis» aparece únicamente en Inicio tras una resolución, en una fila propia y discreta; desaparece automáticamente a los 10 segundos y al salir de Inicio. No aparece al abrir casos desde Aprender.

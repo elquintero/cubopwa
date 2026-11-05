@@ -31,7 +31,7 @@ const cubiq = () => {
     },
     closeBundle() {
       const files = walk(outDir).map((f) => relative(outDir, f).split(sep).join('/'))
-        .filter((f) => f !== 'sw.js' && !f.endsWith('.map') && !f.endsWith('.woff')) // woff2 basta en los navegadores que instalan PWAs
+        .filter((f) => f !== 'sw.js' && !f.endsWith('.map') && !f.endsWith('.woff')) // woff2 basta en los navegadores que instalan PWAs; los idiomas (lang/) SÍ se precargan para que todo funcione sin conexión
         .filter((f) => !f.endsWith('.woff2') || /-latin-\d/.test(f));                // solo el subconjunto latino de la tipografía (cubre el español)
       const hash = createHash('sha1');
       for (const f of files.sort()) hash.update(f).update(readFileSync(join(outDir, f)));
