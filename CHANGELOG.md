@@ -1,5 +1,11 @@
 # CubIQ · Historial de versiones
 
+## 1.28.2
+- Las imágenes de Aprender y Entrenar usan siempre el cubo clásico: colores originales, pegatinas cuadradas y sin logo. Las skins y colores personalizados se reservan para el cubo principal de la pantalla de resolución.
+- El botón «Análisis» aparece únicamente en Inicio tras una resolución, en una fila propia y discreta; desaparece automáticamente a los 10 segundos y al salir de Inicio. No aparece al abrir casos desde Aprender.
+- «Prepara el caso» reorganiza la etiqueta y el algoritmo en bloques adaptables. Los algoritmos largos pueden ocupar varias líneas sin desbordar ni superponerse al resto de la pantalla.
+- La animación del detalle de un caso mantiene también el estilo clásico, independientemente de la skin elegida.
+
 ## 1.28.1
 - El botón «Análisis» pasa a compartir la fila de estadísticas rápidas, en lugar de ocupar una fila vertical propia. Así no empuja el cubo ni desplaza el contenido al terminar una resolución; se conserva la función de abrir la repetición y los consejos.
 - El cálculo de probabilidades OLL/PLL deja de ejecutarse durante el arranque. Se calcula cuando se necesita y obtiene únicamente los movimientos de preparación, sin generar SVG ni datos de presentación.
