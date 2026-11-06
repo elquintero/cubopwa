@@ -4,27 +4,33 @@ import '@fontsource/poppins/700.css';
 import './insight.js';
 
 // El análisis de mejora se ejecuta en un hilo separado para no bloquear las pestañas.
-let insightWorker = null, insightWorkerId = 0;
+let insightWorker = null, insightWorkerId = 0, insightWorkerTried = false;
 const insightJobs = new Map();
-try {
-  if (typeof Worker !== 'undefined') {
-    insightWorker = new Worker(new URL('./insight-worker.js', import.meta.url), { type: 'module' });
-    insightWorker.onmessage = ({ data }) => {
-      const job = insightJobs.get(data.id);
-      if (!job) return;
-      insightJobs.delete(data.id);
-      data.error ? job.reject(new Error(data.error)) : job.resolve(data.result);
-    };
-    const failWorker = () => {
-      for (const job of insightJobs.values()) job.reject(new Error('Worker no disponible'));
-      insightJobs.clear(); insightWorker?.terminate(); insightWorker = null;
-    };
-    insightWorker.onerror = failWorker;
-    insightWorker.onmessageerror = failWorker;
-  }
-} catch (_) { insightWorker = null; }
+// El Worker se crea la primera vez que hace falta (no en el arranque).
+function ensureWorker() {
+  if (insightWorkerTried) return insightWorker;
+  insightWorkerTried = true;
+  try {
+    if (typeof Worker !== 'undefined') {
+      insightWorker = new Worker(new URL('./insight-worker.js', import.meta.url), { type: 'module' });
+      insightWorker.onmessage = ({ data }) => {
+        const job = insightJobs.get(data.id);
+        if (!job) return;
+        insightJobs.delete(data.id);
+        data.error ? job.reject(new Error(data.error)) : job.resolve(data.result);
+      };
+      const failWorker = () => {
+        for (const job of insightJobs.values()) job.reject(new Error('Worker no disponible'));
+        insightJobs.clear(); insightWorker?.terminate(); insightWorker = null;
+      };
+      insightWorker.onerror = failWorker;
+      insightWorker.onmessageerror = failWorker;
+    }
+  } catch (_) { insightWorker = null; }
+  return insightWorker;
+}
 window.analyzeSolveAsync = (snap, moves) => new Promise((resolve, reject) => {
-  if (!insightWorker) {
+  if (!ensureWorker()) {
     // Compatibilidad con navegadores sin Web Worker.
     try { resolve(window.Insight.analyze(snap, moves)); } catch (e) { reject(e); }
     return;

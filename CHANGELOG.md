@@ -1,5 +1,10 @@
 # CubIQ · Historial de versiones
 
+## 1.29.5
+- Arranque más ligero: al abrir solo se pinta lo visible (cubo, scramble y la línea ao5/ao12/mejor). El historial, las tarjetas y la tabla de estadísticas se generan cuando el navegador está libre, o al entrar en la pestaña si lo haces antes.
+- El Worker del análisis de resoluciones se crea la primera vez que hace falta, no al cargar la app.
+- La comprobación de inactividad del cubo (cada 20 s) solo se ejecuta mientras hay un cubo conectado.
+
 ## 1.29.4
 - Idioma y «Desconectar el cubo por inactividad»: la lista desplegable ya se cierra al elegir una opción, al tocar fuera, con «atrás» y con Escape (antes se quedaba abierta).
 - Sin vibración al mantener pulsado (marcar resuelto, caso aprendido, diagnóstico).

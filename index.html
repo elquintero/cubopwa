@@ -951,12 +951,12 @@ const best=(a,n)=>{if(a.length<n)return null;
   for(let i=from;i<=a.length;i++){const r=winAvg(a,i,n);if(r<b)b=r}
   bestMemo[n]={len:a.length,h:hsh(a,a.length),v:b};return b};
 const H_PLAY='<svg class="i" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M10 8.6v6.8l5.6-3.4z"/></svg>',H_DEL='<svg class="i" viewBox="0 0 24 24"><path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3"/></svg>';
+function renderQuick(a5,a12,bs){const q=(n,x)=>x===null?'':`<span>${n} <b>${fmt(x)}</b></span>`;$('quick').innerHTML=[q('ao5',a5),q('ao12',a12),q('mejor',bs)].join('')}
 function renderStats(){
   const v=solves.map(val),rows=[['single',v.length?v[v.length-1]:null,v.length?Math.min(...v):null]];
   for(const n of[5,12,50,100])rows.push(['ao'+n,avg(v,n),best(v,n)]);
   const f=x=>x===null?'-':fmt(x);
-  const q=(n,x)=>x===null?'':`<span>${n} <b>${fmt(x)}</b></span>`;
-  $('quick').innerHTML=[q('ao5',rows[1][1]),q('ao12',rows[2][1]),q('mejor',rows[0][2])].join('');
+  renderQuick(rows[1][1],rows[2][1],rows[0][2]);
   renderStatsCards(v);
   $('stats').innerHTML='<tr><th></th><th>Ahora</th><th>Mejor</th></tr>'+rows.map(r=>`<tr><td>${r[0]}</td><td>${f(r[1])}</td><td>${f(r[2])}</td></tr>`).join('');
   const ok=solves.filter(s=>s.p!==2&&s.m>0),tps=ok.length?ok.reduce((a,s)=>a+s.m/(s.t/1000),0)/ok.length:0,fin=v.filter(x=>x!==Infinity);
@@ -2338,7 +2338,9 @@ function cubeIdleCheck(){
   if(Date.now()-lastAct<m*60000)return; // lastAct se renueva con cada giro del cubo y con cada toque en la app
   window.disconnectCube(window.app);toast('Cubo desconectado por inactividad. Toca «Conectar» para volver.');
 }
-setInterval(cubeIdleCheck,20000);
+let idleTimer=0; // el intervalo solo corre con un cubo conectado: sin cubo no hay nada que comprobar
+function idleSync(){const on=$('status').className==='on';if(on&&!idleTimer)idleTimer=setInterval(cubeIdleCheck,20000);else if(!on&&idleTimer){clearInterval(idleTimer);idleTimer=0}}
+new MutationObserver(idleSync).observe($('status'),{attributes:true,attributeFilter:['class']});idleSync();
 document.addEventListener('visibilitychange',()=>{if(!document.hidden)cubeIdleCheck()});
 $('oIdle').onchange=e=>{cfg.idleMin=+e.target.value;saveCfg()};
 
@@ -2346,7 +2348,8 @@ $('oIdle').onchange=e=>{cfg.idleMin=+e.target.value;saveCfg()};
 for(const ev of ['gesturestart','gesturechange','gestureend'])document.addEventListener(ev,e=>e.preventDefault()); // iOS: sin zoom con pellizco
 if('serviceWorker' in navigator&&location.protocol.startsWith('http'))addEventListener('load',()=>idle(()=>navigator.serviceWorker.register('sw.js',{updateViaCache:'none'}).then(r=>document.addEventListener('visibilitychange',()=>{if(!document.hidden&&navigator.onLine!==false)r.update().catch(()=>{})})).catch(()=>{}),4000)); // registro fuera del arranque; busca actualizaciones al volver a la app
 $('btnGyro').hidden=!cfg.gyro;touchAct();
-draw();renderStats();newScramble();$('svPlay').innerHTML=PLAY;$('csPlay').innerHTML=PLAY;
+draw();{const v=solves.map(val);renderQuick(avg(v,5),avg(v,12),v.length?Math.min(...v):null)}newScramble();$('svPlay').innerHTML=PLAY;$('csPlay').innerHTML=PLAY;
+idle(()=>{if(VKEY.stats===undefined)renderStats()},2500); // historial, tarjetas y tabla: fuera del arranque (si abres Estadísticas antes, se generan entonces)
 setTimeout(()=>idle(()=>{try{scheduleCoach()}catch(e){console.error(e)}},8000),3000);
 </script>
 <script type="module" src="./src/bt.js"></script>
