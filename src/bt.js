@@ -144,6 +144,6 @@ try { if (localStorage.getItem(PERF_FLAG) === '1') loadPerf().then((m) => m.star
     const t = performance.now(); taps = taps.filter((x) => t - x < 3000); taps.push(t);
     if (taps.length < 5) return;
     taps = [];
-    loadPerf().then((m) => { if (m.isOn()) m.stop(); else m.start(); if (navigator.vibrate) navigator.vibrate(30); }).catch(console.error);
+    loadPerf().then((m) => { if (m.isOn()) m.stop(); else m.start(); }).catch(console.error);
   });
 }

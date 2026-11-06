@@ -39,6 +39,9 @@ header{flex:none;display:flex;align-items:center;gap:6px;height:calc(52px + env(
 .logo{border-radius:7px;margin-right:6px}
 .brand{font:700 20px/1 Poppins,ui-rounded,system-ui,sans-serif;letter-spacing:-.02em}
 html,body{touch-action:pan-x pan-y} /* sin zoom con pellizco */
+html,body{-webkit-user-select:none;user-select:none;-webkit-touch-callout:none} /* se comporta como app nativa: texto no seleccionable */
+input,textarea,[contenteditable=true]{-webkit-user-select:text;user-select:text}
+img,svg,canvas{-webkit-user-drag:none;user-drag:none}
 .brand span{color:#ff8a1f}
 #rot{display:none}
 @media (pointer:coarse) and (orientation:landscape) and (max-height:540px){#rot{display:flex;position:fixed;inset:0;z-index:100;background:var(--bg);color:var(--tx);flex-direction:column;align-items:center;justify-content:center;gap:10px;text-align:center}#rot span{color:var(--mu);font-size:14px}}
@@ -575,6 +578,7 @@ input[type=range]::-webkit-slider-thumb{background:var(--tx);border:2px solid va
     </details>
     <h3>Acerca de</h3>
     <p class="mu" id="verLine" style="margin:0">CubIQ · versión <span id="ver">1.22.0</span></p>
+    <p class="mu" id="copyLine" style="margin:4px 0 0">Copyright © Magic-Soft</p>
   </div>
   <div class="vb" id="setTheme" hidden>
     <h3 style="margin-top:6px">Tema</h3>
@@ -826,7 +830,7 @@ function checkPhase(){if(phase==='scramble')trackSync();else{if(train&&at&&(phas
 let drag=null;
 let cvLp=0,cvP0=null;
 cv.addEventListener('pointerdown',e=>{drag=[e.clientX,e.clientY];cvP0=[e.clientX,e.clientY];cv.setPointerCapture(e.pointerId);
-  clearTimeout(cvLp);cvLp=setTimeout(()=>{cvLp=0;drag=null;if(navigator.vibrate)navigator.vibrate(30);markSolved()},650)});
+  clearTimeout(cvLp);cvLp=setTimeout(()=>{cvLp=0;drag=null;markSolved()},650)});
 cv.addEventListener('contextmenu',e=>e.preventDefault());
 for(const ev of ['pointerup','pointercancel'])cv.addEventListener(ev,()=>{clearTimeout(cvLp);cvLp=0});
 cv.addEventListener('pointermove',e=>{if(!drag)return;if(cvLp&&cvP0&&Math.hypot(e.clientX-cvP0[0],e.clientY-cvP0[1])>10){clearTimeout(cvLp);cvLp=0}A+=(e.clientX-drag[0])*0.01;Bt=Math.max(-1.4,Math.min(1.4,Bt+(e.clientY-drag[1])*0.01));drag=[e.clientX,e.clientY];draw()});
@@ -1273,8 +1277,8 @@ function ddOpen(sel,btn){
     const b=document.createElement('button');b.type='button';b.setAttribute('role','option');b.dataset.v=o.value;
     const on=o.value===sel.value;b.className=on?'on':'';b.setAttribute('aria-selected',on);
     const t=document.createElement('span');t.textContent=o.textContent;b.appendChild(t);b.insertAdjacentHTML('beforeend',DD_CHECK);m.appendChild(b)}
-  m.onclick=e=>{const b=e.target.closest('button');if(!b)return;const v=b.dataset.v,ch=sel.value!==v;ddClose();if(ch){sel.value=v;sel.dispatchEvent(new Event('change',{bubbles:true}))}btn.focus()};
-  document.body.appendChild(m);
+  m.onclick=e=>{e.stopPropagation();const b=e.target.closest('button');if(!b)return;const v=b.dataset.v,ch=sel.value!==v;ddClose();btn.setAttribute('aria-expanded','false');if(ch){sel.value=v;sel.dispatchEvent(new Event('change',{bubbles:true}))}btn.focus()};
+  document.body.appendChild(m);ddMenu=m;
   const r=btn.getBoundingClientRect(),vh=(window.visualViewport&&visualViewport.height)||innerHeight;
   m.style.minWidth=r.width+'px';m.style.maxHeight='none';
   const w=Math.max(r.width,m.offsetWidth),h=Math.min(m.scrollHeight+2,360),gap=6,pad=10,below=vh-r.bottom-gap-pad,above=r.top-gap-pad,up=below<h&&above>below;
@@ -1302,6 +1306,8 @@ ddInit();
 let hArmed=false,lastBack=0;
 const hArm=()=>{if(hArmed)return;try{history.pushState({cq:1},'');hArmed=true}catch(e){}};
 try{history.replaceState({cq:0},'')}catch(e){}
+document.addEventListener('contextmenu',e=>{if(!e.target.closest('input,textarea,[contenteditable=true]'))e.preventDefault()}); // sin menú de copiar/pegar
+document.addEventListener('selectstart',e=>{if(!e.target.closest?.('input,textarea,[contenteditable=true]'))e.preventDefault()});
 document.addEventListener('pointerdown',hArm,true); // se arma con el primer toque: Chrome ignora las entradas de historial sin interacción
 window.addEventListener('popstate',()=>{
   hArmed=false;
@@ -1598,7 +1604,7 @@ let lpT=0,lpFired=false;
 $('lnBody').addEventListener('pointerdown',e=>{const t=e.target.closest('.tile');if(!t)return;lpFired=false;clearTimeout(lpT);
   lpT=setTimeout(()=>{lpFired=true;const k=t.dataset.k+' '+t.dataset.i,L=lstats[k]||(lstats[k]={s:0,c:0,n:0});
     if(L.s>=3){L.s=0;L.c=0;toast(lbl(t.dataset.k,t.dataset.i)+': vuelve a nuevo')}else{setMastered(k,1);toast(lbl(t.dataset.k,t.dataset.i)+': marcado como dominado. Lo repasarás en 3 días')}
-    saveL();if(navigator.vibrate)navigator.vibrate(25);renderLearn()},550)});
+    saveL();renderLearn()},550)});
 for(const ev of ['pointerup','pointercancel','pointermove','pointerleave'])$('lnBody').addEventListener(ev,()=>clearTimeout(lpT));
 $('lnBody').addEventListener('contextmenu',e=>{if(e.target.closest('.tile'))e.preventDefault()});
 $('lnBody').onclick=e=>{
