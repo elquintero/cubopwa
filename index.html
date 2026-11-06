@@ -403,7 +403,13 @@ input[type=range]::-webkit-slider-thumb{background:var(--tx);border:2px solid va
 .logo-upload-copy{min-width:0;flex:1}.logo-upload-copy b,.logo-upload-copy small{display:block}.logo-upload-copy b{font-size:13px}.logo-upload-copy small{font-size:11px;line-height:1.35;color:var(--mu);margin:2px 0 8px}
 .logo-actions{display:flex;flex-wrap:wrap;gap:6px 18px}.logo-actions .lnk{padding:2px 0;font-size:13px}.lnk-mu{color:var(--mu)}
 .lnk+.lnk{margin-left:14px}
-.color-dot{width:26px;height:26px;border:2px solid var(--bd2);border-radius:50%;padding:0;box-shadow:inset 0 0 0 2px var(--card)}
+.color-dot{width:26px;height:26px;border:2px solid var(--bd2);border-radius:7px;padding:0;box-shadow:inset 0 0 0 2px var(--card)}
+.ddw{position:relative;flex:none;max-width:46%;display:inline-flex}.ddw select{pointer-events:none;max-width:100%}
+.ddw .dd-hit{position:absolute;inset:0;width:100%;height:100%;background:none;border:0;border-radius:10px;padding:0;cursor:pointer;-webkit-tap-highlight-color:transparent}.ddw .dd-hit:focus-visible{outline:2px solid var(--ac);outline-offset:2px}
+.dd-menu{position:fixed;z-index:1200;min-width:140px;max-width:calc(100vw - 24px);max-height:min(56vh,360px);overflow:auto;overscroll-behavior:contain;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:6px;box-shadow:0 18px 44px rgba(0,0,0,.38);animation:cmPop .14s ease-out;transform-origin:var(--o,top right)}
+.dd-menu button{display:flex;align-items:center;justify-content:space-between;gap:14px;width:100%;text-align:left;padding:11px 12px;border:0;border-radius:9px;background:none;color:var(--tx);font:inherit;font-size:14px;cursor:pointer;white-space:nowrap}
+.dd-menu button:hover,.dd-menu button:focus-visible{background:var(--inset);outline:none}
+.dd-menu button.on{color:var(--ac);font-weight:600}.dd-menu button svg{width:16px;height:16px;flex:none;stroke:currentColor;fill:none;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round;opacity:0}.dd-menu button.on svg{opacity:1}
 .color-modal-backdrop{position:fixed;inset:0;z-index:1000;background:rgba(5,7,10,.62);-webkit-backdrop-filter:blur(3px);backdrop-filter:blur(3px);display:grid;place-items:center;padding:22px;animation:cmFade .16s ease-out}
 .color-modal{width:min(100%,340px);background:var(--card);border:1px solid var(--line);border-radius:18px;padding:18px;box-shadow:0 24px 60px rgba(0,0,0,.4);animation:cmPop .18s ease-out}
 @keyframes cmFade{from{opacity:0}}@keyframes cmPop{from{opacity:0;transform:translateY(6px) scale(.98)}}
@@ -420,7 +426,7 @@ input[type=range]::-webkit-slider-thumb{background:var(--tx);border:2px solid va
 .cm-hue::-moz-range-track{background:transparent}
 .cm-hex{display:flex;align-items:center;gap:10px;margin-top:16px;padding:0 12px;height:40px;background:var(--inset);border:1px solid var(--line);border-radius:11px}.cm-hex:focus-within{border-color:var(--ac)}
 .cm-hex span{font-size:10px;font-weight:600;letter-spacing:.08em;color:var(--mu)}.cm-hex input{flex:1;min-width:0;background:none;border:0;outline:0;color:var(--tx);font:13px ui-monospace,SFMono-Regular,monospace;text-transform:uppercase}
-.cm-presets{display:grid;grid-template-columns:repeat(8,1fr);gap:7px;margin-top:14px}.cm-presets button{aspect-ratio:1;border-radius:50%;border:1px solid rgba(128,128,128,.4);box-shadow:inset 0 0 0 2px var(--card)}.cm-presets button.on{border-color:var(--ac);box-shadow:inset 0 0 0 2px var(--card),0 0 0 1px var(--ac)}
+.cm-presets{display:grid;grid-template-columns:repeat(8,1fr);gap:7px;margin-top:14px}.cm-presets button{aspect-ratio:1;border-radius:7px;border:1px solid rgba(128,128,128,.4);box-shadow:inset 0 0 0 2px var(--card)}.cm-presets button.on{border-color:var(--ac);box-shadow:inset 0 0 0 2px var(--card),0 0 0 1px var(--ac)}
 .cm-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:18px}.cm-btn{height:40px;border-radius:11px;border:1px solid var(--line);font-size:13px;font-weight:600;color:var(--tx)}.cm-btn:hover{border-color:var(--mu)}.cm-btn.pri{background:var(--ac);border-color:var(--ac);color:var(--onac)}.cm-btn.pri:hover{filter:brightness(1.06)}
 /* 1.26: giro del cubo en repeticiones, botón Análisis, selector de ajustes e historial paginado */
 #svCv,#csCv{touch-action:none;cursor:grab;-webkit-user-select:none;user-select:none}
@@ -523,10 +529,11 @@ input[type=range]::-webkit-slider-thumb{background:var(--tx);border:2px solid va
   <div class="vt"><div class="seg" id="setTabs"><button data-t="gen" class="on">General</button><button data-t="theme">Tema</button></div></div>
   <div class="vb" id="setGen">
     <button class="profcard" id="spProf"></button>
-    <label class="opt"><span><b>Idioma</b></span><select id="oLang" class="sel"><option value="es">Español</option><option value="en">English</option><option value="fr">Français</option><option value="de">Deutsch</option><option value="zh-TW">繁體中文</option></select></label>
+    <div class="opt" data-dd><span><b>Idioma</b></span><select id="oLang" class="sel"><option value="es">Español</option><option value="en">English</option><option value="fr">Français</option><option value="de">Deutsch</option><option value="zh-TW">繁體中文</option></select></div>
     <label class="opt"><span><b>Inspección de 15 s</b><small>Cuenta atrás antes de resolver. Tras 15 s se aplica +2 y tras 17 s, DNF</small></span><input type="checkbox" role="switch" id="oInsp"></label>
     <label class="opt"><span><b>Mantener la pantalla encendida</b><small>Evita que el móvil se apague mientras practicas o resuelves (se libera tras 10 min sin actividad)</small></span><input type="checkbox" role="switch" id="oWake"></label>
-    <label class="opt"><span><b>Desconectar el cubo por inactividad</b><small>Si no giras el cubo ni tocas la app durante este tiempo, se desconecta para ahorrar la batería del cubo. Se vuelve a conectar con «Conectar»</small></span><select id="oIdle" aria-label="Desconectar el cubo por inactividad"><option value="0">Nunca</option><option value="2">2 min</option><option value="5">5 min</option><option value="10">10 min</option><option value="15">15 min</option></select></label>
+    <label class="opt"><span><b>Repeticiones con el amarillo arriba</b><small>Muestra la repetición de cada resolución con la cara amarilla arriba (cruz blanca abajo). Desactívalo para verla con la blanca arriba</small></span><input type="checkbox" role="switch" id="oRpY"></label>
+    <div class="opt" data-dd><span><b>Desconectar el cubo por inactividad</b><small>Si no giras el cubo ni tocas la app durante este tiempo, se desconecta para ahorrar la batería del cubo. Se vuelve a conectar con «Conectar»</small></span><select id="oIdle" aria-label="Desconectar el cubo por inactividad"><option value="0">Nunca</option><option value="2">2 min</option><option value="5">5 min</option><option value="10">10 min</option><option value="15">15 min</option></select></div>
     <label class="opt"><span><b>Inicio automático</b><small>Empieza al realizar un giro cuando el scramble está hecho y aparece ¡Start!</small></span><input type="checkbox" role="switch" id="oAuto"></label>
     <label class="opt"><span><b>Animación de éxito</b><small>Reproduce una animación cuando el cubo está resuelto o un caso de entrenamiento terminado</small></span><input type="checkbox" role="switch" id="oSucc"></label>
     <label class="opt"><span><b>Análisis y consejos</b><small>Recibe alertas instantáneas sobre cómo podrías haber ahorrado tiempo</small></span><input type="checkbox" role="switch" id="oIns"></label>
@@ -1254,6 +1261,41 @@ document.addEventListener('click',e=>{
 document.addEventListener('scroll',hHide,true);
 $('oLang').value=I18N.lang;$('oLang').onchange=e=>{cfg.lang=e.target.value;saveCfg();location.reload()};
 $('oHelp').onchange=e=>{cfg.help=e.target.checked;saveCfg();applyHelp();hHide()};
+
+/* ===== Desplegables propios (Idioma, Desconexión): mismo aspecto cerrado que el select, lista unificada al abrirse ===== */
+let ddMenu=null,ddSel=null;
+const DD_CHECK='<svg viewBox="0 0 24 24"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg>';
+function ddClose(){if(ddMenu){ddMenu.remove();ddMenu=null;ddSel=null}}
+function ddOpen(sel,btn){
+  ddClose();ddSel=sel;
+  const m=document.createElement('div');m.className='dd-menu';m.setAttribute('role','listbox');
+  for(const o of sel.options){
+    const b=document.createElement('button');b.type='button';b.setAttribute('role','option');b.dataset.v=o.value;
+    const on=o.value===sel.value;b.className=on?'on':'';b.setAttribute('aria-selected',on);
+    const t=document.createElement('span');t.textContent=o.textContent;b.appendChild(t);b.insertAdjacentHTML('beforeend',DD_CHECK);m.appendChild(b)}
+  m.onclick=e=>{const b=e.target.closest('button');if(!b)return;const v=b.dataset.v,ch=sel.value!==v;ddClose();if(ch){sel.value=v;sel.dispatchEvent(new Event('change',{bubbles:true}))}btn.focus()};
+  document.body.appendChild(m);
+  const r=btn.getBoundingClientRect(),w=Math.max(r.width,m.offsetWidth),h=m.offsetHeight;
+  const left=Math.max(12,Math.min(innerWidth-w-12,r.right-w)),below=innerHeight-r.bottom-8,up=below<h&&r.top>below;
+  m.style.minWidth=r.width+'px';m.style.left=left+'px';
+  m.style.top=(up?Math.max(8,r.top-6-h):r.bottom+6)+'px';m.style.setProperty('--o',(up?'bottom':'top')+' right');
+  const on=m.querySelector('.on');if(on)on.scrollIntoView({block:'nearest'});
+  btn.setAttribute('aria-expanded','true');
+}
+function ddInit(){
+  document.querySelectorAll('.opt[data-dd] select').forEach(sel=>{
+    if(sel.parentElement.classList.contains('ddw'))return;
+    const w=document.createElement('span');w.className='ddw';sel.parentNode.insertBefore(w,sel);w.appendChild(sel);
+    sel.tabIndex=-1;sel.setAttribute('aria-hidden','true');
+    const b=document.createElement('button');b.type='button';b.className='dd-hit';b.setAttribute('aria-haspopup','listbox');b.setAttribute('aria-expanded','false');
+    b.setAttribute('aria-label',sel.getAttribute('aria-label')||(sel.closest('.opt').querySelector('b')||{}).textContent||'');
+    b.onclick=e=>{e.stopPropagation();if(ddSel===sel){ddClose();b.setAttribute('aria-expanded','false')}else ddOpen(sel,b)};
+    w.appendChild(b)});
+}
+document.addEventListener('pointerdown',e=>{if(ddMenu&&!e.target.closest('.dd-menu')&&!e.target.closest('.dd-hit')){ddClose();document.querySelectorAll('.dd-hit').forEach(b=>b.setAttribute('aria-expanded','false'))}},true);
+document.addEventListener('keydown',e=>{if(e.key==='Escape'&&ddMenu){e.stopPropagation();ddClose();document.querySelectorAll('.dd-hit').forEach(b=>b.setAttribute('aria-expanded','false'))}},true);
+window.addEventListener('resize',ddClose);document.addEventListener('scroll',e=>{if(ddMenu&&!e.target.closest?.('.dd-menu'))ddClose()},true);
+ddInit();
 /* Botón «atrás» de Android: vuelve a la pantalla anterior, luego a Cronómetro, y sale con doble pulsación */
 let hArmed=false,lastBack=0;
 const hArm=()=>{if(hArmed)return;try{history.pushState({cq:1},'');hArmed=true}catch(e){}};
@@ -1262,8 +1304,12 @@ document.addEventListener('pointerdown',hArm,true); // se arma con el primer toq
 window.addEventListener('popstate',()=>{
   hArmed=false;
   if(!hpop.hidden){hHide();hArm();return}
+  if(ddMenu){ddClose();hArm();return}
   const dlg=document.querySelector('dialog[open]');
   if(dlg){dlg.close();hArm();return}
+  if(train){ // entrenamiento en curso: atrás vuelve a donde se empezó (Entrenar, el caso o la pestaña de origen)
+    if(app.busy())toast('Termina la resolución antes de salir');else exitTrain();
+    hArm();return}
   if(vStack.length){back();hArm();return}
   if(vNow!=='home'){nav('home');hArm();return}
   if(app.busy()){toast('Termina la resolución antes de salir');hArm();return}
@@ -1272,7 +1318,7 @@ window.addEventListener('popstate',()=>{
 /* Solo vertical en móvil (la app instalada ya lo fija desde el manifest) */
 if(matchMedia('(pointer:coarse)').matches)document.addEventListener('pointerdown',()=>{try{screen.orientation.lock('portrait').catch(()=>{})}catch(e){}},{once:true});
 document.addEventListener('keydown',e=>{if(e.key==='Escape'&&vStack.length&&!document.querySelector('dialog[open]'))back()});
-function syncSet(){if(!$('setTheme').hidden&&typeof renderPrev==='function')renderPrev();$('oIns').checked=cfg.insight;$('oGyro').checked=cfg.gyro;$('oHelp').checked=cfg.help!==false;$('oInsp').checked=cfg.insp;$('oAuto').checked=cfg.auto;$('oSucc').checked=cfg.success;$('oWake').checked=cfg.wake!==false;$('oIdle').value=String(cubeIdleMin());renderDevs()}
+function syncSet(){if(!$('setTheme').hidden&&typeof renderPrev==='function')renderPrev();$('oIns').checked=cfg.insight;$('oGyro').checked=cfg.gyro;$('oHelp').checked=cfg.help!==false;$('oInsp').checked=cfg.insp;$('oAuto').checked=cfg.auto;$('oSucc').checked=cfg.success;$('oWake').checked=cfg.wake!==false;$('oRpY').checked=cfg.rpYellow!==false;$('oIdle').value=String(cubeIdleMin());renderDevs()}
 
 /* ===== Aviso instantáneo ===== */
 let alertTimer=0,alertData=null;
@@ -1455,7 +1501,7 @@ function coachAction(C){
 // Empieza ya la sesión con los casos elegidos. Si el cubo no está resuelto, abre el selector con esos casos ya marcados.
 function trainNow(tab){
   tTab=tab;torder='rand';
-  if(startSession('drill',{v:'train'}))return;
+  if(startSession('drill',{v:TABS.includes(vNow)&&vNow!=='home'?vNow:'train'}))return;
   nav('train');trainLanding=false;renderCatalog();
 }
 /* ===== Recomendaciones: prioridad por impacto ===== */
@@ -1694,17 +1740,18 @@ function pickCase(){
 function nextCase(){const k=pickCase();if(!k)return exitTrain();lastKey=k;tpeek=false;const sp=k.indexOf(' ');train=GC(k.slice(0,sp),k.slice(sp+1));at=null;renderTrain();newScramble()}
 function startSession(mode,from){
   if(!isSolved(cube)){toast('Deja el cubo resuelto para empezar');return false}
+  if(!from&&vNow!=='home'&&TABS.includes(vNow))from={v:vNow}; // vuelve a la pestaña desde la que se empezó
   tmode=mode;trFrom=from||null;tses={n:0};hideAlert();lastKey='';seqI=0;
   trReview=false;trFail=false;
   if(mode==='learn'){const k=[...tsel][0],L=lstats[k]||(lstats[k]={s:0,c:0,n:0});trReview=L.s>=3;if(!L.s)L.s=1;L.c=0;cfg.showAlg=L.s<2;saveCfg();saveL()}
   nextCase();nav('home');return true;
 }
 const startLearn=(kind,id)=>{tsel=new Set([kind+' '+id]);return startSession('learn',{v:'case',kind,id})};
-const startTrain=(kind,id)=>{tsel=new Set([kind+' '+id]);return startSession('drill',vNow==='case'?{v:'case',kind,id}:null)};
+const startTrain=(kind,id)=>{tsel=new Set([kind+' '+id]);return startSession('drill',vNow==='case'?{v:'case',kind,id}:null)}; // desde Entrenar, startSession recuerda la pestaña
 function startGroup(kind){tsel=new Set(Object.keys(Insight.GROUPS[kind]).map(id=>kind+' '+id));return startSession('drill',null)}
 function exitTrain(){
   const from=trFrom;train=null;at=null;tpeek=false;trFrom=null;renderTrain();newScramble();$('timer').textContent='0.00';$('live').textContent='';
-  if(from&&from.v==='case'){nav('learn');openCase(from.kind,from.id)}else if(from&&from.v==='train')nav('train');
+  if(from&&from.v==='case'){nav('learn');openCase(from.kind,from.id)}else if(from&&from.v&&TABS.includes(from.v)&&from.v!=='home')nav(from.v);
 }
 function finishTrain(t){
   const k=train.key,e=tstats[k]||(tstats[k]={n:0,best:Infinity,last:0}),rec=t<e.best,lab=caseTitle(train);
@@ -2190,7 +2237,7 @@ function rpFrame(T){
   for(let j=0;j<=k;j++)mv(st,m[j].m);
   let an=null;const nx=m[k+1];
   if(rp.play&&nx&&nx.t-T<180){const q=nx.m.endsWith("'")?-1:nx.m.endsWith('2')?2:1,n=FACES[nx.m[0]],ax=n.findIndex(v=>v),sg=n[ax],e=1-(nx.t-T)/180;an={ax,sg,th:-sg*q*Math.PI/2*e*e*(3-2*e)}}
-  paintCube(c.getContext('2d'),c.width,st,an,null,rview);
+  paintCube(c.getContext('2d'),c.width,st,an,cfg.rpYellow!==false?GFL:null,rview); // amarillo arriba (giro z2), como en el entrenamiento
   $('svSeek').value=rp.dur?Math.round(T/rp.dur*1000):0;$('svTime').textContent=sec(T)+' / '+sec(rp.dur);
   rp.segs.forEach((x,n)=>{const a=x.a<0?0:m[x.a].t,b=m[x.b].t,el=$('svPhases').children[n];if(el)el.classList.toggle('on',T>=a&&T<=b&&!(T===a&&n>0))});
 }
@@ -2274,6 +2321,7 @@ async function updateWake(){
 function touchAct(){lastAct=Date.now();clearTimeout(wakeT);wakeT=setTimeout(updateWake,WAKE_IDLE+1000);if(!wakeLock)updateWake()}
 document.addEventListener('visibilitychange',()=>{if(document.hidden)releaseWake();else touchAct()});
 for(const ev of['pointerdown','keydown'])document.addEventListener(ev,touchAct,{passive:true});
+$('oRpY').onchange=e=>{cfg.rpYellow=e.target.checked;saveCfg();if(rp&&rp.moves)rpFrame(rp.T)};
 $('oWake').onchange=e=>{cfg.wake=e.target.checked;saveCfg();touchAct();if(!cfg.wake)releaseWake()};
 /* ===== Desconexión del cubo por inactividad (ahorra la batería del cubo) ===== */
 const cubeIdleMin=()=>cfg.idleMin===undefined?5:+cfg.idleMin||0;

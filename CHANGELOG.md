@@ -1,5 +1,11 @@
 # CubIQ · Historial de versiones
 
+## 1.29.2
+- Botón «atrás» del móvil: ya no cierra la app al estar en un entrenamiento. Vuelve a donde empezaste (Entrenar, la ficha del caso o la pestaña de origen), tanto con «Entrenar mis casos de…» como al pulsar uno de los «Últimos entrenamientos». Si estás resolviendo, avisa en lugar de salir.
+- Idioma y «Desconectar el cubo por inactividad»: cerrados se ven igual, pero al abrirse muestran la misma lista propia de la app (tarjeta redondeada, opción actual marcada), en lugar de la nativa del sistema. «Atrás» y Escape la cierran.
+- Colores de las caras: los selectores pasan de círculos a cuadrados con esquinas suaves, a juego con las pegatinas del cubo.
+- Repeticiones con el amarillo arriba (giro z2, como en el entrenamiento). Se puede desactivar en Ajustes > General > «Repeticiones con el amarillo arriba».
+
 ## 1.29.1
 - Todos los idiomas se precargan en el service worker (≈ 130 KB), para poder cambiar de idioma sin conexión, también en un APK que cargue la web (TWA). En un APK con los archivos dentro (Capacitor/Cordova) ya iban incluidos en la carpeta lang/.
 
