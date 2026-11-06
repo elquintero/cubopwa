@@ -404,7 +404,7 @@ input[type=range]::-webkit-slider-thumb{background:var(--tx);border:2px solid va
 .logo-actions{display:flex;flex-wrap:wrap;gap:6px 18px}.logo-actions .lnk{padding:2px 0;font-size:13px}.lnk-mu{color:var(--mu)}
 .lnk+.lnk{margin-left:14px}
 .color-dot{width:26px;height:26px;border:2px solid var(--bd2);border-radius:7px;padding:0;box-shadow:inset 0 0 0 2px var(--card)}
-.ddw{position:relative;flex:none;max-width:46%;display:inline-flex}.ddw select{pointer-events:none;max-width:100%}
+.ddw{position:relative;flex:none;max-width:60%;display:inline-flex}.opt .ddw select{pointer-events:none;max-width:none;width:auto;min-width:0;text-overflow:ellipsis}
 .ddw .dd-hit{position:absolute;inset:0;width:100%;height:100%;background:none;border:0;border-radius:10px;padding:0;cursor:pointer;-webkit-tap-highlight-color:transparent}.ddw .dd-hit:focus-visible{outline:2px solid var(--ac);outline-offset:2px}
 .dd-menu{position:fixed;z-index:1200;min-width:140px;max-width:calc(100vw - 24px);max-height:min(56vh,360px);overflow:auto;overscroll-behavior:contain;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:6px;box-shadow:0 18px 44px rgba(0,0,0,.38);animation:cmPop .14s ease-out;transform-origin:var(--o,top right)}
 .dd-menu button{display:flex;align-items:center;justify-content:space-between;gap:14px;width:100%;text-align:left;padding:11px 12px;border:0;border-radius:9px;background:none;color:var(--tx);font:inherit;font-size:14px;cursor:pointer;white-space:nowrap}
@@ -1275,10 +1275,12 @@ function ddOpen(sel,btn){
     const t=document.createElement('span');t.textContent=o.textContent;b.appendChild(t);b.insertAdjacentHTML('beforeend',DD_CHECK);m.appendChild(b)}
   m.onclick=e=>{const b=e.target.closest('button');if(!b)return;const v=b.dataset.v,ch=sel.value!==v;ddClose();if(ch){sel.value=v;sel.dispatchEvent(new Event('change',{bubbles:true}))}btn.focus()};
   document.body.appendChild(m);
-  const r=btn.getBoundingClientRect(),w=Math.max(r.width,m.offsetWidth),h=m.offsetHeight;
-  const left=Math.max(12,Math.min(innerWidth-w-12,r.right-w)),below=innerHeight-r.bottom-8,up=below<h&&r.top>below;
-  m.style.minWidth=r.width+'px';m.style.left=left+'px';
-  m.style.top=(up?Math.max(8,r.top-6-h):r.bottom+6)+'px';m.style.setProperty('--o',(up?'bottom':'top')+' right');
+  const r=btn.getBoundingClientRect(),vh=(window.visualViewport&&visualViewport.height)||innerHeight;
+  m.style.minWidth=r.width+'px';m.style.maxHeight='none';
+  const w=Math.max(r.width,m.offsetWidth),h=Math.min(m.scrollHeight+2,360),gap=6,pad=10,below=vh-r.bottom-gap-pad,above=r.top-gap-pad,up=below<h&&above>below;
+  const mh=Math.max(120,Math.min(h,up?above:below));m.style.maxHeight=mh+'px';
+  const left=Math.max(12,Math.min(innerWidth-w-12,r.right-w));
+  m.style.left=left+'px';m.style.top=(up?Math.max(pad,r.top-gap-mh):Math.min(r.bottom+gap,vh-pad-mh))+'px';m.style.setProperty('--o',(up?'bottom':'top')+' right');
   const on=m.querySelector('.on');if(on)on.scrollIntoView({block:'nearest'});
   btn.setAttribute('aria-expanded','true');
 }

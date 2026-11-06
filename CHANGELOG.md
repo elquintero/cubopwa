@@ -1,5 +1,8 @@
 # CubIQ · Historial de versiones
 
+## 1.29.3
+- Idioma y Desconexión: los selectores cerrados ya no se encogen ni cortan el texto, y la lista abierta elige el lado con más espacio y se limita a la pantalla (con scroll si hace falta), así que ya no se sale por abajo.
+
 ## 1.29.2
 - Botón «atrás» del móvil: ya no cierra la app al estar en un entrenamiento. Vuelve a donde empezaste (Entrenar, la ficha del caso o la pestaña de origen), tanto con «Entrenar mis casos de…» como al pulsar uno de los «Últimos entrenamientos». Si estás resolviendo, avisa en lugar de salir.
 - Idioma y «Desconectar el cubo por inactividad»: cerrados se ven igual, pero al abrirse muestran la misma lista propia de la app (tarjeta redondeada, opción actual marcada), en lugar de la nativa del sistema. «Atrás» y Escape la cierran.
