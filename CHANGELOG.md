@@ -1,5 +1,12 @@
 # CubIQ · Historial de versiones
 
+## 1.29.4
+- Idioma y «Desconectar el cubo por inactividad»: la lista desplegable ya se cierra al elegir una opción, al tocar fuera, con «atrás» y con Escape (antes se quedaba abierta).
+- Sin vibración al mantener pulsado (marcar resuelto, caso aprendido, diagnóstico).
+- La app se comporta como una app integrada: el texto ya no se puede seleccionar ni copiar/pegar con pulsación larga. Los campos de escritura siguen funcionando con normalidad.
+- Icono nuevo (cuadrícula naranja con «IQ») con el fondo transparente: icono de la app, maskable de Android (ajustado a la zona segura), favicon y logo de la cabecera. El de iOS conserva el fondo oscuro del tema, porque no admite transparencia.
+- Ajustes > Acerca de: añadido «Copyright © Magic-Soft».
+
 ## 1.29.3
 - Idioma y Desconexión: los selectores cerrados ya no se encogen ni cortan el texto, y la lista abierta elige el lado con más espacio y se limita a la pantalla (con scroll si hace falta), así que ya no se sale por abajo.
 
