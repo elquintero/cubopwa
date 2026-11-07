@@ -2,6 +2,8 @@ import pkg from '../package.json';
 import '@fontsource/poppins/600.css';
 import '@fontsource/poppins/700.css';
 import './insight.js';
+import { compareCross, solveCross, countHtm } from './cross.js';
+window.Cross = { solveCross, countHtm };
 
 // El análisis de mejora se ejecuta en un hilo separado para no bloquear las pestañas.
 let insightWorker = null, insightWorkerId = 0, insightWorkerTried = false;
@@ -29,17 +31,21 @@ function ensureWorker() {
   } catch (_) { insightWorker = null; }
   return insightWorker;
 }
-window.analyzeSolveAsync = (snap, moves) => new Promise((resolve, reject) => {
-  if (!ensureWorker()) {
-    // Compatibilidad con navegadores sin Web Worker.
-    try { resolve(window.Insight.analyze(snap, moves)); } catch (e) { reject(e); }
-    return;
-  }
-  const id = ++insightWorkerId;
-  insightJobs.set(id, { resolve, reject });
-  try { insightWorker.postMessage({ id, snap, moves }); }
-  catch (e) { insightJobs.delete(id); reject(e); }
-});
+function callWorker(payload, fallback) {
+  return new Promise((resolve, reject) => {
+    if (!ensureWorker()) { // Compatibilidad con navegadores sin Web Worker.
+      try { resolve(fallback()); } catch (e) { reject(e); }
+      return;
+    }
+    const id = ++insightWorkerId;
+    insightJobs.set(id, { resolve, reject });
+    try { insightWorker.postMessage({ id, ...payload }); }
+    catch (e) { insightJobs.delete(id); reject(e); }
+  });
+}
+window.analyzeSolveAsync = (snap, moves) => callWorker({ snap, moves }, () => window.Insight.analyze(snap, moves));
+// Cruz del solver frente a la óptima (src/cross.js): se calcula en el worker, la tabla de 190 080 posiciones tarda ~30 ms.
+window.crossCompareAsync = (snap, moves, f, end) => callWorker({ kind: 'cross', snap, moves, f, end }, () => compareCross(snap, moves, f, end));
 
 // La versión se define una sola vez, en package.json, y se muestra en Ajustes.
 window.APP_VERSION = pkg.version;

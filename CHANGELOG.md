@@ -1,5 +1,17 @@
 # CubIQ · Historial de versiones
 
+## 1.31.0
+- Entrenador de cruz (Entrenar > tarjeta «Entrenador de cruz»): scramble de 12 giros desde donde esté el cubo, 15 s para planificar, resuelves solo la cruz y al completarla se compara con la óptima (tu cruz, óptima, secuencia, giros de más y, en «Cualquier color», la mejor cara posible). Dificultad Fácil / Normal / Difícil según los giros de la cruz óptima (3–5 / 6 / 7+) y cruz blanca o cualquier color.
+- Resultado con «Ver repetición» (abre la repetición del intento con «Ver la óptima en el cubo») y «Siguiente». Los intentos se guardan por perfil (xstats, incluidos en la copia de seguridad) y la tarjeta muestra tus últimos 30: cruces, % óptimas y giros de más de media.
+- El atrás de Android y la X salen del entrenador; no cambia el cronómetro normal.
+- Traducido a los cinco idiomas.
+
+## 1.30.0
+- Cruz frente a la óptima: en la repetición de cada resolución aparece una tarjeta «Cruz» con los giros de tu cruz (la media vuelta cuenta uno), los de la cruz más corta posible para ese scramble y esa secuencia. Si no es óptima, muestra cuántos giros de más (+N) y permite verla sobre el cubo 3D con «Ver la óptima en el cubo».
+- Nuevo src/cross.js: recorre una sola vez las 190 080 posiciones de la cruz (~30 ms) y baja por esa tabla para dar la solución más corta de cualquier cara. Se calcula en el Worker de análisis.
+- Nuevas pruebas (tests/cross.test.mjs, incluidas en `npm test`): las profundidades coinciden con un cálculo independiente (1, 15, 158, 1 394, 9 809, 46 381, 97 254, 34 966 y 102 posiciones a 0–8 giros) y 400 cruces aleatorios se resuelven de verdad en 8 giros o menos.
+- Traducida a los cinco idiomas.
+
 ## 1.29.5
 - Arranque más ligero: al abrir solo se pinta lo visible (cubo, scramble y la línea ao5/ao12/mejor). El historial, las tarjetas y la tabla de estadísticas se generan cuando el navegador está libre, o al entrar en la pestaña si lo haces antes.
 - El Worker del análisis de resoluciones se crea la primera vez que hace falta, no al cargar la app.

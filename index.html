@@ -255,6 +255,26 @@ input[type=range]::-moz-range-thumb{width:16px;height:16px;border-radius:50%;bac
 #svCase[hidden]{display:none}#svCase .ci svg,#svCase .ci img{width:54px;height:54px;display:block;border-radius:8px}
 #svCase .ct{flex:1;min-width:0;display:grid}#svCase .ct b{font:600 16px Poppins,system-ui,sans-serif}#svCase .ct small{color:var(--mu)}
 #svTips{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+#svCross{margin:0 0 8px}#svCross:empty{display:none}
+.cx{border:1px solid var(--line);border-radius:14px;padding:12px 14px;background:var(--card);display:grid;gap:10px}
+.cx-h{display:flex;align-items:center}.cx h4{margin:0;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--mu);font-weight:600}
+.cx-r{display:grid;grid-template-columns:82px 1fr 22px;align-items:center;gap:10px;font-size:13px;color:var(--mu);white-space:nowrap}
+.cx-r b{font:600 15px Poppins,system-ui,sans-serif;color:var(--tx);text-align:right;font-variant-numeric:tabular-nums}
+.cx-t{height:8px;border-radius:99px;background:var(--inset);overflow:hidden}.cx-t i{display:block;height:100%;border-radius:99px}
+.cx-s{display:flex;flex-wrap:wrap;gap:5px}.cx-s span{font:600 13px ui-monospace,SFMono-Regular,Menlo,monospace;padding:4px 8px;border-radius:8px;background:var(--inset);color:var(--tx)}
+.cx-f{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.cx-d{font-size:12px;font-weight:600;padding:3px 10px;border-radius:99px}.cx-d.bad{color:var(--ac);background:var(--selbg)}.cx-d.ok{color:var(--ok);background:color-mix(in srgb,var(--ok) 14%,transparent)}
+.cx-f .btn{padding:7px 12px;font-size:13px}
+.cx-b{display:flex;gap:8px}.cx-b .btn{flex:1;justify-content:center;padding:10px 8px;font-size:14px;white-space:nowrap}.cx-n{margin:0;font-size:12px;color:var(--mu)}
+#xtbar{display:flex;align-items:center;gap:10px;margin:0 0 8px;padding:6px 6px 6px 12px;border:1px solid var(--line);border-radius:12px;background:var(--card)}
+#xtbar[hidden]{display:none}.xt-tag{font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--ac)}#xtStat{font-size:12px;flex:1}
+#xtRes{margin:10px 0 0}#xtRes[hidden]{display:none}
+body.xtres .cvwrap{display:none}
+.xt-card{border:1px solid var(--line);border-radius:18px;padding:14px 16px;background:var(--card);display:grid;gap:12px;margin:0 0 12px}
+.xt-h{display:flex;align-items:center;gap:12px}.xt-h b{display:block;font-size:15px}.xt-h small{display:block;font-size:12px;color:var(--mu);margin-top:2px;line-height:1.35}
+.xt-ic{flex:none;width:40px;height:40px;border-radius:12px;background:var(--selbg);display:grid;place-items:center;color:var(--ac)}.xt-ic svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.8}
+.xt-o{display:grid;grid-template-columns:78px 1fr;align-items:center;gap:8px;font-size:12px;color:var(--mu)}.xt-o .seg{margin:0}
+.xt-f{display:flex;align-items:center;justify-content:space-between;gap:10px}.xt-s{font-size:12px;color:var(--mu)}
 .tip{border:1px solid var(--line);border-radius:14px;padding:10px 6px;display:grid;gap:6px;justify-items:center;align-content:start;text-align:center;background:var(--card)}
 .tip h4{margin:0;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--mu);font-weight:600}
 .tip>svg,.tip .g svg,.tip>img{width:46px;height:46px;display:block}.tip b{font:600 17px Poppins,system-ui,sans-serif}.tip .ok{color:var(--ok)}.tip small{color:var(--mu);font-size:11px}
@@ -473,11 +493,13 @@ input[type=range]::-webkit-slider-thumb{background:var(--tx);border:2px solid va
     <p id="trSay"></p>
     <div class="algrow"><span class="cap" id="trCap">Algoritmo</span><code id="trAlg"></code></div>
   </div>
+  <div id="xtbar" hidden><span class="xt-tag">Entrenador de cruz</span><span id="xtStat" class="mu"></span><button class="ib" id="xtExit" aria-label="Salir" title="Salir"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></svg></button></div>
   <div id="scr"></div>
   <div id="hint"></div>
   <div id="timer">0.00</div>
   <div id="phase"></div>
   <div id="live"></div>
+  <div id="xtRes" hidden></div>
   <div id="quick"></div>
   <div id="anaRow" hidden><button id="btnAna" class="ana" aria-label="Ver el análisis de la resolución" title="Ver el análisis de esta resolución"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20V10M10 20V4M16 20v-7M2 20h20"/></svg>Análisis</button></div>
   <div class="cvwrap"><canvas id="cv" width="520" height="520" aria-label="Vista 3D del cubo"></canvas></div>
@@ -668,6 +690,7 @@ input[type=range]::-webkit-slider-thumb{background:var(--tx);border:2px solid va
       <div id="svPhases"></div>
       <div id="svCase" hidden></div>
       <div class="legend"><span><i style="background:#8c95a3"></i>pausa</span><span><i style="background:var(--ac)"></i>giros</span><span><i style="background:var(--ac);border-radius:50%;width:6px;height:6px"></i>caso detectado</span><button class="hi" data-h="Repetición de tu resolución: ▶ la reproduce y la barra te mueve por ella. Cada fase muestra su tiempo. «Pausa» es el tiempo parado antes de girar, «giros» el tiempo moviendo, y el punto marca el caso detectado. Arrastra el cubo para girarlo; doble toque para centrarlo." aria-label="Ayuda">i</button></div>
+      <div id="svCross"></div>
       <div id="svTips"></div>
     </div>
     <p id="svNo" class="mu" hidden>Esta resolución se guardó sin movimientos, así que no hay repetición.</p>
@@ -839,14 +862,15 @@ document.getElementById('btnView').onclick=()=>{flip=!flip;draw()};
 
 window.CM={solvedCube,mv,sig,isSolved,clone,FACES,COL,NAME}; // para el módulo de análisis
 /* ===== Estado de la resolución ===== */
-let cube=solvedCube(),phase='scramble',scr=[],targetSig='',t0=0,mvs=[],ti=0,pen=0,train=null,snap=null,gest=[];
+let cube=solvedCube(),phase='scramble',scr=[],targetSig='',t0=0,mvs=[],ti=0,pen=0,train=null,snap=null,gest=[],xt=null,xstats=[]; // xt: entrenador de cruz (ver más abajo)
 const $=id=>document.getElementById(id);
 const fmt=ms=>{if(ms===Infinity)return'DNF';const s=ms/1000;return s>=60?Math.floor(s/60)+':'+(s%60).toFixed(2).padStart(5,'0'):s.toFixed(2)};
 const toast=m=>{const t=$('toast');t.textContent=m;t.className='show';clearTimeout(toast.h);toast.h=setTimeout(()=>t.className='',2800)};
 function setPhase(p){phase=p;const T=$('timer');
   $('phase').textContent={scramble:train?'Prepara el caso · amarillo arriba, verde de frente':'Haz este scramble',ready:train?'Ejecuta el algoritmo hasta resolver el cubo':cfg.insp?'Toca o pulsa espacio para iniciar la inspección':cfg.auto?'Haz un giro para empezar':'Toca o pulsa espacio para empezar',inspect:'Inspección · haz un giro para empezar',running:''}[p];
   T.className=p==='ready'?'ready':p==='running'?'run':p==='inspect'?'insp':'';
-  if(p==='ready'){T.textContent=train?'¡Start!':cfg.insp?'15':cfg.auto?'¡Start!':'0.00';$('live').textContent=''}
+  if(xt)$('phase').textContent={scramble:'Haz este scramble',ready:'Toca o pulsa espacio: 15 s para planificar la cruz',inspect:'Planifica la cruz y empieza cuando quieras',running:'Resuelve solo la cruz'}[p]||'';
+  if(p==='ready'){T.textContent=train?'¡Start!':(cfg.insp||xt)?'15':cfg.auto?'¡Start!':'0.00';$('live').textContent=''}
   if(p==='ready'&&train)initAlg();
   if((p==='running'||p==='inspect')&&typeof anaHide==='function')anaHide();
   if(typeof updateWake==='function')updateWake();
@@ -854,7 +878,7 @@ function setPhase(p){phase=p;const T=$('timer');
 let prog=0,wrong=[],pre=[];
 const OPP={U:'D',D:'U',L:'R',R:'L',F:'B',B:'F'},qOf=m=>m.endsWith("'")?3:m.endsWith('2')?2:1,qs=(f,q)=>f+['','','2',"'"][q];
 function setScramble(list){scr=list;const c=clone(cube);pre=[sig(c)];scr.forEach(m=>{mv(c,m);pre.push(sig(c))});prog=0;wrong=[];setPhase('scramble');renderScr()}
-function newScramble(){setScramble(train?train.setup:genScramble())}
+function newScramble(){setScramble(train?train.setup:xt?xtScramble():genScramble())}
 const dsp=m=>train&&train.frame?train.frame[m[0]]+m.slice(1):m; // en entrenamiento, los giros se muestran según cómo sujetas el cubo
 function renderScr(){ // verde = bien · amarillo = medio giro · rojo = error
   const el=$('scr'),h=$('hint');el.innerHTML='';
@@ -883,14 +907,14 @@ function onMove(m){
   if(phase==='ready'||phase==='inspect')snap=clone(cube);
   mv(cube,m);queue.push(m);pump();
   if(phase==='scramble')trackMove(m);
-  else if(phase==='ready'){if(!train&&(!cfg.auto||cfg.insp))return;pen=0;t0=performance.now();mvs=[{m,t:0}];setPhase('running');tick()}
+  else if(phase==='ready'){if(!train&&(!cfg.auto||cfg.insp||xt))return;pen=0;t0=performance.now();mvs=[{m,t:0}];setPhase('running');tick()}
   else if(phase==='inspect'){const el=performance.now()-ti;pen=el>17000?2:el>15000?1:0;t0=performance.now();mvs=[{m,t:0}];setPhase('running');tick()}
-  else if(phase==='running'){mvs.push({m,t:performance.now()-t0});$('live').textContent=mvs.slice(-12).map(x=>x.m).join(' ');if(isSolved(cube))finish()}
+  else if(phase==='running'){mvs.push({m,t:performance.now()-t0});$('live').textContent=mvs.slice(-12).map(x=>x.m).join(' ');if(xt){const f=crossFace(cube,xt.face);if(f)xtFinish(f)}else if(isSolved(cube))finish()}
   if(train&&at&&(phase==='ready'||phase==='running'))algMove(m);
   gest.push(m);if(gest.length>4)gest.shift();
   if(gest.length===4&&gest.every(x=>x===m)&&'RLU'.includes(m[0])&&phase!=='running'){gest=[];gesture(m[0])}
 }
-function itick(){if(phase!=='inspect')return;const r=15-(performance.now()-ti)/1000;$('timer').textContent=r>0?Math.ceil(r):r>-2?'+2':'DNF';requestAnimationFrame(itick)}
+function itick(){if(phase!=='inspect')return;const r=15-(performance.now()-ti)/1000;$('timer').textContent=r>0?Math.ceil(r):xt?'0':r>-2?'+2':'DNF';requestAnimationFrame(itick)}
 function tick(){if(phase!=='running')return;$('timer').textContent=fmt(performance.now()-t0);requestAnimationFrame(tick)}
 function finish(){
   const t=Math.round(performance.now()-t0);
@@ -908,9 +932,9 @@ function anaHide(){clearTimeout(anaTimer);anaTimer=0;anaSv=null;const r=$('anaRo
 $('btnAna').onclick=()=>{const i=solves.indexOf(anaSv);if(i<0){anaHide();return}openSolve(i)};
 function manual(){ // espacio / toque: sin cubo o para saltar pasos
   if(phase==='scramble')setPhase('ready');
-  else if(phase==='ready'){if(cfg.insp&&!train){ti=performance.now();setPhase('inspect');itick()}else{snap=clone(cube);pen=0;t0=performance.now();mvs=[];setPhase('running');tick()}}
+  else if(phase==='ready'){if((cfg.insp||xt)&&!train){ti=performance.now();setPhase('inspect');itick()}else{snap=clone(cube);pen=0;t0=performance.now();mvs=[];setPhase('running');tick()}}
   else if(phase==='inspect'){snap=clone(cube);const el=performance.now()-ti;pen=el>17000?2:el>15000?1:0;t0=performance.now();mvs=[];setPhase('running');tick()}
-  else if(phase==='running'){const t=Math.round(performance.now()-t0);if(train)return finishTrain(t);if(mvs.length===0){solves.push({t,m:0,s:scr.join(' '),d:Date.now(),p:0});save();renderStats()}
+  else if(phase==='running'){if(xt)return;const t=Math.round(performance.now()-t0);if(train)return finishTrain(t);if(mvs.length===0){solves.push({t,m:0,s:scr.join(' '),d:Date.now(),p:0});save();renderStats()}
     else finish();phase!=='scramble'&&(newScramble(),$('timer').textContent=fmt(t))}
 }
 $('timer').onclick=manual;$('btnSkip').onclick=()=>phase==='scramble'&&setPhase('ready');
@@ -1313,6 +1337,7 @@ window.addEventListener('popstate',()=>{
   hArmed=false;
   if(!hpop.hidden){hHide();hArm();return}
   if(ddMenu){ddClose();hArm();return}
+  if(xt&&vNow==='home'){if(phase==='running'||phase==='inspect')toast('Termina la resolución antes de salir');else xtExit();hArm();return}
   const dlg=document.querySelector('dialog[open]');
   if(dlg){dlg.close();hArm();return}
   if(train){ // entrenamiento en curso: atrás vuelve a donde se empezó (Entrenar, el caso o la pestaña de origen)
@@ -1761,6 +1786,71 @@ function exitTrain(){
   const from=trFrom;train=null;at=null;tpeek=false;trFrom=null;renderTrain();newScramble();$('timer').textContent='0.00';$('live').textContent='';
   if(from&&from.v==='case'){nav('learn');openCase(from.kind,from.id)}else if(from&&from.v&&TABS.includes(from.v)&&from.v!=='home')nav(from.v);
 }
+/* ===== Entrenador de cruz: scramble → 15 s para planificar → resolver solo la cruz → compararla con la óptima ===== */
+const xsave=()=>{try{PS.set('xstats',JSON.stringify(xstats.slice(-300)))}catch(e){}};
+function crossFace(c,pref){ // cara cuya cruz está hecha ('' si ninguna); pref: 'U' o 'any'
+  for(const f of pref==='any'?'UDLRFB':pref){const n=FACEV[f];let k=0,ok=true;
+    for(const s of c){if((s.p[0]!==0)+(s.p[1]!==0)+(s.p[2]!==0)===2&&s.p[0]*n[0]+s.p[1]*n[1]+s.p[2]*n[2]===1){k++;if(s.c!==NAME[s.n]){ok=false;break}}}
+    if(ok&&k===8)return f}
+  return '';
+}
+function xtScramble(){ // 12 giros desde donde esté el cubo; se repite hasta que la cruz blanca tenga la dificultad elegida
+  const L=cfg.xl||'n',lo={e:3,n:6,h:7}[L],hi={e:5,n:6,h:8}[L];let s=[];
+  for(let a=0;a<150;a++){
+    s=[];let last='',last2='';
+    while(s.length<12){const f='UDLRFB'[Math.random()*6|0];if(f===last||(f===OPP[last]&&last2===f))continue;s.push(f+['',"'",'2'][Math.random()*3|0]);last2=last;last=f}
+    const c=clone(cube);s.forEach(m=>mv(c,m));const n=Cross.solveCross(c,'U').len;
+    if(n>=lo&&n<=hi)break;
+  }
+  return s;
+}
+function xtSummary(){
+  const l=xstats.slice(-30);if(!l.length)return 'Aún sin intentos';
+  const opt=l.filter(x=>x.m<=x.o).length,d=l.reduce((a,x)=>a+Math.max(0,x.m-x.o),0)/l.length;
+  return l.length+' cruces · '+Math.round(opt/l.length*100)+' % óptimas · media +'+d.toFixed(1)+' giros';
+}
+function xtCardHTML(){
+  const L=cfg.xl||'n',F=cfg.xf==='any'?'any':'U';
+  const seg=(attr,cur,list)=>'<div class="seg">'+list.map(([k,l])=>'<button data-'+attr+'="'+k+'" class="'+(k===cur?'on':'')+'">'+l+'</button>').join('')+'</div>';
+  return '<div class="xt-card"><div class="xt-h"><span class="xt-ic"><svg viewBox="0 0 24 24"><rect x="9" y="3" width="6" height="6" rx="1.5"/><rect x="3" y="9" width="6" height="6" rx="1.5"/><rect x="9" y="9" width="6" height="6" rx="1.5"/><rect x="15" y="9" width="6" height="6" rx="1.5"/><rect x="9" y="15" width="6" height="6" rx="1.5"/></svg></span><div><b>Entrenador de cruz</b><small>Planifica 15 s, resuelve la cruz y compárala con la óptima</small></div></div>'
+    +'<div class="xt-o"><span>Dificultad</span>'+seg('xl',L,[['e','Fácil'],['n','Normal'],['h','Difícil']])+'</div>'
+    +'<div class="xt-o"><span>Cruz</span>'+seg('xf',F,[['U','Cruz blanca'],['any','Cualquier color']])+'</div>'
+    +'<div class="xt-f"><span class="xt-s">'+xtSummary()+'</span><button class="btn pri" id="xtGo">Empezar</button></div></div>';
+}
+function startXt(){
+  if(!window.Cross)return;
+  if(phase==='running'||phase==='inspect'){toast('Termina la resolución antes de salir');return}
+  hideAlert();if(train){train=null;at=null;renderTrain()}
+  xt={face:cfg.xf==='any'?'any':'U',n:0,last:null};
+  idle(()=>{for(const g of xt.face==='any'?'UDLRFB':'U')Cross.solveCross(solvedCube(),g)});
+  nav('home');newScramble();$('timer').textContent='0.00';$('live').textContent='';renderXt();
+}
+function xtExit(){
+  if(!xt)return;xt=null;$('xtRes').hidden=true;renderXt();newScramble();$('timer').textContent='0.00';$('live').textContent='';nav('train');
+}
+function renderXt(){
+  $('xtbar').hidden=!xt;document.body.classList.toggle('xtres',!!xt&&phase==='xtres'); // con el resultado a la vista se oculta el cubo 3D
+  if(!xt){$('xtRes').hidden=true;return}
+  $('xtStat').textContent='Intento '+(xt.n+(phase==='xtres'?0:1));
+}
+function xtFinish(f){
+  const t=Math.round(performance.now()-t0);phase='xtres';$('timer').className='';$('timer').textContent=fmt(t);$('phase').textContent='';
+  if(typeof updateWake==='function')updateWake();
+  const mine=Cross.countHtm(mvs.map(x=>x.m)),o=Cross.solveCross(snap,f);let best=null;
+  if(xt.face==='any'){let bl=99,bf='';for(const g of 'UDLRFB'){const l=Cross.solveCross(snap,g).len;if(l<bl){bl=l;bf=g}}if(bl<o.len)best={f:bf,n:bl}}
+  xstats.push({d:Date.now(),t,m:mine,o:o.len,f});xsave();xt.n++;
+  xt.last={mine,opt:o.len,seq:o.seq,face:f,best,t,mv:mvs.map(x=>x.m+' '+Math.round(x.t)).join(','),fl:toFacelets(snap),s:scr.join(' '),moves:mvs.length};
+  if(mine<=o.len)celebrate();
+  renderXt();renderXtRes();
+}
+function renderXtRes(){
+  const box=$('xtRes');if(!xt||phase!=='xtres'||!xt.last){box.hidden=true;return}
+  const r=xt.last;box.hidden=false;
+  box.innerHTML=crossCard(r,{foot:'<button class="btn" id="xtRep">Ver repetición</button><button class="btn pri" id="xtNext">Siguiente</button>'});
+  $('xtNext').onclick=()=>{box.hidden=true;newScramble();$('timer').textContent='0.00';$('live').textContent='';renderXt()};
+  $('xtRep').onclick=()=>openSolve({xt:true,t:r.t,m:r.moves,s:r.s,d:Date.now(),p:0,fl:r.fl,mv:r.mv,xo:r});
+}
+$('xtExit').onclick=()=>{if(phase==='running'||phase==='inspect'){toast('Termina la resolución antes de salir');return}xtExit()};
 function finishTrain(t){
   const k=train.key,e=tstats[k]||(tstats[k]={n:0,best:Infinity,last:0}),rec=t<e.best,lab=caseTitle(train);
   e.n++;e.last=t;if(rec)e.best=t;saveTS();tses.n++;
@@ -1813,13 +1903,16 @@ function renderCatalog(){
     const best=bests.length?fmt(Math.min(...bests)):'—';
     let h='<div class="train-hero"><h3>Entrena con intención</h3><p>Sesiones enfocadas, evolución medible y control de tus casos más difíciles.</p></div>';
     h+='<div class="train-dashboard"><div class="train-metric"><small>Resoluciones</small><strong>'+solved+'</strong><em>prácticas registradas</em></div><div class="train-metric"><small>Casos practicados</small><strong>'+practiced+'</strong><em>con actividad</em></div><div class="train-metric"><small>Mejor tiempo</small><strong>'+best+'</strong><em>récord personal</em></div><div class="train-metric"><small>Por repasar</small><strong>'+due+'</strong><em>casos pendientes</em></div></div>';
-    h+=trainingCoachHTML(C,due,learned);
+    h+=trainingCoachHTML(C,due,learned);h+=xtCardHTML();
     h+='<div class="train-actions one"><button class="btn ghost" id="trainChoose"><svg viewBox="0 0 24 24"><path d="M4 7h10M4 12h10M4 17h6M17 14l2 2 3-4"/></svg>Elegir los casos yo mismo</button></div>';
     h+='<div class="train-section-title"><h3>Últimos entrenamientos</h3><span class="cnt">'+(recent.length?recent.length:'')+'</span></div>';
     if(recent.length){h+='<div class="train-recent">'+recent.map(([k,v])=>{const i=k.indexOf(' '),kind=k.slice(0,i),id=k.slice(i+1),when=fmtDate(v.last);return '<button data-training-case="'+esc(k)+'"><span class="tr-main"><b>'+esc(lbl(kind,id))+'</b><small>'+when+' · '+v.n+' repeticiones · mejor '+fmt(v.best)+'</small></span><strong>'+fmt(v.last)+'</strong></button>'}).join('')+'</div>';}
     else h+='<div class="train-empty">Todavía no hay entrenamientos registrados. Empieza con unos casos de F2L y aquí aparecerán tus últimas prácticas y resultados.</div>';
     h+='<div class="train-section-title"><h3>Tu progreso</h3></div><div class="train-empty">'+learned+' casos empezados · '+due+' '+(due===1?'caso pendiente de repaso':'casos pendientes de repaso')+'</div>';
     overview.innerHTML=h;
+    overview.querySelectorAll('[data-xl]').forEach(b=>b.onclick=()=>{cfg.xl=b.dataset.xl;saveCfg();renderCatalog()});
+    overview.querySelectorAll('[data-xf]').forEach(b=>b.onclick=()=>{cfg.xf=b.dataset.xf;saveCfg();renderCatalog()});
+    const xg=overview.querySelector('#xtGo');if(xg)xg.onclick=startXt;
     $('trainChoose').onclick=()=>{trainLanding=false;tsel.clear();tTab='F2L';renderCatalog()};
     overview.querySelectorAll('[data-training-case]').forEach(b=>b.onclick=()=>{const k=b.dataset.trainingCase;startTrain(k.slice(0,k.indexOf(' ')),k.slice(k.indexOf(' ')+1))});
     const coachBtn=overview.querySelector('#trainCoachGo');if(coachBtn)coachBtn.onclick=()=>{
@@ -1891,9 +1984,9 @@ function updateProfileUI(){
 const esc=t=>String(t).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 function loadData(){
   trFrom=null;if(train)exitTrain();
-  solves=[];tstats={};lstats={};lfav={};lrec=[];rstats={};coachMemo=null;
+  if(xt)xt=null;solves=[];tstats={};lstats={};lfav={};lrec=[];rstats={};xstats=[];coachMemo=null;
   try{solves=JSON.parse(PS.get('solves')||'[]')}catch(e){}
-  try{tstats=JSON.parse(PS.get('tstats')||'{}');lstats=JSON.parse(PS.get('lstats')||'{}');lfav=JSON.parse(PS.get('lfav')||'{}');lrec=JSON.parse(PS.get('lrec')||'[]');rstats=JSON.parse(PS.get('rstats')||'{}')}catch(e){}
+  try{tstats=JSON.parse(PS.get('tstats')||'{}');lstats=JSON.parse(PS.get('lstats')||'{}');lfav=JSON.parse(PS.get('lfav')||'{}');lrec=JSON.parse(PS.get('lrec')||'[]');rstats=JSON.parse(PS.get('rstats')||'{}');xstats=JSON.parse(PS.get('xstats')||'[]')}catch(e){}
   hideAlert();tsel=new Set();updateProfileUI();renderStats();newScramble();$('timer').textContent='0.00';$('live').textContent='';
   if(vNow==='learn')renderLearn();if(vNow==='train')renderCatalog();if(vNow==='prof')renderProf();
 }
@@ -1906,7 +1999,7 @@ function addProfile(name,seed,data){
   if(data)for(const k of Object.keys(data))try{localStorage.setItem(pk(k,id),data[k])}catch(e){}
   guest=false;profileId=id;saveProfiles();loadData();
 }
-const BK_KEYS=['solves','tstats','lstats','lfav','lrec','rstats'];
+const BK_KEYS=['solves','tstats','lstats','lfav','lrec','rstats','xstats'];
 $('btnBk').onclick=()=>{
   if(guest){toast('En modo invitado no hay datos que guardar');return}
   const data={};for(const k of BK_KEYS){const v=PS.get(k);if(v!=null)data[k]=v}
@@ -1957,7 +2050,7 @@ $('pfBody').onclick=e=>{
   const b=e.target.closest('[data-a]');if(!b)return;const a=b.dataset.a,row=b.closest('.pf-row'),id=row&&row.dataset.id;
   if(a==='switch'&&id&&id!==profileId){switchProfile(id)}
   else if(a==='rename'){const q=profiles.find(x=>x.id===id),n=prompt('Nombre del perfil',q.name);if(n&&n.trim()){q.name=n.trim().slice(0,18);saveProfiles();updateProfileUI();renderProf()}}
-  else if(a==='del'){const q=profiles.find(x=>x.id===id);if(confirm('¿Borrar el perfil «'+q.name+'» y todos sus datos?')){['solves','tstats','lstats','lfav','lrec','rstats'].forEach(k=>localStorage.removeItem(pk(k,id)));profiles=profiles.filter(x=>x.id!==id);saveProfiles();renderProf()}}
+  else if(a==='del'){const q=profiles.find(x=>x.id===id);if(confirm('¿Borrar el perfil «'+q.name+'» y todos sus datos?')){['solves','tstats','lstats','lfav','lrec','rstats','xstats'].forEach(k=>localStorage.removeItem(pk(k,id)));profiles=profiles.filter(x=>x.id!==id);saveProfiles();renderProf()}}
   else if(a==='new'){pfForm={seed:Math.floor(Math.random()*1e6),name:''};renderProf();$('pfName').focus()}
   else if(a==='keep'){pfForm={seed:Math.floor(Math.random()*1e6),name:'',keep:true};renderProf();$('pfName').focus()}
   else if(a==='dice'){pfForm.seed=Math.floor(Math.random()*1e6);const n=$('pfName').value;pfForm.name=n;renderProf();$('pfName').value=n}
@@ -2173,7 +2266,7 @@ applyTheme();updateLogoControls();
 if(cfg.cubeLogoData){const li=new Image();li.onload=()=>{window.__cubeLogoImg=li;draw();renderPrev()};li.src=cfg.cubeLogoData}
 /* ===== Detalle de la resolución: repetición, fases y cómo mejorar ===== */
 const PH_COL={cross:'#9b7bf0',slot1:'#5b6bf0',slot2:'#4a82f0',slot3:'#3a9be8',slot4:'#34b0de',oll:'#e867b8',pll:'#3ddc97'};
-let rp=null;
+let rp=null,rpMain=null,rpBar='';
 const mkView=A=>v=>{const a=A.a,b=A.b;let x=v[0]*Math.cos(a)+v[2]*Math.sin(a),z=-v[0]*Math.sin(a)+v[2]*Math.cos(a);const y=v[1]*Math.cos(b)-z*Math.sin(b);z=v[1]*Math.sin(b)+z*Math.cos(b);return[x,y,z]};
 const RA={a:-0.6,b:0.45},rview=mkView(RA),CA={a:-0.6,b:0.45},cview=mkView(CA); // ángulos de la vista en la repetición y en el reproductor de casos
 function orbit(cvs,A,redraw){ // arrastrar para girar el cubo, igual que en el cronómetro; doble toque para centrarlo
@@ -2203,11 +2296,11 @@ function phGlyph(seg,P,cases){ // imagen de cada fase: cruz, pareja de colores o
 }
 const ring=(pc,col)=>'<svg viewBox="0 0 36 36"><circle cx="18" cy="18" r="15" fill="none" style="stroke:var(--track)" stroke-width="4"/><circle cx="18" cy="18" r="15" fill="none" stroke="'+col+'" stroke-width="4" stroke-linecap="round" pathLength="100" stroke-dasharray="'+Math.max(1,pc)+' 100" transform="rotate(-90 18 18)"/><text x="18" y="22" text-anchor="middle" font-size="10" font-weight="700" style="fill:var(--tx)">'+pc+'%</text></svg>';
 function openSolve(i){
-  const sv=solves[i];if(!sv)return;RA.a=-0.6;RA.b=0.45;
+  const sv=typeof i==='object'?i:solves[i];if(!sv)return;RA.a=-0.6;RA.b=0.45;rpMain=null;$('svCross').innerHTML='';
   const moves=sv.mv?sv.mv.split(',').map(x=>{const [m,t]=x.split(' ');return{m,t:+t}}):[],start=sv.fl?fromFacelets(sv.fl):null,has=!!(start&&moves.length);
   rp={sv,moves,start,T:0,play:false,speed:1,dur:has?moves[moves.length-1].t:0,last:0,P:null,segs:[]};
   const dv=devices.find(d=>d.id===sv.dv),tps=sv.m&&sv.t?sv.m/(sv.t/1000):0;
-  $('svT').textContent='Resolución #'+(i+1);
+  $('svT').textContent=sv.xt?'Cruz de práctica':'Resolución #'+(i+1);
   const kpi=(v,l)=>'<div class="kpi"><b>'+v+'</b><span>'+l+'</span></div>';
   $('svKpi').innerHTML=kpi(fmt(val(sv))+(sv.p===1?'+':''),'tiempo')+kpi(tps?tps.toFixed(1):'–','giros/s')+kpi(sv.m||'–','giros')+kpi(new Date(sv.d).toLocaleDateString(I18N.loc,{day:'numeric',month:'short'}),dv?(dv.alias||dv.id).slice(0,12):'fecha');
   $('svScr').innerHTML=sv.s?'<details><summary>Scramble</summary><p></p></details>':'';if(sv.s)$('svScr').querySelector('p').textContent=sv.s;$('svBody').hidden=!has;$('svNo').hidden=has;
@@ -2221,9 +2314,41 @@ function openSolve(i){
     $('svSeek').style.setProperty('--bar',bar||'var(--track)');$('svSeek').value=0;
     $('svPhases').innerHTML=P?segs.map((x,n)=>{const r=x.step?x.rec/x.step*100:0;
       return '<button class="ph'+(caseOfSeg(x)?' has':'')+'" data-n="'+n+'" title="'+phLabel(x,cases)+(caseOfSeg(x)?' · caso detectado':'')+'"><span class="g">'+phGlyph(x,P,cases)+'</span><span class="lb">'+phLabel(x,cases)+'</span><b>'+sec(x.step)+'</b><div class="bar2"><i class="r" style="width:'+r+'%"></i><i class="e" style="width:'+(100-r)+'%"></i></div><small>'+x.turns+' · '+x.tps.toFixed(1)+'/s</small></button>'}).join(''):'<p class="mu">No se han podido separar las fases (¿no es CFOP?).</p>';
-    renderTips(P,cases,start,moves);
+    if(sv.xt){$('svTips').innerHTML='';const r=sv.xo;$('svCross').innerHTML=crossCard(r,{play:r.mine>r.opt});const bt=$('cxPlay');if(bt)bt.onclick=()=>cxToggle(r.seq)}
+    else{renderTips(P,cases,start,moves);renderCross(P,start,moves)}
   }
   $('svPlay').innerHTML=PLAY;push('solve');if(has)rpFrame(0);
+}
+// Tarjeta «Cruz»: barras de tu cruz y la óptima + secuencia óptima. opts.play = botón para verla en el cubo; opts.foot = botones propios.
+const FNAME={U:'blanca',D:'amarilla',F:'verde',B:'azul',R:'roja',L:'naranja'},FACEV={U:[0,1,0],D:[0,-1,0],F:[0,0,1],B:[0,0,-1],R:[1,0,0],L:[-1,0,0]};
+function crossCard(r,opts){
+  opts=opts||{};const good=r.mine<=r.opt,d=r.mine-r.opt,sc=Math.max(8,r.mine),w=n=>Math.max(6,n/sc*100).toFixed(1);
+  return '<div class="cx"><div class="cx-h"><h4>Cruz</h4>'+HI('Compara los giros de tu cruz con la cruz más corta posible para este scramble, que nunca pasa de 8. La media vuelta cuenta como un giro.')+'</div>'
+    +'<div class="cx-r"><span>Tu cruz</span><div class="cx-t"><i style="width:'+w(r.mine)+'%;background:'+PH_COL.cross+'"></i></div><b>'+r.mine+'</b></div>'
+    +'<div class="cx-r"><span>Óptima</span><div class="cx-t"><i style="width:'+w(r.opt)+'%;background:var(--ok)"></i></div><b>'+r.opt+'</b></div>'
+    +(good?'<div class="cx-f"><span class="cx-d ok">Cruz óptima ✓</span></div>'
+      :'<div class="cx-s">'+r.seq.map(m=>'<span>'+m+'</span>').join('')+'</div><div class="cx-f"><span class="cx-d bad">+'+d+(d>1?' giros':' giro')+'</span>'+(opts.play?'<button class="btn" id="cxPlay">Ver la óptima en el cubo</button>':'')+'</div>')
+    +(r.best?'<p class="cx-n">Mejor cara: '+FNAME[r.best.f]+' · '+r.best.n+' giros</p>':'')
+    +(opts.foot?'<div class="cx-b">'+opts.foot+'</div>':'')+'</div>';
+}
+function renderCross(P,start,moves){
+  const box=$('svCross');box.innerHTML='';const x=P&&P.segs[0];
+  if(!x||x.key!=='cross'||x.turns<=0||!window.crossCompareAsync)return;
+  const tok=rp;
+  window.crossCompareAsync(clone(start),moves.slice(0,x.b+1).map(m=>({m:m.m})),P.f,x.b).then(r=>{
+    if(rp!==tok||!r)return;
+    box.innerHTML=crossCard(r,{play:true});
+    const bt=$('cxPlay');if(bt)bt.onclick=()=>cxToggle(r.seq);
+  }).catch(e=>console.error(e));
+}
+// Reproduce la cruz óptima sobre el mismo cubo 3D (y vuelve a tu resolución con el mismo botón).
+function cxToggle(seq){
+  if(!rp)return;const bt=$('cxPlay');rpPlay(false);
+  if(rpMain){rp=rpMain;rpMain=null;$('svSeek').style.setProperty('--bar',rpBar);rpFrame(rp.T);if(bt)bt.textContent='Ver la óptima en el cubo';return}
+  rpMain=rp;rpBar=$('svSeek').style.getPropertyValue('--bar');
+  const ms=seq.map((m,i)=>({m,t:(i+1)*500}));
+  rp={...rp,moves:ms,dur:ms[ms.length-1].t+400,T:0,play:false,segs:[],opt:true};
+  $('svSeek').style.setProperty('--bar',PH_COL.cross);rpFrame(0);rpPlay(true);if(bt)bt.textContent='Volver a mi resolución';
 }
 function renderTips(P,cases,start,moves){
   const box=$('svTips');box.innerHTML='';if(!P){return}
@@ -2267,7 +2392,7 @@ $('svPrev').onclick=()=>{rpPlay(false);const k=rpIdx(rp.T-1);rpSeek(k>=0?rp.move
 $('svNext').onclick=()=>{rpPlay(false);const k=rpIdx(rp.T);rpSeek(rp.moves[Math.min(k+1,rp.moves.length-1)].t)};
 $('svSeek').oninput=e=>{rpPlay(false);rpSeek(e.target.value/1000*rp.dur)};
 $('svSpeed').onclick=e=>{const b=e.target.closest('button');if(!b)return;rp.speed=+b.dataset.s;for(const x of $('svSpeed').children)x.classList.toggle('on',x===b)};
-$('svPhases').onclick=e=>{const b=e.target.closest('.ph');if(!b)return;const n=+b.dataset.n,x=rp.segs[n];rpPlay(false);rpSeek(x.a<0?0:rp.moves[x.a].t);rpPlay(true);showSvCase(n)};
+$('svPhases').onclick=e=>{const b=e.target.closest('.ph');if(!b)return;const n=+b.dataset.n,x=rp.segs[n];if(!x)return;rpPlay(false);rpSeek(x.a<0?0:rp.moves[x.a].t);rpPlay(true);showSvCase(n)};
 function showSvCase(n){
   const x=rp.segs[n],box=$('svCase'),hit=caseOfSeg(x);
   if(!hit){box.hidden=true;rp.sel=null;return}
